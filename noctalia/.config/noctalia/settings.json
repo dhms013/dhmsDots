@@ -3,7 +3,7 @@
         "customLaunchPrefix": "runapp",
         "customLaunchPrefixEnabled": false,
         "enableClipPreview": true,
-        "enableClipboardHistory": true,
+        "enableClipboardHistory": false,
         "pinnedExecs": [
         ],
         "position": "center",
@@ -85,7 +85,7 @@
                     "showDiskUsage": false,
                     "showMemoryAsPercent": false,
                     "showMemoryUsage": true,
-                    "showNetworkStats": false,
+                    "showNetworkStats": true,
                     "usePrimaryColor": false
                 },
                 {
@@ -430,14 +430,14 @@
         "foot": false,
         "fuzzel": false,
         "ghostty": false,
-        "gtk": true,
+        "gtk": false,
         "kcolorscheme": true,
         "kitty": false,
         "niri": false,
         "pywalfox": false,
-        "qt": true,
+        "qt": false,
         "spicetify": false,
-        "telegram": false,
+        "telegram": true,
         "vicinae": false,
         "walker": false,
         "wezterm": false

@@ -61,8 +61,8 @@
       "format": "\u001b[90m┌ Software ──────────────────────────────────────────┐"
     },
     {
-      "type": "command",
-      "key": "\ue900 OS",
+      "type": "os",
+      "key": " OS",
       "keyColor": "blue"
     },
     {

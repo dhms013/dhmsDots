@@ -23,6 +23,7 @@ alias update="sudo pacman -Syu --noconfirm; yay -Syu --noconfirm"
 alias gadd="git add"
 alias gcm="git commit -m"
 alias gp="git push"
+alias boo="ghostty +boo"
 
 export EDITOR="nvim"
 
