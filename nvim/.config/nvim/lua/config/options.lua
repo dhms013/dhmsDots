@@ -3,3 +3,5 @@
 -- Add any additional options here
 vim.opt.relativenumber = false
 vim.g.autoformat = true
+vim.opt.guifont = "DejaVuSansMono:7.5"
+vim.opt.scrolloff = 999

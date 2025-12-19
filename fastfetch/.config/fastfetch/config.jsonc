@@ -3,9 +3,11 @@
   "logo": {
     "type": "kitty",
     "source": "~/.config/fastfetch/logo/archOmega.png",
-    "height": 25,
+    "height": 20,
     "padding": {
-      "top": 1
+      "top": 2,
+      "left": 2,
+      "right": 2
     }
   },
   "modules": [

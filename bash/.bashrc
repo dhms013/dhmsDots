@@ -24,8 +24,11 @@ alias gadd="git add"
 alias gcm="git commit -m"
 alias gp="git push"
 alias boo="ghostty +boo"
+alias relog="sudo killall sddm"
 
 export EDITOR="nvim"
+export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers --line-range :500 {}'"
+export BAT_THEME="ansi"
 
 fastfetch
 eval "$(zoxide init bash)"

@@ -1,0 +1,12 @@
+#!/bin/sh
+PIDFILE=/tmp/dhms-rec.pid
+OUTDIR=~/Videos/Screenrecords
+
+if [ -f "$PIDFILE" ]; then
+  kill "$(cat $PIDFILE)"
+  rm "$PIDFILE"
+else
+  wf-recorder -f "$OUTDIR/$(date +%F_%H-%M-%S).mp4" &
+  echo $! > "$PIDFILE"
+fi
+
