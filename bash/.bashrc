@@ -7,10 +7,13 @@
 
 eval "$(starship init bash)"
 
-alias ls='eza -l'
-alias lsa='eza -l -a'
-alias lt='eza -l --tree --level=2'
-alias lta='eza -l -a --tree --level=2'
+alias cd ='z'
+alias ls='eza -lh --group-directories-first --icons=auto'
+alias lsa='ls -a'
+alias lt='eza --tree --level=2 --long --icons --git'
+alias lta='lt -a'
+alias ..='cd ..'
+alias ...='cd ../..'
 alias grep='grep --color=auto'
 alias waybar="systemctl --user restart waybar.service"
 alias fastfetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
