@@ -454,7 +454,7 @@
         "spicetify": false,
         "telegram": true,
         "vicinae": false,
-        "walker": false,
+        "walker": true,
         "wezterm": false,
         "yazi": true,
         "zed": false
