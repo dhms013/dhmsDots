@@ -20,6 +20,7 @@ alias fastfetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
 alias lv='nvim $(fzf -m --preview="bat --color=always {}")'
 alias expac="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
 alias icat="clear; kitty +kitten icat"
+alias megumin="icat ~/.config/fastfetch/logo/megumin.gif"
 alias bashrc="clear; source ~/.bashrc"
 alias duf="clear; duf"
 alias update="sudo pacman -Syu --noconfirm; yay -Syu --noconfirm"
