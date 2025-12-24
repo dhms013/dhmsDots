@@ -19,8 +19,8 @@ If it breaks on your machine, you fix it.
 - Restores my preferred defaults for Hyprland usage
 
 This repo assumes:
-- You already installed **Arch Linux**
-- You selected **Hyprland** during `archinstall`
+- You already installed **Arch Linux** (or other your beloved distro)
+- You selected **Hyprland** during `archinstall` (or manually if you're not using `archinstall` script)
 
 Nothing more, nothing less.
 
@@ -47,7 +47,7 @@ You can change them anytime by editing the Hyprland config after stowing.
 - **Hyprland**
 
 This repo does not install Hyprland for you.
-Install it first using `archinstall`.
+Install it first using `archinstall` (or manually if you're not using `archinstall` script).
 
 ---
 
@@ -60,7 +60,7 @@ The Makefile installs packages in two layers:
 
 This includes (but is not limited to):
 
-- paru
+- paru (edit for `yay` if you prefer that)
 - stow
 - neovim
 - ghostty
