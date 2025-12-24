@@ -98,7 +98,7 @@ They are renamed before stow runs.
 
 ### 1. Install Arch + Hyprland
 
-Use `archinstall` and keep it minimal.
+Use `archinstall` (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
 
 ---
 
