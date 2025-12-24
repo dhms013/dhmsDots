@@ -4,6 +4,7 @@
         "customLaunchPrefixEnabled": false,
         "enableClipPreview": true,
         "enableClipboardHistory": true,
+        "iconMode": "tabler",
         "pinnedExecs": [
         ],
         "position": "center",
@@ -19,7 +20,6 @@
         "mprisBlacklist": [
         ],
         "preferredPlayer": "",
-        "visualizerQuality": "high",
         "visualizerType": "linear",
         "volumeOverdrive": false,
         "volumeStep": 5
@@ -29,21 +29,21 @@
         "density": "default",
         "exclusive": true,
         "floating": true,
-        "marginHorizontal": 0.28,
+        "marginHorizontal": 0.3,
         "marginVertical": 0,
         "monitors": [
         ],
         "outerCorners": true,
         "position": "top",
         "showCapsule": true,
-        "showOutline": false,
+        "showOutline": true,
         "transparent": true,
         "widgets": {
             "center": [
                 {
                     "characterCount": 2,
                     "colorizeIcons": false,
-                    "enableScrollWheel": true,
+                    "enableScrollWheel": false,
                     "followFocusedScreen": false,
                     "hideUnoccupied": false,
                     "id": "Workspace",
@@ -61,7 +61,7 @@
                     "showDiskUsage": false,
                     "showGpuTemp": false,
                     "showMemoryAsPercent": false,
-                    "showMemoryUsage": true,
+                    "showMemoryUsage": false,
                     "showNetworkStats": false,
                     "usePrimaryColor": false
                 },
@@ -69,6 +69,30 @@
                     "diskPath": "/",
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
+                    "showCpuUsage": false,
+                    "showDiskUsage": false,
+                    "showGpuTemp": false,
+                    "showMemoryAsPercent": false,
+                    "showMemoryUsage": false,
+                    "showNetworkStats": false,
+                    "usePrimaryColor": false
+                },
+                {
+                    "diskPath": "/",
+                    "id": "SystemMonitor",
+                    "showCpuTemp": false,
+                    "showCpuUsage": false,
+                    "showDiskUsage": false,
+                    "showGpuTemp": false,
+                    "showMemoryAsPercent": false,
+                    "showMemoryUsage": true,
+                    "showNetworkStats": false,
+                    "usePrimaryColor": false
+                },
+                {
+                    "diskPath": "/",
+                    "id": "SystemMonitor",
+                    "showCpuTemp": false,
                     "showCpuUsage": false,
                     "showDiskUsage": false,
                     "showGpuTemp": true,
@@ -158,7 +182,7 @@
     },
     "brightness": {
         "brightnessStep": 5,
-        "enableDdcSupport": false,
+        "enableDdcSupport": true,
         "enforceMinimum": true
     },
     "calendar": {
@@ -239,7 +263,6 @@
         }
     },
     "desktopWidgets": {
-        "editMode": true,
         "enabled": false,
         "gridSnap": false,
         "monitorWidgets": [
@@ -288,6 +311,8 @@
     "hooks": {
         "darkModeChange": "",
         "enabled": true,
+        "performanceModeDisabled": "",
+        "performanceModeEnabled": "",
         "screenLock": "",
         "screenUnlock": "",
         "wallpaperChange": ""
@@ -411,7 +436,7 @@
         ],
         "showHeader": true
     },
-    "settingsVersion": 31,
+    "settingsVersion": 32,
     "systemMonitor": {
         "cpuCriticalThreshold": 90,
         "cpuPollingInterval": 1000,
@@ -420,7 +445,7 @@
         "diskCriticalThreshold": 90,
         "diskPollingInterval": 3000,
         "diskWarningThreshold": 70,
-        "enableNvidiaGpu": true,
+        "enableDgpuMonitoring": true,
         "gpuCriticalThreshold": 90,
         "gpuPollingInterval": 1000,
         "gpuWarningThreshold": 70,
@@ -445,6 +470,8 @@
         "fuzzel": false,
         "ghostty": false,
         "gtk": true,
+        "helix": false,
+        "hyprland": false,
         "kcolorscheme": true,
         "kitty": false,
         "mango": false,
@@ -460,6 +487,8 @@
         "zed": false
     },
     "ui": {
+        "bluetoothDetailsViewMode": "grid",
+        "bluetoothHideUnnamedDevices": false,
         "fontDefault": "Adwaita Sans",
         "fontDefaultScale": 1,
         "fontFixed": "monospace",
@@ -467,7 +496,8 @@
         "panelBackgroundOpacity": 0.4,
         "panelsAttachedToBar": true,
         "settingsPanelMode": "attached",
-        "tooltipsEnabled": true
+        "tooltipsEnabled": true,
+        "wifiDetailsViewMode": "grid"
     },
     "wallpaper": {
         "directory": "/home/dhms/.config/noctalia/Wallpaper",
@@ -492,6 +522,7 @@
         "wallhavenOrder": "asc",
         "wallhavenPurity": "111",
         "wallhavenQuery": "gachiakuta",
+        "wallhavenRatios": "",
         "wallhavenResolutionHeight": "",
         "wallhavenResolutionMode": "atleast",
         "wallhavenResolutionWidth": "",
