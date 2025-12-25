@@ -7,7 +7,7 @@ BASE_PKGS := $(shell cat packages/basePkg)
 AUR_PKGS  := $(shell cat packages/aurPkg)
 
 PACMAN := sudo pacman -S --needed --noconfirm
-PARU   := paru -S --needed --noconfirm
+PARU   := paru -S --needed
 
 # -----------------------------
 # Stow targets
@@ -33,9 +33,9 @@ base:
 .PHONY: paru
 paru:
 	@if ! command -v paru >/dev/null; then \
-		echo "==> Installing paru-bin"; \
-		git clone https://aur.archlinux.org/paru-bin.git /tmp/paru-bin; \
-		cd /tmp/paru-bin && makepkg -si --noconfirm; \
+		echo "==> Installing paru"; \
+		git clone https://aur.archlinux.org/paru.git /tmp/paru; \
+		cd /tmp/paru && makepkg -si --noconfirm; \
 	else \
 		echo "==> paru already installed"; \
 	fi
