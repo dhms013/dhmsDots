@@ -11,15 +11,26 @@ If it breaks on your machine, you fix it.
 
 ---
 
+## Notes
+
+- This repo is my personal backup
+- No guarantees
+- No support
+- Ofcourse you can use this with other distro with Hyprland, but edit it by yourself or simply just copy-paste the dotfiles 🤣
+
+If something breaks, you fix it yourself.
+
+---
+
 ## What this repo is
 
-- A **post-archinstall** helper
+- A **post-install** helper for Hyprland configs
 - Installs my base packages (pacman + AUR)
 - Stows my dotfiles safely
 - Restores my preferred defaults for Hyprland usage
 
 This repo assumes:
-- You already installed **Arch Linux** (or other your beloved distro)
+- You already installed **Arch Linux** (or other your beloved distro based on arch)
 - You selected **Hyprland** during `archinstall` (or manually if you're not using `archinstall` script)
 
 Nothing more, nothing less.
@@ -28,7 +39,7 @@ Nothing more, nothing less.
 
 ## Default apps used in keybinds
 
-My Hyprland config assumes these defaults:
+My Hyprland config uses the following defaults:
 
 | Purpose        | App       |
 |---------------|-----------|
@@ -96,9 +107,9 @@ They are renamed before stow runs.
 
 ## How to use
 
-### 1. Install Arch + Hyprland
+### 1. Install your distro + Hyprland
 
-Use `archinstall` (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
+Use archinstall (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
 
 ---
 
@@ -124,16 +135,6 @@ This will:
 - Stow dotfiles safely
 
 Log out and log back in if needed.
-
----
-
-## Notes
-
-- This repo is my personal backup
-- No guarantees
-- No support
-
-If something breaks, you fix it yourself.
 
 ---
 
