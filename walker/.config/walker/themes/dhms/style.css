@@ -1,7 +1,6 @@
 @define-color surface #081512;
 @define-color surfaceVariant #0F251F;
-@define-color text #a8e6a1;
-@define-color selected-text #D4E157;
+
 @define-color onSurface #A6B5B1;
 @define-color onSurfaceVariant #99A8A4;
 
@@ -30,11 +29,10 @@ scrollbar {
   box-shadow:
     0 19px 38px rgba(0, 0, 0, 0.3),
     0 15px 12px rgba(0, 0, 0, 0.22);
-  background: alpha(@surface, 0.5);
+  background: @surface;
   padding: 12px;
   border-radius: 20px;
   border: 2px solid @outline;
-  color: @text;
 }
 
 .preview-box,
@@ -44,7 +42,7 @@ scrollbar {
 }
 
 .box {
-  background: alpha(@surfaceVariant, 0.5);
+  background: @surfaceVariant;
   padding: 20px;
   border-radius: 20px;
   border: 2px solid @outline;
@@ -53,7 +51,6 @@ scrollbar {
 .search-container {
   border-radius: 10px;
   border: 2px solid @outline;
-  background: alpha(@surfaceVariant, 0.5);   
 }
 
 .input placeholder {
@@ -61,7 +58,7 @@ scrollbar {
 }
 
 .input {
-  background: alpha(@surface,0.5);
+  background: @surface;
   color: @onSurface;
   caret-color: @onSurface;
   padding: 10px;
@@ -90,7 +87,6 @@ child {
 .item-box {
   border-radius: 10px;
   padding: 10px;
-  color: @text;
 }
 
 .item-quick-activation {
@@ -102,8 +98,7 @@ child {
 
 child:hover .item-box,
 child:selected .item-box {
- background: alpha(@primary, 0.5);
-  color: @selected-text;
+ background: alpha(@primary, 0.4);
 }
 
 .item-text-box {
@@ -127,7 +122,6 @@ child:selected .item-box {
   border-top: 1px solid @primary;
   padding: 10px;
   border-radius: 10px;
-  background: alpha(@surfaceVariant, 0.5);
   color: @onSurface;
 }
 
@@ -185,10 +179,11 @@ child:selected .item-box {
 
 .error {
   padding: 10px;
-  background: alpha(@error, 0.5);
+  background: @error;
   color: @surface;
 }
 
 :not(.calc).current {
   font-style: italic;
 }
+

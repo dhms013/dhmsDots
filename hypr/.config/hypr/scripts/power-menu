@@ -1,0 +1,12 @@
+#!/bin/bash
+entries="    Lock\n󰒲     Suspend\n󰜉    Restart\n󰐥    Shutdown"
+
+selected=$(echo -e "$entries" | walker --dmenu | awk '{print $2}')
+
+case $selected in
+Lock) pidof hyprlock || hyprlock ;;
+Shutdown) systemctl poweroff ;;
+Reboot) systemctl reboot ;;
+Suspend) systemctl suspend ;;
+Logout) hyprctl dispatch exit ;;
+esac

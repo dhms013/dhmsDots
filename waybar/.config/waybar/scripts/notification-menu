@@ -1,0 +1,17 @@
+#!/bin/bash
+
+entries=$(makoctl history | jq -r '.data[] | .[] | "\(.summary.data): \(.body.data)"' | tac)
+
+if [ -z "$entries" ]; then
+    notify-send "Notifications" "No history found"
+    exit 0
+fi
+
+# Show in Walker and capture selection
+selected=$(echo -e "$entries" | walker --dmenu)
+
+# Optional: If you want to do something when selecting an item
+# (e.g., re-display it)
+if [ ! -z "$selected" ]; then
+   notify-send "Selected History" "$selected"
+fi

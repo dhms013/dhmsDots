@@ -1,0 +1,6 @@
+source ~/.config/bash/aliases
+source ~/.config/bash/envs
+source ~/.config/bash/functions
+source ~/.config/bash/init
+source ~/.config/bash/shell
+[[ $- == *i* ]] && bind -f ~/.config/bash/inputrc

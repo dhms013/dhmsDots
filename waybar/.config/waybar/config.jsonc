@@ -1,0 +1,237 @@
+{
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 26,
+  "modules-left": [
+    "custom/menu",
+    "temperature",
+    "cpu",
+    "custom/gpu",
+    "memory",
+    "hyprland/window"
+  ],
+  "modules-center": [
+    "hyprland/workspaces",
+    "custom/screenrecording-indicator"
+  ],
+  "modules-right": [
+    "network#speed",
+    "network",
+    "bluetooth",
+    "pulseaudio",
+    "clock",
+    "custom/notification",
+    "group/tray-expander",
+    "custom/power"
+  ],
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      // "default": " ",
+      // "active": " ",
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六",
+      "7": "七",
+      "8": "八",
+      "9": "九",
+      "10": "十"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "custom/menu": {
+    "format": " ⨇rcⱨ ",
+    "on-click": "walker",
+    "tooltip-format": "walker"
+  },
+  "hyprland/window": {
+    "format": "{title}",
+    "max-length": 16,
+    "icon": true,
+    "icon-size": 13,
+    "tooltip": true,
+    "rewrite": {
+      "Ghostty": "  Neovim ",
+      "WhatsApp": " WhatsApp "
+    },
+    "swap-icon-label": false
+  },
+  "custom/notification": {
+    "format": " ",
+    "on-click": "~/.config/waybar/scripts/notification-menu",
+    "on-click-right": "makoctl dismiss -a",
+    "restart-interval": 1
+  },
+  "temperature": {
+    "critical-threshold": 90,
+    "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+    "format": " {temperatureC}°C",
+    "format-critical": "🔥 {temperatureC}°C",
+    "tooltip": true,
+    "interval": 1
+  },
+  "cpu": {
+    "interval": 1,
+    "format": "󰍛 {usage}%",
+    "on-click": "$TERMINAL --title=btop-float -e btop"
+  },
+  "custom/gpu": {
+    "format": "󰾲 {}%   {}°C",
+    "tooltip": false,
+    // "exec-if": "nvidia-smi",
+    "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
+    "exec-alt": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    // "return-type": "json",
+    // "tooltip": false,
+    "interval": 1
+  },
+  "memory": {
+    "format": "  {percentage}%",
+    "format-tooltip": "{used}G used, {available}G available, {total}G total",
+    "interval": 1
+  },
+  "clock": {
+    "format": " {:L%a %d, %H:%M} ",
+    "format-alt": " {:L%A %d/%m/%Y} ",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select",
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    }
+  },
+  "network#speed": {
+    "format-wifi": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "format-disconnected": "",
+    "interval": 1
+  },
+  "network": {
+    "format-icons": [
+      "󰤯 ",
+      "󰤟 ",
+      "󰤢 ",
+      "󰤥 ",
+      "󰤨 "
+    ],
+    "format": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "󰀂 ",
+    "format-disconnected": "󰤮 ",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 1,
+    "spacing": 1
+    // "on-click": "$TERMINAL --title=impala-float -e impala"
+  },
+  "battery": {
+    "format": "{capacity}%{icon}",
+    "format-discharging": "{capacity}%{icon}",
+    "format-charging": "{capacity}%{icon}",
+    "format-plugged": "",
+    "format-icons": {
+      "charging": [
+        "󰢜 ",
+        "󰂆 ",
+        "󰂇 ",
+        "󰂈 ",
+        "󰢝 ",
+        "󰂉 ",
+        "󰢞 ",
+        "󰂊 ",
+        "󰂋 ",
+        "󰂅 "
+      ],
+      "default": [
+        "󰁺",
+        "󰁻",
+        "󰁼",
+        "󰁽",
+        "󰁾",
+        "󰁿",
+        "󰂀",
+        "󰂁",
+        "󰂂",
+        "󰁹"
+      ]
+    },
+    "format-full": "{capacity}% 󰂅 ",
+    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+    "interval": 5,
+    "on-click": "omarchy-menu power",
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "format-no-controller": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "$TERMINAL --title=bluetui-float -e bluetui"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "on-click": "$TERMINAL --title=wiremix-float -e wiremix",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "format-muted": " ",
+    "format-icons": {
+      "default": [
+        " ",
+        " ",
+        " "
+      ]
+    }
+  },
+  "group/tray-expander": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "tray-group-item"
+    },
+    "modules": [
+      "custom/expand-icon",
+      "tray"
+    ]
+  },
+  "custom/expand-icon": {
+    "format": "  ",
+    "tooltip": false
+  },
+  "custom/power": {
+    "format": "󰐥",
+    "on-click": "~/.config/hypr/scripts/power-menu",
+    "tooltip": false
+  },
+  "tray": {
+    "icon-size": 12,
+    "spacing": 5
+  }
+}

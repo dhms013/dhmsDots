@@ -51,7 +51,7 @@ define safe_stow_home
 	@if [ -e "$(HOME)/.$(1)rc" ] && [ ! -L "$(HOME)/.$(1)rc" ]; then \
 		echo "==> Backing up .$(1)rc"; \
 		mv "$(HOME)/.$(1)rc" "$(HOME)/.$(1)rc.pre-stow"; \
-	fi
+	fi; \
 	stow $(1)
 endef
 
@@ -59,7 +59,7 @@ define safe_stow_config
 	@if [ -d "$(CONFIG_HOME)/$(1)" ] && [ ! -L "$(CONFIG_HOME)/$(1)" ]; then \
 		echo "==> Backing up $(1) config"; \
 		mv "$(CONFIG_HOME)/$(1)" "$(CONFIG_HOME)/$(1).pre-stow"; \
-	fi
+	fi; \
 	stow $(1)
 endef
 
