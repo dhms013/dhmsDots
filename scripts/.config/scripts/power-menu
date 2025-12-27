@@ -1,5 +1,5 @@
 #!/bin/bash
-entries="    Lock\n󰒲     Suspend\n󰜉    Restart\n󰐥    Shutdown"
+entries="󰒲     Suspend\n    Lock\n󰜉    Restart\n󰐥    Shutdown"
 
 selected=$(echo -e "$entries" | walker --dmenu | awk '{print $2}')
 

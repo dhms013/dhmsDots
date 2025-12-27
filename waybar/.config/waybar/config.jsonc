@@ -32,7 +32,7 @@
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
-      // "default": " ",
+      // "default": "零",
       // "active": " ",
       "1": "一",
       "2": "二",
@@ -74,6 +74,7 @@
     "format": " ",
     "on-click": "~/.config/scripts/notification-menu",
     "on-click-right": "makoctl dismiss -a",
+    "tooltip": false,
     "restart-interval": 1
   },
   "temperature": {

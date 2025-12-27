@@ -1,37 +1,7 @@
-#
 # ~/.bashrc
-#
 
-# If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
 source ~/.config/bash/rc
-# eval "$(starship init bash)"
-#
-# alias cd ='z'
-# alias ls='eza -lh --group-directories-first --icons=auto'
-# alias lsa='ls -a'
-# alias lt='eza --tree --level=2 --long --icons --git'
-# alias lta='lt -a'
-# alias ..='cd ..'
-# alias ...='cd ../..'
-# alias grep='grep --color=auto'
-# alias waybar="systemctl --user restart waybar.service"
-# alias fastfetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
-# alias lv='nvim $(fzf -m --preview="bat --color=always {}")'
-# alias expac="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
-# alias icat="clear; kitty +kitten icat"
-# alias megumin="icat ~/.config/fastfetch/logo/megumin.gif"
-# alias bashrc="clear; source ~/.bashrc"
-# alias update="sudo pacman -Syu --noconfirm; paru -Syu --noconfirm"
-# alias gadd="git add"
-# alias gcm="git commit -m"
-# alias gp="git push"
-# alias boo="ghostty +boo"
-# alias relog="sudo killall sddm"
-#
-# export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers --line-range :500 {}'"
-# export BAT_THEME="ansi"
-#
-# eval "$(zoxide init bash)"
+
 fastfetch

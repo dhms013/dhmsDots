@@ -17,8 +17,9 @@ If it breaks on your machine, you fix it.
 - No guarantees
 - No support
 - Ofcourse you can use this with other distro with Hyprland, but edit it by yourself or simply just copy-paste the dotfiles 🤣
-
-If something breaks, you fix it yourself.
+- $mainMod usually using windows key, but please read the note inside .config/hypr/keybindings.conf
+- Makefile still not perfect, gonna fix it someday when I have a time
+- If something breaks, you fix it yourself.
 
 ---
 
@@ -41,11 +42,12 @@ Nothing more, nothing less.
 
 My Hyprland config uses the following defaults:
 
-| Purpose        | App       |
+| Purpose       | App       |
 |---------------|-----------|
-| Terminal       | ghostty   |
-| Editor         | nvim      |
-| File manager   | yazi      |
+| Terminal      | ghostty      |
+| Editor        | nvim         |
+| File manager  | yazi         |
+| Browser       | Zen Browser  |
 
 These apps are referenced directly in Hyprland keybinds.
 
@@ -55,10 +57,10 @@ You can change them anytime by editing the Hyprland config after stowing.
 
 ## Mandatory dependency
 
-- **Hyprland**
+- **Depend on what you need from this repo**
 
 This repo does not install Hyprland for you.
-Install it first using `archinstall` (or manually if you're not using `archinstall` script).
+Install it first `by yourself` 🙃
 
 ---
 
@@ -89,16 +91,25 @@ You can freely add or remove packages later.
 
 This repo manages configs for:
 
-- bash (home directory)
-- hypr
-- ghostty
-- kitty
-- nvim
-- yazi
-- walker
-- fastfetch
+- background
+- bash
+- btop
+- environment.d
 - eza
+- fastfetch
+- ghostty
+- hypr
+- hyprland-preview-share-picker
+- kitty
+- mako
+- nvim
+- scripts (used in hypr and waybar)
 - starship
+- themes (backup)
+- walker
+- waybar
+- waypaper
+- yazi
 
 Existing configs are not deleted.
 They are renamed before stow runs.
@@ -109,8 +120,11 @@ They are renamed before stow runs.
 
 ### 1. Install your distro + Hyprland
 
+1. Option 1 
 Use archinstall (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
 
+2. Option 2
+Install any distro/OS that you like (Of course you can't use the Makefile if you did)
 ---
 
 ### 2. Clone the repo
