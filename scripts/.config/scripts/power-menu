@@ -10,3 +10,5 @@ Reboot) systemctl reboot ;;
 Suspend) systemctl suspend ;;
 Logout) hyprctl dispatch exit ;;
 esac
+
+# \n󰍃     Logout

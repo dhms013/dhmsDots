@@ -9,6 +9,7 @@
     "temperature",
     "cpu",
     "custom/gpu",
+    "custom/gpu-temp",
     "memory",
     "hyprland/window"
   ],
@@ -24,6 +25,7 @@
     "clock",
     "custom/notification",
     "group/tray-expander",
+    "power-profiles-daemon",
     "custom/power"
   ],
   "hyprland/workspaces": {
@@ -63,14 +65,14 @@
     "icon-size": 13,
     "tooltip": true,
     "rewrite": {
-      "Ghostty": "  Neovim ",
+      "nvim": "eovim ",
       "WhatsApp": " WhatsApp "
     },
     "swap-icon-label": false
   },
   "custom/notification": {
     "format": " ",
-    "on-click": "~/.config/waybar/scripts/notification-menu",
+    "on-click": "~/.config/scripts/notification-menu",
     "on-click-right": "makoctl dismiss -a",
     "restart-interval": 1
   },
@@ -80,27 +82,28 @@
     "format": " {temperatureC}°C",
     "format-critical": "🔥 {temperatureC}°C",
     "tooltip": true,
-    "interval": 1
+    "interval": 3
   },
   "cpu": {
-    "interval": 1,
+    "interval": 3,
     "format": "󰍛 {usage}%",
     "on-click": "$TERMINAL --title=btop-float -e btop"
   },
   "custom/gpu": {
-    "format": "󰾲 {}%   {}°C",
+    "format": "󰾲  {}%",
     "tooltip": false,
-    // "exec-if": "nvidia-smi",
     "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
-    "exec-alt": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
-    // "return-type": "json",
-    // "tooltip": false,
-    "interval": 1
+    "interval": 3
+  },
+  "custom/gpu-temp": {
+    "format": " {}°C",
+    "tooltip": false,
+    "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    "interval": 3
   },
   "memory": {
-    "format": "  {percentage}%",
-    "format-tooltip": "{used}G used, {available}G available, {total}G total",
-    "interval": 1
+    "format": "  {used}G/{total}G",
+    "interval": 3
   },
   "clock": {
     "format": " {:L%a %d, %H:%M} ",
@@ -144,7 +147,18 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 1,
     "spacing": 1
-    // "on-click": "$TERMINAL --title=impala-float -e impala"
+    // "on-click": "$TERMINAL --title=impala-float -e impala"  # activate this if wifi adapter exists
+  },
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "",
+      "performance": "",
+      "balanced": "",
+      "power-saver": ""
+    }
   },
   "battery": {
     "format": "{capacity}%{icon}",
@@ -181,7 +195,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
-    "on-click": "omarchy-menu power",
+    "on-click": "powerprofilesctl",
     "states": {
       "warning": 20,
       "critical": 10
@@ -227,7 +241,7 @@
   },
   "custom/power": {
     "format": "󰐥",
-    "on-click": "~/.config/hypr/scripts/power-menu",
+    "on-click": "~/.config/scripts/power-menu",
     "tooltip": false
   },
   "tray": {

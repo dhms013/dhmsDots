@@ -92,6 +92,7 @@ window#waybar.empty #window {
 #temperature,
 #cpu,
 #custom-gpu,
+#custom-gpu-temp,
 #memory,
 #network#speed,
 #workspaces button,
@@ -105,6 +106,7 @@ window#waybar.empty #window {
 #custom-expand-icon,
 #custom-notification,
 #custom-power,
+#power-profiles-daemon,
 #battery {
   min-width: 15px;
   font-family: 'BitstromWera Nerd Font';
