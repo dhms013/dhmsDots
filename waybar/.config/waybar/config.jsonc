@@ -55,7 +55,7 @@
     }
   },
   "custom/menu": {
-    "format": " ⨇rcⱨ ",
+    "format": "𐤃𐤄𐤌𐤑",
     "on-click": "walker",
     "tooltip-format": "walker"
   },
@@ -129,6 +129,7 @@
     "format-wifi": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-disconnected": "",
+    "on-click": "$TERMINAL --title=float -e cloudflare-speed-cli",
     "interval": 1
   },
   "network": {
