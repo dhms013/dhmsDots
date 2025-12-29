@@ -1,5 +1,5 @@
 #!/bin/bash
-entries="󰒲     Suspend\n    Lock\n󰜉    Restart\n󰐥    Shutdown"
+entries="󰒲     Suspend\n󰍃     Logout\n    Lock\n󰜉    Restart\n󰐥    Shutdown"
 
 selected=$(echo -e "$entries" | walker --dmenu | awk '{print $2}')
 
@@ -8,7 +8,5 @@ Lock) pidof hyprlock || hyprlock ;;
 Shutdown) systemctl poweroff ;;
 Reboot) systemctl reboot ;;
 Suspend) systemctl suspend ;;
-Logout) hyprctl dispatch exit ;;
+Logout) ghostty --title=float -e sudo killall sddm ;;
 esac
-
-# \n󰍃     Logout

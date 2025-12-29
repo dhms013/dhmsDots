@@ -22,6 +22,7 @@
     "network",
     "bluetooth",
     "pulseaudio",
+    "custom/ddc_brightness",
     "clock",
     "custom/notification",
     "group/tray-expander",
@@ -88,7 +89,7 @@
   "cpu": {
     "interval": 3,
     "format": "󰍛 {usage}%",
-    "on-click": "$TERMINAL --title=btop-float -e btop"
+    "on-click": "$TERMINAL --title=float -e btop"
   },
   "custom/gpu": {
     "format": "󰾲  {}%",
@@ -110,7 +111,6 @@
     "format": " {:L%a %d, %H:%M} ",
     "format-alt": " {:L%A %d/%m/%Y} ",
     "tooltip-format": "<tt><small>{calendar}</small></tt>",
-    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select",
     "calendar": {
       "mode": "month",
       "mode-mon-col": 3,
@@ -147,8 +147,8 @@
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
     "interval": 1,
-    "spacing": 1
-    // "on-click": "$TERMINAL --title=impala-float -e impala"  # activate this if wifi adapter exists
+    "spacing": 1,
+    "on-click": "$TERMINAL --title=float -e impala"
   },
   "power-profiles-daemon": {
     "format": "{icon}",
@@ -209,11 +209,11 @@
     "format-connected": "󰂱",
     "format-no-controller": "",
     "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "$TERMINAL --title=bluetui-float -e bluetui"
+    "on-click": "$TERMINAL --title=float -e bluetui"
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "$TERMINAL --title=wiremix-float -e wiremix",
+    "on-click": "$TERMINAL --title=float -e wiremix",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": " ",
@@ -224,6 +224,24 @@
         " "
       ]
     }
+  },
+  "custom/ddc_brightness": {
+    "format": "{icon}",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "exec": "bash -c 'v=$(ddcutil getvcp 10 | grep -oP \"current value =\\s*\\K[0-9]+\"); echo \"{\\\"percentage\\\": ${v:-0}}\"'",
+    "return-type": "json",
+    "on-scroll-up": "ddcutil setvcp 10 + 5",
+    "on-scroll-down": "ddcutil setvcp 10 - 5",
+    "on-click": "ddcutil setvcp 10 50",
+    "interval": 6,
+    "tooltip": true,
+    "tooltip-format": "Brightness: {percentage}%"
   },
   "group/tray-expander": {
     "orientation": "inherit",

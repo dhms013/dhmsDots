@@ -10,13 +10,13 @@
 @define-color accent #6bbf7a;
 @define-color base-bg #1e2a24;
 
-#clock,
-#battery,
-#pulseaudio,
-#network,
-#tray {
-    color: @foreground;
-}
+/* #clock, */
+/* #battery, */
+/* #pulseaudio, */
+/* #network, */
+/* #tray { */
+/*     color: @foreground; */
+/* } */
 
 #battery.charging, 
 #battery.plugged {
@@ -101,6 +101,7 @@ window#waybar.empty #window {
 #network,
 #bluetooth,
 #pulseaudio,
+#custom-ddc_brightness,
 #clock,
 #custom-screenrecording-indicator,
 #custom-expand-icon,
@@ -126,11 +127,11 @@ window#waybar.empty #window {
   padding-left: 11.5px;
 }
 
-tooltip {
-  padding: 2px;
-  background-color: @background;
-  border-radius: 15px;
-}
+/* tooltip { */
+/*   padding: 2px; */
+/*   background-color: @background; */
+/*   border-radius: 15px; */
+/* } */
 
 #custom-update {
   font-size: 10px;
