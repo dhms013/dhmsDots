@@ -74,7 +74,7 @@
   "custom/notification": {
     "format": " ",
     "on-click": "~/.config/scripts/notification-menu",
-    "on-click-right": "makoctl dismiss -a",
+    "on-click-right": "$TERMINAL --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
     "tooltip": false,
     "restart-interval": 1
   },
@@ -84,27 +84,31 @@
     "format": " {temperatureC}°C",
     "format-critical": "🔥 {temperatureC}°C",
     "tooltip": true,
+    "on-click": "$TERMINAL --title=float -e btop",
     "interval": 3
   },
   "cpu": {
-    "interval": 3,
     "format": "󰍛 {usage}%",
-    "on-click": "$TERMINAL --title=float -e btop"
+    "on-click": "$TERMINAL --title=float -e btop",
+    "interval": 3
   },
   "custom/gpu": {
     "format": "󰾲  {}%",
     "tooltip": false,
     "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
+    "on-click": "$TERMINAL --title=float -e nvtop",
     "interval": 3
   },
   "custom/gpu-temp": {
     "format": " {}°C",
     "tooltip": false,
     "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    "on-click": "$TERMINAL --title=float -e nvtop",
     "interval": 3
   },
   "memory": {
     "format": "  {used}G/{total}G",
+    "on-click": "$TERMINAL --title=float -e btop",
     "interval": 3
   },
   "clock": {
