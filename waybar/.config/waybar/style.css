@@ -110,7 +110,7 @@ window#waybar.empty #window {
 #power-profiles-daemon,
 #battery {
   min-width: 15px;
-  font-family: 'BitstromWera Nerd Font';
+  font-family: 'Symbols Nerd Font';
   margin: 2.5px;
   background-color: @background;
   color: @foreground;
@@ -121,11 +121,11 @@ window#waybar.empty #window {
   padding-left: 5px;
 }
 
-#network,
-#custom-notification,
-#pulseaudio {
-  padding-left: 11.5px;
-}
+/* #network, */
+/* #custom-notification, */
+/* #pulseaudio { */
+/*   padding-left: 11.5px; */
+/* } */
 
 /* tooltip { */
 /*   padding: 2px; */

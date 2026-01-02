@@ -72,7 +72,7 @@
     "swap-icon-label": false
   },
   "custom/notification": {
-    "format": " ",
+    "format": "",
     "on-click": "~/.config/scripts/notification-menu",
     "on-click-right": "$TERMINAL --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
     "tooltip": false,
@@ -138,16 +138,16 @@
   },
   "network": {
     "format-icons": [
-      "󰤯 ",
-      "󰤟 ",
-      "󰤢 ",
-      "󰤥 ",
-      "󰤨 "
+      "󰤯",
+      "󰤟",
+      "󰤢",
+      "󰤥",
+      "󰤨"
     ],
     "format": "{icon}",
     "format-wifi": "{icon}",
-    "format-ethernet": "󰀂 ",
-    "format-disconnected": "󰤮 ",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰤮",
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
@@ -173,16 +173,16 @@
     "format-plugged": "",
     "format-icons": {
       "charging": [
-        "󰢜 ",
-        "󰂆 ",
-        "󰂇 ",
-        "󰂈 ",
-        "󰢝 ",
-        "󰂉 ",
-        "󰢞 ",
-        "󰂊 ",
-        "󰂋 ",
-        "󰂅 "
+        "󰢜",
+        "󰂆",
+        "󰂇",
+        "󰂈",
+        "󰢝",
+        "󰂉",
+        "󰢞",
+        "󰂊",
+        "󰂋",
+        "󰂅"
       ],
       "default": [
         "󰁺",
@@ -197,7 +197,7 @@
         "󰁹"
       ]
     },
-    "format-full": "{capacity}% 󰂅 ",
+    "format-full": "{capacity}% 󰂅",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
@@ -221,12 +221,12 @@
     "on-click": "$TERMINAL --title=float -e wiremix",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
-    "format-muted": " ",
+    "format-muted": "",
     "format-icons": {
       "default": [
-        " ",
-        " ",
-        " "
+        "",
+        "",
+        ""
       ]
     }
   },
@@ -234,7 +234,7 @@
     "format": "{icon}",
     "format-icons": [
       "",
-      "",
+      "",
       "",
       "",
       ""
@@ -243,7 +243,7 @@
     "return-type": "json",
     "on-scroll-up": "ddcutil setvcp 10 + 5",
     "on-scroll-down": "ddcutil setvcp 10 - 5",
-    "on-click": "ddcutil setvcp 10 50",
+    "on-click-right": "ddcutil setvcp 10 50",
     "interval": 6,
     "tooltip": true,
     "tooltip-format": "Brightness: {percentage}%"
