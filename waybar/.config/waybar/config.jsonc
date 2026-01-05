@@ -74,7 +74,7 @@
   "custom/notification": {
     "format": "",
     "on-click": "~/.config/scripts/notification-menu",
-    "on-click-right": "$TERMINAL --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
+    "on-click-right": "xdg-terminal-exec --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
     "tooltip": false,
     "restart-interval": 1
   },
@@ -84,31 +84,31 @@
     "format": " {temperatureC}°C",
     "format-critical": "🔥 {temperatureC}°C",
     "tooltip": true,
-    "on-click": "$TERMINAL --title=float -e btop",
+    "on-click": "xdg-terminal-exec --title=float -e btop",
     "interval": 3
   },
   "cpu": {
     "format": "󰍛 {usage}%",
-    "on-click": "$TERMINAL --title=float -e btop",
+    "on-click": "xdg-terminal-exec --title=float -e btop",
     "interval": 3
   },
   "custom/gpu": {
     "format": "󰾲  {}%",
     "tooltip": false,
     "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
-    "on-click": "$TERMINAL --title=float -e nvtop",
+    "on-click": "xdg-terminal-exec --title=float -e nvtop",
     "interval": 3
   },
   "custom/gpu-temp": {
     "format": " {}°C",
     "tooltip": false,
     "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
-    "on-click": "$TERMINAL --title=float -e nvtop",
+    "on-click": "xdg-terminal-exec --title=float -e nvtop",
     "interval": 3
   },
   "memory": {
     "format": "  {used}G/{total}G",
-    "on-click": "$TERMINAL --title=float -e btop",
+    "on-click": "xdg-terminal-exec --title=float -e btop",
     "interval": 3
   },
   "clock": {
@@ -133,7 +133,7 @@
     "format-wifi": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-disconnected": "",
-    "on-click": "$TERMINAL --title=float -e cloudflare-speed-cli",
+    "on-click": "xdg-terminal-exec --title=float -e cloudflare-speed-cli",
     "interval": 1
   },
   "network": {
@@ -153,7 +153,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 1,
     "spacing": 1,
-    "on-click": "$TERMINAL --title=float -e impala"
+    "on-click": "xdg-terminal-exec --title=float -e impala"
   },
   "power-profiles-daemon": {
     "format": "{icon}",
@@ -214,11 +214,11 @@
     "format-connected": "󰂱",
     "format-no-controller": "",
     "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "$TERMINAL --title=float -e bluetui"
+    "on-click": "xdg-terminal-exec --title=float -e bluetui"
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "$TERMINAL --title=float -e wiremix",
+    "on-click": "xdg-terminal-exec --title=float -e wiremix",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
