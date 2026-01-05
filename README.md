@@ -1,6 +1,6 @@
 # dhmsDots
 
-Personal Hyprland **supplement** and post-install bootstrap for Arch Linux.
+Personal Hyprland **supplement** and post-install bootstrap for Arch Linux,
 
 This repo is **not** a full distro, not a framework, and not trying to be smart.
 It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back
@@ -16,9 +16,8 @@ If it breaks on your machine, you fix it.
 - This repo is my personal backup
 - No guarantees
 - No support
-- Ofcourse you can use this with other distro with Hyprland, but edit it by yourself or simply just copy-paste the dotfiles 🤣
-- $mainMod usually using windows key, but please read the note inside .config/hypr/keybindings.conf
-- Makefile still not perfect, gonna fix it someday when I have a time
+- Of course you can use this with other distro with Hyprland. But you'll need to edit the setup.sh by yourself, or simply just copy-paste (or stow) the dotfiles 🤣
+- $mainMod usually using windows key, but please read the note inside hypr/.config/hypr/keybindings.conf
 - If something breaks, you fix it yourself.
 
 ---
@@ -31,8 +30,8 @@ If it breaks on your machine, you fix it.
 - Restores my preferred defaults for Hyprland usage
 
 This repo assumes:
-- You already installed **Arch Linux** (or other your beloved distro based on arch)
-- You selected **Hyprland** during `archinstall` (or manually if you're not using `archinstall` script)
+- **Arch Linux** already installed (or other your beloved distro based on arch)
+- **Hyprland** already installed (if you choose other Desktop environment, you still able to steal some dotfiles from here)
 
 Nothing more, nothing less.
 
@@ -66,7 +65,7 @@ Install it first `by yourself` 🙃
 
 ## Packages installed
 
-The Makefile installs packages in two layers:
+The **setup.sh** installs packages in two layers:
 
 - **pacman** for official repos
 - **paru** for AUR packages
@@ -80,7 +79,6 @@ This includes (but is not limited to):
 - yazi
 - walker-bin and elephant providers
 - nerd fonts (including Japanese fonts)
-- hyprlock, hyprpaper, hypridle
 - media tools, utilities, and Hyprland extras
 
 You can freely add or remove packages later.
@@ -124,7 +122,7 @@ They are renamed before stow runs.
 Use archinstall (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
 
 2. Option 2
-Install any distro/OS that you like (Of course you can't use the Makefile if you did)
+Install any distro/OS that you like (of course you need to edit the setup.sh if you did)
 ---
 
 ### 2. Clone the repo
@@ -139,7 +137,7 @@ cd dhmsDots
 ### 3. Run everything
 
 ```bash
-make all
+./setup.sh
 ```
 
 This will:
