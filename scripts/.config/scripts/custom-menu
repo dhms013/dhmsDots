@@ -75,7 +75,7 @@ aur_install_and_launch() {
 
 show_learn_menu() {
   case $(menu "Learn" "  Keybindings\n  Omarchy\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
-  *Keybindings*) omarchy-menu-keybindings ;;
+  *Keybindings*) keybinds ;;
   *Omarchy*) omarchy-launch-webapp "https://learn.omacom.io/2/the-omarchy-manual" ;;
   *Hyprland*) omarchy-launch-webapp "https://wiki.hypr.land/" ;;
   *Arch*) omarchy-launch-webapp "https://wiki.archlinux.org/title/Main_page" ;;
@@ -154,7 +154,7 @@ show_style_menu() {
 }
 
 show_theme_menu() {
-  walker -m menus:omarchythemes --width 800 --minheight 400
+  walker -m menus:themesMenu --width 800 --minheight 400
 }
 
 show_font_menu() {
@@ -454,17 +454,17 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n󰧑  Learn\n󱓞  Trigger\n  Style\n  Setup\n󰉉  Install\n󰭌  Remove\n  Update\n  About\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n  Themes\n󰧑  Learn\n󱓞  Trigger\n  Style\n  Setup\n󰉉  Install\n󰭌  Remove\n  Update\n  About\n  System")"
 }
 
 go_to_menu() {
   case "${1,,}" in
   *apps*) walker -p "Launch…" ;;
+  *theme*) show_theme_menu ;;
   *learn*) show_learn_menu ;;
   *trigger*) show_trigger_menu ;;
   *share*) show_share_menu ;;
   *style*) show_style_menu ;;
-  *theme*) show_theme_menu ;;
   *screenshot*) show_screenshot_menu ;;
   *screenrecord*) show_screenrecord_menu ;;
   *setup*) show_setup_menu ;;

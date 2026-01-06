@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Add logging at the start
+echo "$(date): theme-set called with args: $@" >>/tmp/theme-set.log
+
 if [[ -z $1 && $1 != "CNCLD" ]]; then
   echo "Usage: theme-set <theme-name>"
   exit 1

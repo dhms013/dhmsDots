@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail # Fail fast on errors, undefined vars, pipe failures
 
 print_logo() {
   cat <<"EOF"
@@ -13,11 +14,13 @@ print_logo() {
 EOF
 }
 
-# Package files
-BASE_PKGS=$(cat packages/basePkg)
-AUR_PKGS=$(cat packages/aurPkg)
-PACMAN="sudo pacman -S --needed --noconfirm"
+# Package list (single file: official + AUR mixed)
+PKGS=$(cat packages/pkgList)
 PARU="paru -S --needed --noconfirm --skipreview"
+
+# Bootstrap: Essential for building paru (via pacman, since paru doesn't exist yet)
+BOOTSTRAP="base-devel git"
+PACMAN="sudo pacman -S --needed --noconfirm"
 
 # Stow targets
 STOW_HOME="bash"
@@ -26,7 +29,7 @@ CONFIG_HOME="$HOME/.config"
 
 # Safe stow helpers
 safe_stow_home() {
-  local dir=$1
+  local dir="$1"
   if [ -e "$HOME/.$dirrc" ] && [ ! -L "$HOME/.$dirrc" ]; then
     echo "==> Backing up .$dirrc"
     mv "$HOME/.$dirrc" "$HOME/.$dirrc.pre-stow"
@@ -35,7 +38,7 @@ safe_stow_home() {
 }
 
 safe_stow_config() {
-  local dir=$1
+  local dir="$1"
   if [ -d "$CONFIG_HOME/$dir" ] && [ ! -L "$CONFIG_HOME/$dir" ]; then
     echo "==> Backing up $dir config"
     mv "$CONFIG_HOME/$dir" "$CONFIG_HOME/$dir.pre-stow"
@@ -46,24 +49,24 @@ safe_stow_config() {
 # Main execution
 print_logo
 
-echo "==> Installing base packages"
-$PACMAN $BASE_PKGS
+echo "==> Installing bootstrap packages (for building AUR helper)"
+$PACMAN $BOOTSTRAP
 
 if ! command -v paru >/dev/null; then
   echo "==> Installing paru"
-  git clone https://aur.archlinux.org/paru.git
-  cd paru && makepkg -si --noconfirm
-  cd ..
-  rm -rf paru
+  git clone https://aur.archlinux.org/paru.git /tmp/paru
+  cd /tmp/paru
+  makepkg -si --noconfirm
   cd -
+  rm -rf /tmp/paru
 else
   echo "==> paru already installed"
 fi
 
-echo "==> Installing AUR packages"
-for pkg in $AUR_PKGS; do
-  echo "==> Installing AUR package: $pkg"
-  $PARU $pkg || echo "==> Failed to install $pkg, continuing to next package..."
+echo "==> Installing all packages (official + AUR) via paru"
+for pkg in $PKGS; do
+  echo "==> Installing: $pkg"
+  $PARU "$pkg" || echo "==> Failed to install $pkg, continuing..."
 done
 
 echo "==> Stowing dotfiles"
@@ -76,4 +79,4 @@ for dir in $STOW_CONFIG; do
   safe_stow_config "$dir"
 done
 
-echo "==> Setup complete!"
+echo "==> Have fun~"

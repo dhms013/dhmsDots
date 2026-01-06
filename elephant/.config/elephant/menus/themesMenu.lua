@@ -4,7 +4,7 @@ NamePretty = "ThemesMenu"
 -- The main function elephant will call
 function GetEntries()
 	local entries = {}
-	local theme_dir = os.getenv("HOME") .. "/.config/themes"
+	local theme_dir = os.getenv("HOME") .. "/.config/themes/themeLists"
 
 	-- First, get all theme directories
 	local find_dirs_cmd = "find -L '" .. theme_dir .. "' -mindepth 1 -maxdepth 1 -type d 2>/dev/null"
@@ -54,7 +54,7 @@ function GetEntries()
 					Preview = preview_path,
 					PreviewType = "file",
 					Actions = {
-						activate = "theme-set " .. theme_name,
+						activate = os.getenv("HOME") .. "/.config/scripts/theme-set " .. theme_name,
 					},
 				})
 			end
