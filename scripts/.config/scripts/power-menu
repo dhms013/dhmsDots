@@ -1,7 +1,7 @@
 #!/bin/bash
 entries="󰒲     Suspend\n󰍃     Logout\n    Lock\n󰜉    Reboot\n󰐥    Shutdown"
 
-selected=$(echo -e "$entries" | walker --dmenu | awk '{print $2}')
+selected=$(echo -e "$entries" | walker --dmenu --width 295 --minheight 1 --maxheight 630 | awk '{print $2}')
 
 case $selected in
 Lock) pidof hyprlock || hyprlock ;;
