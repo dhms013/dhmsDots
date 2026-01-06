@@ -150,7 +150,8 @@ Log out and log back in if needed.
 
 ---
 
-## License
-
-Do whatever you want with this repo.
-Just don’t blame me if it breaks your system.
+## Thanks to :
+1. [Omarchy](https://github.com/basecamp/omarchy/tree/master?tab=readme-ov-file#)
+My first linux that provide so many inspiration for me to make this repo
+2. [Typecraft Dev](https://github.com/typecraft-dev)
+Because the [setup.sh](./setup.sh) is copy-paste with some adjustment from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)
