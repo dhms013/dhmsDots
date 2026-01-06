@@ -1,13 +1,13 @@
-@define-color surface #081512;
-@define-color surfaceVariant #0F251F;
+@define-color base #081512;
+@define-color background #0F251F;
 
-@define-color onSurface #A6B5B1;
-@define-color onSurfaceVariant #99A8A4;
+@define-color text #A6B5B1;
+@define-color subtext #99A8A4;
 
-@define-color primary #1E9177;
+@define-color selected #1E9177;
 @define-color secondary #167A63;
 @define-color error #933636;
-@define-color outline #1B6352;
+@define-color border #1B6352;
 
 * {
   all: unset;
@@ -26,31 +26,28 @@ scrollbar {
 }
 
 .box-wrapper {
-  box-shadow:
-    0 19px 38px rgba(0, 0, 0, 0.3),
-    0 15px 12px rgba(0, 0, 0, 0.22);
-  background: @surface;
+  background: @base;
   padding: 12px;
   border-radius: 20px;
-  border: 2px solid @outline;
+  border: 2px solid @border;
 }
 
 .preview-box,
 .elephant-hint,
 .placeholder {
-  color: @onSurface;
+  color: @text;
 }
 
 .box {
-  background: @surfaceVariant;
+  background: @background;
   padding: 20px;
   border-radius: 20px;
-  border: 2px solid @outline;
+  border: 2px solid @border;
 }
 
 .search-container {
   border-radius: 10px;
-  border: 2px solid @outline;
+  border: 2px solid @border;
 }
 
 .input placeholder {
@@ -58,30 +55,14 @@ scrollbar {
 }
 
 .input {
-  background: @surface;
-  color: @onSurface;
-  caret-color: @onSurface;
+  background: @base;
+  color: @text;
+  caret-color: @text;
   padding: 10px;
 }
 
-.input:focus,
-.input:active {
-}
-
-.content-container {
-}
-
-.placeholder {
-}
-
-.scroll {
-}
-
 .list {
-  color: @onSurface;
-}
-
-child {
+  color: @text;
 }
 
 .item-box {
@@ -93,15 +74,12 @@ child {
   background: @secondary;
   border-radius: 10px;
   padding: 10px;
-  color: @surface;
+  color: @base;
 }
 
 child:hover .item-box,
 child:selected .item-box {
- background: alpha(@primary, 0.4);
-}
-
-.item-text-box {
+  background: alpha(@selected, 0.4);
 }
 
 .item-subtext {
@@ -119,17 +97,14 @@ child:selected .item-box {
 }
 
 .preview {
-  border-top: 1px solid @primary;
+  border-top: 1px solid @selected;
   padding: 10px;
   border-radius: 10px;
-  color: @onSurface;
+  color: @text;
 }
 
 .calc .item-text {
   font-size: 24px;
-}
-
-.calc .item-subtext {
 }
 
 .symbols .item-image {
@@ -157,16 +132,13 @@ child:selected .item-box {
 }
 
 .keybinds-wrapper {
-  border-top: 1px solid @primary;
+  border-top: 1px solid @selected;
   font-size: 12px;
-  color: @primary;
-}
-
-.keybinds {
+  color: @selected;
 }
 
 .keybind {
-  color: @onSurfaceVariant;
+  color: @subtext;
 }
 
 .keybind-bind {
@@ -174,16 +146,12 @@ child:selected .item-box {
   text-transform: lowercase;
 }
 
-.keybind-label {
-}
-
 .error {
   padding: 10px;
   background: @error;
-  color: @surface;
+  color: @base;
 }
 
 :not(.calc).current {
   font-style: italic;
 }
-

@@ -56,8 +56,8 @@
   },
   "custom/menu": {
     "format": "𐤃𐤄𐤌𐤑",
-    "on-click": "walker",
-    "tooltip-format": "walker"
+    "on-click": "~/.config/scripts/custom-menu",
+    "tooltip-format": "menu"
   },
   "hyprland/window": {
     "format": "{title}",
