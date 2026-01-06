@@ -58,30 +58,26 @@ You can change them anytime by editing the Hyprland config after stowing.
 
 - **Depend on what you need from this repo**
 
-This repo does not install Hyprland for you.
+This repo does not install Hyprland basic setup for you.
 Install it first `by yourself` 🙃
 
 ---
 
 ## Packages installed
 
-The **setup.sh** installs packages in two layers:
-
-- **pacman** for official repos
-- **paru** for AUR packages
-
+The [setup.sh](./setup.sh) installs packages that listed in [pkgList](./packages/pkgList)
 This includes (but is not limited to):
 
-- paru (edit for `yay` if you prefer that)
+- paru (edit for [yay](https://github.com/Jguer/yay) if you prefer that)
 - stow
 - neovim
 - ghostty
 - yazi
-- walker-bin and elephant providers
-- nerd fonts (including Japanese fonts)
+- walker and elephant providers
+- nerd fonts
 - media tools, utilities, and Hyprland extras
 
-You can freely add or remove packages later.
+You can freely add or remove packages before or after run [setup.sh](./setup.sh)
 
 ---
 
@@ -89,7 +85,6 @@ You can freely add or remove packages later.
 
 This repo manages configs for:
 
-- background
 - bash
 - btop
 - environment.d
@@ -103,7 +98,7 @@ This repo manages configs for:
 - nvim
 - scripts (used in hypr and waybar)
 - starship
-- themes (backup)
+- themes
 - walker
 - waybar
 - waypaper
@@ -119,9 +114,12 @@ They are renamed before stow runs.
 ### 1. Install your distro + Hyprland
 
 1. Option 1 
-Use archinstall (or follow [arch wiki](https://wiki.archlinux.org/title/Installation_guide)) and keep it minimal.
+Use archinstall 
 
-2. Option 2
+2.Option 2
+Install manually by following [arch wiki](https://wiki.archlinux.org/title/Installation_guide) or some youtuber
+
+3. Option 3
 Install any distro/OS that you like (of course you need to edit the setup.sh if you did)
 ---
 
@@ -141,8 +139,7 @@ cd dhmsDots
 ```
 
 This will:
-- Install base packages
-- Install AUR packages
+- Install all listed packages
 - Check existing configs
 - Stow dotfiles safely
 
