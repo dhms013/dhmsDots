@@ -1,10 +1,10 @@
-/* @import "../omarchy/current/theme/swayosd.css"; */
+@import "../themes/current/theme/swayosd.css";
 
-@define-color background-color #0f1a14;
-@define-color border-color     #6bbf7a;
-@define-color label            #a8e6a1;
-@define-color image            #a8e6a1;
-@define-color progress         #cddc39;
+/* @define-color background-color #0f1a14; */
+/* @define-color border-color     #6bbf7a; */
+/* @define-color label            #a8e6a1; */
+/* @define-color image            #a8e6a1; */
+/* @define-color progress         #cddc39; */
 
 window {
     background-color: transparent;

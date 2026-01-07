@@ -79,26 +79,28 @@ for dir in $STOW_CONFIG; do
   safe_stow_config "$dir"
 done
 
-
 # Set initial theme
 ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
 
 # Set Background
 set_background() {
-    local bg_image="$1"
-    if [[ -f "$bg_image" ]]; then
-        echo "Setting background to: $bg_image"
-        waypaper --set-auto "$bg_image"
-    else
-        echo "Error: Image file not found at $bg_image"
-    fi
+  local bg_image="$1"
+  if [[ -f "$bg_image" ]]; then
+    echo "Setting background to: $bg_image"
+    waypaper --set-auto "$bg_image"
+  else
+    echo "Error: Image file not found at $bg_image"
+  fi
 }
 WALLPAPER_PATH="~/.config/themes/themeLists/dhms/green-street.png"
 
 set_background "$WALLPAPER_PATH"
 
-ln -snf ~/.config/omarchy/current/theme/btop.theme ~/.config/btop/themes/current.theme
-
-ln -snf ~/.config/omarchy/current/theme/mako.ini ~/.config/mako/config
+rm -rf ~/.config/btop/themes/current.theme
+rm -rf ~/.config/mako/config
+rm -rf ~/.config/nvim/lua/plugins/theme.lua
+ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
+ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
+ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
 
 echo "==> Have fun~"
