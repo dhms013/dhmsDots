@@ -1,29 +1,4 @@
-# Hakker Theme - Ghostty conversion
-
-background = #0f1a14
-foreground = #a8e6a1
-cursor-color = #cddc39
-cursor-text = #0f1a14
-selection-background = #e8f4fd
-selection-foreground = #0a0a0f
-
-palette = 0=#0a0a0f
-palette = 1=#7ba7d1
-palette = 2=#8bd1c1
-palette = 3=#8ba7d1
-palette = 4=#7ba7d1
-palette = 5=#b87bd1
-palette = 6=#7bd1c1
-palette = 7=#4a4a5a
-
-palette = 8=#1a1a2a
-palette = 9=#8ba7d1
-palette = 10=#8bd1c1
-palette = 11=#8ca7d1
-palette = 12=#8ba7d1
-palette = 13=#c87bd1
-palette = 14=#8bd1c1
-palette = 15=#f8f8fd
+config-file = ?".config/themes/current/theme/ghostty.conf"
 
 background-opacity = 0.8
 font-size = 7.5
