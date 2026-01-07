@@ -1,4 +1,4 @@
-config-file = ?".config/themes/current/theme/ghostty.conf"
+config-file = ?"~/.config/themes/current/theme/ghostty.conf"
 
 background-opacity = 0.8
 font-size = 7.5

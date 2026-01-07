@@ -1,13 +1,4 @@
-@define-color base #081512;
-@define-color background #0F251F;
-
-@define-color text #A6B5B1;
-@define-color subtext #99A8A4;
-
-@define-color selected #1E9177;
-@define-color secondary #167A63;
-@define-color error #933636;
-@define-color border #1B6352;
+@import "../../../themes/current/theme/walker.css";
 
 * {
   all: unset;
@@ -79,7 +70,7 @@ scrollbar {
 
 child:hover .item-box,
 child:selected .item-box {
-  background: alpha(@selected, 0.4);
+  background: alpha(@selected-text, 0.4);
 }
 
 .item-subtext {
