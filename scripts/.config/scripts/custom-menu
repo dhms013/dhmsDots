@@ -74,7 +74,8 @@ aur_install_and_launch() {
 }
 
 show_learn_menu() {
-  case $(menu "Learn" "  Keybindings\n  Omarchy\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
+  # case $(menu "Learn" "  Keybindings\n  Omarchy\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
+  case $(menu "Learn" "  Keybindings\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
   *Keybindings*) keybinds ;;
   *Omarchy*) omarchy-launch-webapp "https://learn.omacom.io/2/the-omarchy-manual" ;;
   *Hyprland*) omarchy-launch-webapp "https://wiki.hypr.land/" ;;
@@ -453,8 +454,11 @@ show_system_menu() {
   esac
 }
 
+# show_main_menu() {
+#   go_to_menu "$(menu "Go" "󰀻  Apps\n  Themes\n󰧑  Learn\n󱓞  Trigger\n  Style\n  Setup\n󰉉  Install\n󰭌  Remove\n  Update\n  About\n  System")"
+# }
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n  Themes\n󰧑  Learn\n󱓞  Trigger\n  Style\n  Setup\n󰉉  Install\n󰭌  Remove\n  Update\n  About\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n  Themes\n󰧑  Learn\n  System")"
 }
 
 go_to_menu() {
@@ -473,7 +477,7 @@ go_to_menu() {
   *remove*) show_remove_menu ;;
   *update*) show_update_menu ;;
   *about*) omarchy-launch-about ;;
-  *system*) show_system_menu ;;
+  *system*) power-menu ;;
   esac
 }
 
