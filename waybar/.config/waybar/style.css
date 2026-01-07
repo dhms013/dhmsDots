@@ -1,7 +1,5 @@
-/* @import "~/.config/waybar/theme/waybar.css" */
+@import "../themes/current/theme/waybar.css";
 
-@define-color background #000000;
-@define-color foreground #00ff99;
 @define-color hover #d0f0d7;
 @define-color selected #dfff00;
 @define-color warning #e5c07b;
@@ -9,14 +7,6 @@
 @define-color border alpha(@accent, 0.7);
 @define-color accent #6bbf7a;
 @define-color base-bg #1e2a24;
-
-/* #clock, */
-/* #battery, */
-/* #pulseaudio, */
-/* #network, */
-/* #tray { */
-/*     color: @foreground; */
-/* } */
 
 #battery.charging, 
 #battery.plugged {

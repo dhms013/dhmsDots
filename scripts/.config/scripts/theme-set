@@ -23,6 +23,15 @@ fi
 # Update theme symlinks
 ln -nsf "$THEME_PATH" "$CURRENT_THEME_DIR"
 
+# Update backgrounds using the first backgrounds
+
+ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
+swww img ~/.config/themes/current/background
+
+systemctl --user restart waybar
+
+xdg-terminal-exec waybar &
+
 if pgrep -x kitty; then
   killall -SIGUSR1 kitty
 fi
@@ -30,11 +39,15 @@ fi
 if pgrep -x ghostty; then
   killall -SIGUSR2 ghostty
 fi
+
 hyprctl reload
+pkill -SIGUSR2 btop
 makoctl reload
+
 pkill swayosd-server
 swayosd-server &
+
 systemctl --user restart elephant.service
+
 pkill walker
 walker --gapplication-service
-waybar

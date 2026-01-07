@@ -81,20 +81,10 @@ done
 
 # Set initial theme
 ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
+ln -snf ~/.config/themes/current/theme/backgrounds/green-street.png ~/.config/themes/current/background
 
 # Set Background
-set_background() {
-  local bg_image="$1"
-  if [[ -f "$bg_image" ]]; then
-    echo "Setting background to: $bg_image"
-    waypaper --set-auto "$bg_image"
-  else
-    echo "Error: Image file not found at $bg_image"
-  fi
-}
-WALLPAPER_PATH="~/.config/themes/themeLists/dhms/green-street.png"
-
-set_background "$WALLPAPER_PATH"
+swww img ~/.config/themes/current/background
 
 rm -rf ~/.config/btop/themes/current.theme
 rm -rf ~/.config/mako/config
