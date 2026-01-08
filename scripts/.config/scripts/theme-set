@@ -26,7 +26,7 @@ ln -nsf "$THEME_PATH" "$CURRENT_THEME_DIR"
 # Update backgrounds using the first backgrounds
 
 ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
-swww img ~/.config/themes/current/background
+awww img ~/.config/themes/current/background
 
 systemctl --user restart waybar
 

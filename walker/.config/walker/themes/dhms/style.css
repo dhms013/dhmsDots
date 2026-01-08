@@ -71,6 +71,7 @@ scrollbar {
 child:hover .item-box,
 child:selected .item-box {
   background: alpha(@selected-text, 0.4);
+  transition : all 0.3s ease-in;
 }
 
 .item-subtext {

@@ -80,11 +80,14 @@ for dir in $STOW_CONFIG; do
 done
 
 # Set initial theme
+echo "==> Setting up theme"
 ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
 ln -snf ~/.config/themes/current/theme/backgrounds/green-street.png ~/.config/themes/current/background
 
 # Set Background
-swww img ~/.config/themes/current/background
+echo "==> setting up background"
+awww-daemon &
+awww img ~/.config/themes/current/background
 
 rm -rf ~/.config/btop/themes/current.theme
 rm -rf ~/.config/mako/config
@@ -93,4 +96,14 @@ ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.
 ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
 ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
 
-echo "==> Have fun~"
+echo ""
+echo "╔════════════════════════════════════════════╗"
+echo "║  Setup complete! Please reboot to start    ║"
+echo "║  Hyprland with your new configuration.     ║"
+echo "╚════════════════════════════════════════════╝"
+echo ""
+read -p "Reboot now? [Y/n] " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  systemctl reboot
+fi

@@ -1,6 +1,7 @@
 7zip
 adw-gtk-theme
 amd-ucode
+awww-git
 base
 base-devel
 bash-completion
@@ -11,6 +12,7 @@ bluez-utils
 brightnessctl
 btop
 btrfs-progs
+cava
 cliphist
 cloudflare-speed-cli-bin
 ddcutil
@@ -44,7 +46,6 @@ jq
 kitty
 libnotify
 libpulse
-libva-nvidia-driver
 limine
 linux
 linux-firmware
@@ -84,13 +85,12 @@ starship
 steam
 stow
 swayosd-git
-swww
 telegram-desktop
 ttf-jetbrains-mono-nerd
 uwsm
 walker-git
 waybar
-waypaper
+waypaper-git
 wget
 winetricks
 wireless_tools
