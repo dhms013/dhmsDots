@@ -1,0 +1,5 @@
+#!/bin/bash
+
+systemctl --user enable elephant.service
+systemctl --user enable swayosd-server.service
+systemctl --user enable waybar.service
