@@ -18,33 +18,8 @@ EOF
 PKGS=$(cat packages/pkgList)
 PARU="paru -S --needed --noconfirm --skipreview"
 
-# Bootstrap: Essential for building paru (via pacman, since paru doesn't exist yet)
 BOOTSTRAP="base-devel git"
 PACMAN="sudo pacman -S --needed --noconfirm"
-
-# Stow targets
-STOW_HOME="bash"
-STOW_CONFIG="backgrounds bash btop environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim starship swayosd themes walker waybar waypaper yazi"
-CONFIG_HOME="$HOME/.config"
-
-# Safe stow helpers
-safe_stow_home() {
-  local dir="$1"
-  if [ -e "$HOME/.$dirrc" ] && [ ! -L "$HOME/.$dirrc" ]; then
-    echo "==> Backing up .$dirrc"
-    mv "$HOME/.$dirrc" "$HOME/.$dirrc.pre-stow"
-  fi
-  stow "$dir"
-}
-
-safe_stow_config() {
-  local dir="$1"
-  if [ -d "$CONFIG_HOME/$dir" ] && [ ! -L "$CONFIG_HOME/$dir" ]; then
-    echo "==> Backing up $dir config"
-    mv "$CONFIG_HOME/$dir" "$CONFIG_HOME/$dir.pre-stow"
-  fi
-  stow "$dir"
-}
 
 # Main execution
 print_logo
@@ -70,14 +45,7 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
-for dir in $STOW_HOME; do
-  echo "==> Stowing $dir (HOME)"
-  safe_stow_home "$dir"
-done
-for dir in $STOW_CONFIG; do
-  echo "==> Stowing $dir (CONFIG)"
-  safe_stow_config "$dir"
-done
+stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar waypaper yazi
 
 # Set initial theme
 echo "==> Setting up theme"
