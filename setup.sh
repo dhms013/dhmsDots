@@ -29,6 +29,10 @@ $PACMAN $BOOTSTRAP
 
 if ! command -v paru >/dev/null; then
   echo "==> Installing paru"
+  if [ -d /tmp/paru ]; then
+    echo "==> Removing existing /tmp/paru directory"
+    rm -rf /tmp/paru
+  fi
   git clone https://aur.archlinux.org/paru.git /tmp/paru
   cd /tmp/paru
   makepkg -si --noconfirm

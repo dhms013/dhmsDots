@@ -132,22 +132,10 @@ cd dhmsDots
 
 ---
 
-### 3. Permission
-Give permission with :
-```
-```
+### 3. Run everything
 
 ```bash
-chmod +x setup.sh
-```
-
-
-### 4. Run everything
-```
-```
-
-```bash
-./setup.sh
+sh setup.sh
 ```
 
 This will:
