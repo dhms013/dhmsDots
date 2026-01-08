@@ -1,1 +1,2 @@
-systemd/
+systemd/.config/systemd/user/graphical-session.target.wants/
+themes/.config/themes/current/
