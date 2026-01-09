@@ -33,7 +33,7 @@
 
 tooltip {
     background-color: @background;
-    border: 2px solid @accent;
+    border: 2px solid @foreground;
     border-radius: 8px;
 }
 
