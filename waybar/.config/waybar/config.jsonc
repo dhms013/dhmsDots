@@ -25,7 +25,8 @@
     "clock",
     "custom/notification",
     "group/tray-expander",
-    "power-profiles-daemon"
+    "power-profiles-daemon",
+    "battery"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -237,12 +238,12 @@
       "",
       ""
     ],
-    "exec": "bash -c 'v=$(ddcutil getvcp 10 | grep -oP \"current value =\\s*\\K[0-9]+\"); echo \"{\\\"percentage\\\": ${v:-0}}\"'",
+    "exec": "bash -c 'if command -v brightnessctl &>/dev/null && brightnessctl g &>/dev/null; then v=$(brightnessctl g); max=$(brightnessctl m); pct=$((v * 100 / max)); else v=$(ddcutil getvcp 10 2>/dev/null | grep -oP \"current value =\\s*\\K[0-9]+\"); pct=${v:-50}; fi; echo \"{\\\"percentage\\\": $pct}\"'",
     "return-type": "json",
-    "on-scroll-up": "ddcutil setvcp 10 + 5",
-    "on-scroll-down": "ddcutil setvcp 10 - 5",
-    "on-click-right": "ddcutil setvcp 10 50",
-    "interval": 6,
+    "on-scroll-up": "brightnessctl s +5% 2>/dev/null || ddcutil setvcp 10 + 5",
+    "on-scroll-down": "brightnessctl s 5%- 2>/dev/null || ddcutil setvcp 10 - 5",
+    "on-click-right": "brightnessctl s 50% 2>/dev/null || ddcutil setvcp 10 50",
+    "interval": 2,
     "tooltip": true,
     "tooltip-format": "Brightness: {percentage}%"
   },
