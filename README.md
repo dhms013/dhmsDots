@@ -2,7 +2,7 @@
 
 Personal Hyprland **supplement** and post-install bootstrap for Arch Linux,
 
-This repo is **not** a full distro, not a framework, and not trying to be smart.
+This repo is **not** a full distro, and not a framework.
 It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back
 with one command.
 
@@ -17,7 +17,7 @@ If it breaks on your machine, you fix it.
 - No guarantees
 - No support
 - Of course you can use this with other distro with Hyprland. But you'll need to edit the setup.sh by yourself, or simply just copy-paste (or stow) the dotfiles 🤣
-- $mainMod usually using windows key, but please read the note inside hypr/.config/hypr/keybindings.conf
+- $mainMod usually using windows key, but please read the note inside [keybindings.conf](./hypr/keybindings.conf) or simply edit the [input.conf](./hypr/input.conf)
 - If something breaks, you fix it yourself.
 
 ---
@@ -85,6 +85,7 @@ You can freely add or remove packages before or after run [setup.sh](./setup.sh)
 
 This repo manages configs for:
 
+- applications (.local/share/)
 - bash
 - btop
 - environment.d
@@ -98,14 +99,15 @@ This repo manages configs for:
 - nvim
 - scripts (used in hypr and waybar)
 - starship
+- systemd
 - themes
 - walker
 - waybar
 - waypaper
 - yazi
 
-Existing configs are not deleted.
-They are renamed before stow runs.
+Existing configs will be replaced.
+Backup them before stow runs.
 
 ---
 
@@ -113,19 +115,20 @@ They are renamed before stow runs.
 
 ### 1. Install your distro + Hyprland
 
-1. Option 1 
-Use archinstall 
+1. Option 1
+Use archinstall
 
-2.Option 2
+2. Option 2
 Install manually by following [arch wiki](https://wiki.archlinux.org/title/Installation_guide) or some youtuber
 
 3. Option 3
-Install any distro/OS that you like (of course you need to edit the setup.sh if you did)
+Install any distro/OS that you like (maybe you'll need to edit the setup.sh if you did)
 ---
 
 ### 2. Clone the repo
 
 ```bash
+sudo pacman -S git
 git clone https://github.com/yourname/dhmsDots.git
 cd dhmsDots
 ```
@@ -140,8 +143,7 @@ sh setup.sh
 
 This will:
 - Install all listed packages
-- Check existing configs
-- Stow dotfiles safely
+- Stow dotfiles
 
 Log out and log back in if needed.
 
