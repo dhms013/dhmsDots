@@ -40,6 +40,7 @@ if pgrep -x ghostty; then
   killall -SIGUSR2 ghostty
 fi
 
+hyprctl reload
 pkill -SIGUSR2 btop
 makoctl reload
 
@@ -50,4 +51,3 @@ systemctl --user restart elephant.service
 
 pkill walker
 walker --gapplication-service
-hyprctl reload
