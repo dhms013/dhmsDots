@@ -8,5 +8,5 @@ Lock) pidof hyprlock || hyprlock ;;
 Shutdown) systemctl poweroff ;;
 Reboot) systemctl reboot ;;
 Suspend) systemctl suspend ;;
-Logout) ghostty --title=float -e sudo killall sddm ;;
+Logout) ghostty --title=float -e sh -c "sudo killall sddm; sudo killall ly" ;;
 esac

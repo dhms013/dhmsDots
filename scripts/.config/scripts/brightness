@@ -1,64 +1,60 @@
 #!/usr/bin/env bash
 
-# Brightness control script for Waybar (ddcutil for external monitor, brightnessctl for laptop)
-
-# Detect if we should use brightnessctl (laptop or no DDC-capable display detected)
 use_brightnessctl() {
-    [ -d /sys/class/power_supply/BAT* ] ||
+  [ -d /sys/class/power_supply/BAT* ] ||
     ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q "Display")
 }
 
-# Send signal to Waybar to update the module immediately after changes
 update_waybar() {
-    pkill -RTMIN+10 waybar
+  pkill -RTMIN+10 waybar
 }
 
 case "${1:-get}" in
-    get)
-        if use_brightnessctl; then
-            current=$(brightnessctl g 2>/dev/null)
-            max=$(brightnessctl m 2>/dev/null)
-            if [[ -n "$current" && -n "$max" && "$max" -gt 0 ]]; then
-                perc=$(( current * 100 / max ))
-            else
-                perc=0
-            fi
-            echo "{\"percentage\": $perc}"
-        else
-            v=$(ddcutil getvcp 10 | grep -oP "current value =\s*\K[0-9]+" 2>/dev/null)
-            echo "{\"percentage\": ${v:-0}}"
-        fi
-        ;;
+get)
+  if use_brightnessctl; then
+    current=$(brightnessctl g 2>/dev/null)
+    max=$(brightnessctl m 2>/dev/null)
+    if [[ -n "$current" && -n "$max" && "$max" -gt 0 ]]; then
+      perc=$((current * 100 / max))
+    else
+      perc=0
+    fi
+    echo "{\"percentage\": $perc}"
+  else
+    v=$(ddcutil getvcp 10 | grep -oP "current value =\s*\K[0-9]+" 2>/dev/null)
+    echo "{\"percentage\": ${v:-0}}"
+  fi
+  ;;
 
-    up)
-        if use_brightnessctl; then
-            brightnessctl s +5%
-        else
-            ddcutil setvcp 10 + 5
-        fi
-        update_waybar
-        ;;
+up)
+  if use_brightnessctl; then
+    brightnessctl s +5%
+  else
+    ddcutil setvcp 10 + 5
+  fi
+  update_waybar
+  ;;
 
-    down)
-        if use_brightnessctl; then
-            brightnessctl s -5%
-        else
-            ddcutil setvcp 10 - 5
-        fi
-        update_waybar
-        ;;
+down)
+  if use_brightnessctl; then
+    brightnessctl s -5%
+  else
+    ddcutil setvcp 10 - 5
+  fi
+  update_waybar
+  ;;
 
-    mid)  # for right-click (set to 50%)
-        if use_brightnessctl; then
-            brightnessctl s 50%
-        else
-            ddcutil setvcp 10 50
-        fi
-        update_waybar
-        ;;
+mid)
+  if use_brightnessctl; then
+    brightnessctl s 50%
+  else
+    ddcutil setvcp 10 50
+  fi
+  update_waybar
+  ;;
 
-    *)
-        echo "Usage: $0 [get|up|down|mid]"
-        exit 1
-        ;;
+*)
+  echo "Usage: $0 [get|up|down|mid]"
+  exit 1
+  ;;
 esac
