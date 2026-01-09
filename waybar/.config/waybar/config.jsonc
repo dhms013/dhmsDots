@@ -238,11 +238,11 @@
       "",
       ""
     ],
-    "exec": "bash -c 'if command -v brightnessctl &>/dev/null && brightnessctl g &>/dev/null; then v=$(brightnessctl g); max=$(brightnessctl m); pct=$((v * 100 / max)); else v=$(ddcutil getvcp 10 2>/dev/null | grep -oP \"current value =\\s*\\K[0-9]+\"); pct=${v:-50}; fi; echo \"{\\\"percentage\\\": $pct}\"'",
+    "exec": "bash -c 'v=$(brightnessctl g 2>/dev/null || ddcutil getvcp 10 2>/dev/null | grep -oP \"current value =\\s*\\K[0-9]+\"); max=$(brightnessctl m 2>/dev/null || echo 100); pct=$((v * 100 / max)); echo \"{\\\"percentage\\\": ${pct:-0}}\"'",
     "return-type": "json",
-    "on-scroll-up": "brightnessctl s +5% 2>/dev/null || ddcutil setvcp 10 + 5",
-    "on-scroll-down": "brightnessctl s 5%- 2>/dev/null || ddcutil setvcp 10 - 5",
-    "on-click-right": "brightnessctl s 50% 2>/dev/null || ddcutil setvcp 10 50",
+    "on-scroll-up": "swayosd-client --brightness raise",
+    "on-scroll-down": "swayosd-client --brightness lower",
+    "on-click-right": "ddcutil setvcp 10 50",
     "interval": 2,
     "tooltip": true,
     "tooltip-format": "Brightness: {percentage}%"
