@@ -242,7 +242,6 @@
     "return-type": "json",
     "on-scroll-up": "swayosd-client --brightness raise",
     "on-scroll-down": "swayosd-client --brightness lower",
-    "on-click-right": "ddcutil setvcp 10 50",
     "interval": 3,
     "tooltip": true,
     "tooltip-format": "Brightness: {percentage}%"
