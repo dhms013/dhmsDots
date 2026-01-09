@@ -238,12 +238,13 @@
       "",
       ""
     ],
-    "exec": "bash -c 'if [ -d /sys/class/power_supply/BAT0 ] || ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q \"Display\"); then current=$(brightnessctl g); max=$(brightnessctl m); perc=$((current * 100 / max)); echo \"{\\\"percentage\\\": $perc}\"; else v=$(ddcutil getvcp 10 | grep -oP \"current value =\\s*\\K[0-9]+\"); echo \"{\\\"percentage\\\": ${v:-0}}\"; fi'",
+    "exec": "~/.config/scripts/brightness get",
     "return-type": "json",
-    "on-scroll-up": "bash -c 'if [ -d /sys/class/power_supply/BAT0 ] || ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q \"Display\"); then brightnessctl s +5%; else ddcutil setvcp 10 + 5; fi'",
-    "on-scroll-down": "bash -c 'if [ -d /sys/class/power_supply/BAT0 ] || ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q \"Display\"); then brightnessctl s -5%; else ddcutil setvcp 10 - 5; fi'",
-    "on-click-right": "bash -c 'if [ -d /sys/class/power_supply/BAT0 ] || ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q \"Display\"); then brightnessctl s 50%; else ddcutil setvcp 10 50; fi'",
-    "interval": 3,
+    "on-scroll-up": "~/.config/scripts/brightness up",
+    "on-scroll-down": "~/.config/scripts/brightness down",
+    "on-click-right": "~/.config/scripts/brightness mid",
+    "interval": "once",
+    "signal": 10,
     "tooltip": true,
     "tooltip-format": "Brightness: {percentage}%"
   },
