@@ -162,6 +162,7 @@ prioritize_entries() {
     prio = 50
     if (match(line, /Terminal/)) prio = 0
     if (match(line, /Quit/))  prio = 1
+    if (match(line, /Custom Menu/)) prio = 2
 
     # print "priority<TAB>line"
     printf "%d\t%s\n", prio, line
