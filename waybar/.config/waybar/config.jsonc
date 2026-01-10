@@ -265,7 +265,7 @@
   },
   "custom/power": {
     "format": "󰐥",
-    "on-click": "~/.config/scripts/power-menu",
+    "on-click": "~/.config/scripts/custom-menu system",
     "tooltip": false
   },
   "tray": {

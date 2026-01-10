@@ -33,7 +33,7 @@ menu() {
     fi
   fi
 
-  echo -e "$options" | walker --dmenu --width 295 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
+  echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 
 terminal() {
@@ -41,12 +41,7 @@ terminal() {
 }
 
 present_terminal() {
-  omarchy-launch-floating-terminal-with-presentation $1
-}
-
-open_in_editor() {
-  notify-send "Editing config file" "$1"
-  omarchy-launch-editor "$1"
+  floating-terminal $1
 }
 
 install() {
@@ -55,14 +50,6 @@ install() {
 
 install_and_launch() {
   present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm $2 && setsid gtk-launch $3"
-}
-
-install_font() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm --needed $2 && sleep 2 && omarchy-font-set '$3'"
-}
-
-install_terminal() {
-  present_terminal "omarchy-install-terminal $1"
 }
 
 aur_install() {
@@ -77,11 +64,10 @@ show_learn_menu() {
   # case $(menu "Learn" "  Keybindings\n  Omarchy\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
   case $(menu "Learn" "  Keybindings\n  Hyprland\n󰣇  Arch\n  Neovim\n󱆃  Bash") in
   *Keybindings*) keybinds ;;
-  *Omarchy*) omarchy-launch-webapp "https://learn.omacom.io/2/the-omarchy-manual" ;;
-  *Hyprland*) omarchy-launch-webapp "https://wiki.hypr.land/" ;;
-  *Arch*) omarchy-launch-webapp "https://wiki.archlinux.org/title/Main_page" ;;
-  *Bash*) omarchy-launch-webapp "https://devhints.io/bash" ;;
-  *Neovim*) omarchy-launch-webapp "https://www.lazyvim.org/keymaps" ;;
+  *Hyprland*) xdg-open "https://wiki.hypr.land/" ;;
+  *Arch*) xdg-open "https://wiki.archlinux.org/title/Main_page" ;;
+  *Bash*) xdg-open "https://devhints.io/bash" ;;
+  *Neovim*) xdg-open "https://www.lazyvim.org/keymaps" ;;
   *) show_main_menu ;;
   esac
 }
@@ -129,16 +115,6 @@ show_share_menu() {
   *File*) terminal bash -c "omarchy-cmd-share file" ;;
   *Folder*) terminal bash -c "omarchy-cmd-share folder" ;;
   *) back_to show_trigger_menu ;;
-  esac
-}
-
-show_toggle_menu() {
-  case $(menu "Toggle" "󱄄  Screensaver\n󰔎  Nightlight\n󱫖  Idle Lock\n󰍜  Top Bar") in
-  *Screensaver*) omarchy-toggle-screensaver ;;
-  *Nightlight*) omarchy-toggle-nightlight ;;
-  *Idle*) omarchy-toggle-idle ;;
-  *Bar*) omarchy-toggle-waybar ;;
-  *) show_trigger_menu ;;
   esac
 }
 
@@ -239,129 +215,12 @@ show_install_menu() {
   esac
 }
 
-show_install_service_menu() {
-  case $(menu "Install" "  Dropbox\n  Tailscale\n󰟵  Bitwarden\n  Chromium Account") in
-  *Dropbox*) present_terminal omarchy-install-dropbox ;;
-  *Tailscale*) present_terminal omarchy-install-tailscale ;;
-  *Bitwarden*) install_and_launch "Bitwarden" "bitwarden bitwarden-cli" "bitwarden" ;;
-  *Chromium*) present_terminal omarchy-install-chromium-google-account ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_editor_menu() {
-  case $(menu "Install" "  VSCode\n  Cursor\n  Zed\n  Sublime Text\n  Helix\n  Emacs") in
-  *VSCode*) present_terminal omarchy-install-vscode ;;
-  *Cursor*) install_and_launch "Cursor" "cursor-bin" "cursor" ;;
-  *Zed*) present_terminal "echo 'Installing Zed...'; sudo pacman -S zed && setsid gtk-launch dev.zed.Zed" ;;
-  *Sublime*) install_and_launch "Sublime Text" "sublime-text-4" "sublime_text" ;;
-  *Helix*) install "Helix" "helix" ;;
-  *Emacs*) install "Emacs" "emacs-wayland" && systemctl --user enable --now emacs.service ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_terminal_menu() {
-  case $(menu "Install" "  Alacritty\n  Ghostty\n  Kitty") in
-  *Alacritty*) install_terminal "alacritty" ;;
-  *Ghostty*) install_terminal "ghostty" ;;
-  *Kitty*) install_terminal "kitty" ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_ai_menu() {
-  ollama_pkg=$(
-    (command -v nvidia-smi &>/dev/null && echo ollama-cuda) ||
-      (command -v rocminfo &>/dev/null && echo ollama-rocm) ||
-      echo ollama
-  )
-
-  case $(menu "Install" "󱚤  Claude Code\n󱚤  Cursor CLI\n󱚤  Gemini\n󱚤  OpenAI Codex\n󱚤  LM Studio\n󱚤  Ollama\n󱚤  Crush\n󱚤  opencode") in
-  *Claude*) install "Claude Code" "claude-code" ;;
-  *Cursor*) install "Cursor CLI" "cursor-cli" ;;
-  *OpenAI*) install "OpenAI Codex" "openai-codex-bin" ;;
-  *Gemini*) install "Gemini" "gemini-cli" ;;
-  *Studio*) install "LM Studio" "lmstudio" ;;
-  *Ollama*) install "Ollama" $ollama_pkg ;;
-  *Crush*) install "Crush" "crush-bin" ;;
-  *opencode*) install "opencode" "opencode" ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_gaming_menu() {
-  case $(menu "Install" "  Steam\n  RetroArch [AUR]\n󰍳  Minecraft\n󰖺  Xbox Controller [AUR]") in
-  *Steam*) present_terminal omarchy-install-steam ;;
-  *RetroArch*) aur_install_and_launch "RetroArch" "retroarch retroarch-assets libretro libretro-fbneo" "com.libretro.RetroArch.desktop" ;;
-  *Minecraft*) install_and_launch "Minecraft" "minecraft-launcher" "minecraft-launcher" ;;
-  *Xbox*) present_terminal omarchy-install-xbox-controllers ;;
-  *) show_install_menu ;;
-  esac
-}
-
 show_install_style_menu() {
   case $(menu "Install" "󰸌  Theme\n  Background\n  Font") in
   *Theme*) present_terminal omarchy-theme-install ;;
   *Background*) nautilus ~/.config/omarchy/current/theme/backgrounds ;;
   *Font*) show_install_font_menu ;;
   *) show_install_menu ;;
-  esac
-}
-
-show_install_font_menu() {
-  case $(menu "Install" "  Meslo LG Mono\n  Fira Code\n  Victor Code\n  Bistream Vera Mono\n  Iosevka" "--width 350") in
-  *Meslo*) install_font "Meslo LG Mono" "ttf-meslo-nerd" "MesloLGL Nerd Font" ;;
-  *Fira*) install_font "Fira Code" "ttf-firacode-nerd" "FiraCode Nerd Font" ;;
-  *Victor*) install_font "Victor Code" "ttf-victor-mono-nerd" "VictorMono Nerd Font" ;;
-  *Bistream*) install_font "Bistream Vera Code" "ttf-bitstream-vera-mono-nerd" "BitstromWera Nerd Font" ;;
-  *Iosevka*) install_font "Iosevka" "ttf-iosevka-nerd" "Iosevka Nerd Font Mono" ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_development_menu() {
-  case $(menu "Install" "󰫏  Ruby on Rails\n  Docker DB\n  JavaScript\n  Go\n  PHP\n  Python\n  Elixir\n  Zig\n  Rust\n  Java\n  .NET\n  OCaml\n  Clojure") in
-  *Rails*) present_terminal "omarchy-install-dev-env ruby" ;;
-  *Docker*) present_terminal omarchy-install-docker-dbs ;;
-  *JavaScript*) show_install_javascript_menu ;;
-  *Go*) present_terminal "omarchy-install-dev-env go" ;;
-  *PHP*) show_install_php_menu ;;
-  *Python*) present_terminal "omarchy-install-dev-env python" ;;
-  *Elixir*) show_install_elixir_menu ;;
-  *Zig*) present_terminal "omarchy-install-dev-env zig" ;;
-  *Rust*) present_terminal "omarchy-install-dev-env rust" ;;
-  *Java*) present_terminal "omarchy-install-dev-env java" ;;
-  *NET*) present_terminal "omarchy-install-dev-env dotnet" ;;
-  *OCaml*) present_terminal "omarchy-install-dev-env ocaml" ;;
-  *Clojure*) present_terminal "omarchy-install-dev-env clojure" ;;
-  *) show_install_menu ;;
-  esac
-}
-
-show_install_javascript_menu() {
-  case $(menu "Install" "  Node.js\n  Bun\n  Deno") in
-  *Node*) present_terminal "omarchy-install-dev-env node" ;;
-  *Bun*) present_terminal "omarchy-install-dev-env bun" ;;
-  *Deno*) present_terminal "omarchy-install-dev-env deno" ;;
-  *) show_install_development_menu ;;
-  esac
-}
-
-show_install_php_menu() {
-  case $(menu "Install" "  PHP\n  Laravel\n  Symfony") in
-  *PHP*) present_terminal "omarchy-install-dev-env php" ;;
-  *Laravel*) present_terminal "omarchy-install-dev-env laravel" ;;
-  *Symfony*) present_terminal "omarchy-install-dev-env symfony" ;;
-  *) show_install_development_menu ;;
-  esac
-}
-
-show_install_elixir_menu() {
-  case $(menu "Install" "  Elixir\n  Phoenix") in
-  *Elixir*) present_terminal "omarchy-install-dev-env elixir" ;;
-  *Phoenix*) present_terminal "omarchy-install-dev-env phoenix" ;;
-  *) show_install_development_menu ;;
   esac
 }
 
@@ -394,62 +253,12 @@ show_update_menu() {
   esac
 }
 
-show_update_channel_menu() {
-  case $(menu "Update channel" "🟢 Stable\n🟡 Edge\n🔴 Dev") in
-  *Stable*) present_terminal "omarchy-channel-set stable" ;;
-  *Edge*) present_terminal "omarchy-channel-set edge" ;;
-  *Dev*) present_terminal "omarchy-channel-set dev" ;;
-  *) show_update_menu ;;
-  esac
-}
-show_update_process_menu() {
-  case $(menu "Restart" "  Hypridle\n  Hyprsunset\n  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
-  *Hypridle*) omarchy-restart-hypridle ;;
-  *Hyprsunset*) omarchy-restart-hyprsunset ;;
-  *Swayosd*) omarchy-restart-swayosd ;;
-  *Walker*) omarchy-restart-walker ;;
-  *Waybar*) omarchy-restart-waybar ;;
-  *) show_update_menu ;;
-  esac
-}
-
-show_update_config_menu() {
-  case $(menu "Use default config" "  Hyprland\n  Hypridle\n  Hyprlock\n  Hyprsunset\n󱣴  Plymouth\n  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
-  *Hyprland*) present_terminal omarchy-refresh-hyprland ;;
-  *Hypridle*) present_terminal omarchy-refresh-hypridle ;;
-  *Hyprlock*) present_terminal omarchy-refresh-hyprlock ;;
-  *Hyprsunset*) present_terminal omarchy-refresh-hyprsunset ;;
-  *Plymouth*) present_terminal omarchy-refresh-plymouth ;;
-  *Swayosd*) present_terminal omarchy-refresh-swayosd ;;
-  *Walker*) present_terminal omarchy-refresh-walker ;;
-  *Waybar*) present_terminal omarchy-refresh-waybar ;;
-  *) show_update_menu ;;
-  esac
-}
-
-show_update_hardware_menu() {
-  case $(menu "Restart" "  Audio\n󱚾  Wi-Fi\n󰂯  Bluetooth") in
-  *Audio*) present_terminal omarchy-restart-pipewire ;;
-  *Wi-Fi*) present_terminal omarchy-restart-wifi ;;
-  *Bluetooth*) present_terminal omarchy-restart-bluetooth ;;
-  *) show_update_menu ;;
-  esac
-}
-
-show_update_password_menu() {
-  case $(menu "Update Password" "  Drive Encryption\n  User") in
-  *Drive*) present_terminal omarchy-drive-set-password ;;
-  *User*) present_terminal passwd ;;
-  *) show_update_menu ;;
-  esac
-}
-
 show_system_menu() {
-  case $(menu "System" "  Lock\n󱄄  Screensaver\n󰜉  Restart\n󰐥  Shutdown") in
-  *Lock*) omarchy-lock-screen ;;
-  *Screensaver*) omarchy-launch-screensaver force ;;
-  *Restart*) omarchy-cmd-reboot ;;
-  *Shutdown*) omarchy-cmd-shutdown ;;
+  case $(menu "System" "󰒲     Suspend\n  Lock\n󰜉  Restart\n󰐥  Shutdown") in
+  *Suspend*) systemctl suspend ;;
+  *Lock*) pidof hyprlock || hyprlock ;;
+  *Restart*) systemctl reboot ;;
+  *Shutdown*) systemctl poweroff ;;
   *) back_to show_main_menu ;;
   esac
 }
@@ -477,7 +286,7 @@ go_to_menu() {
   *remove*) show_remove_menu ;;
   *update*) show_update_menu ;;
   *about*) omarchy-launch-about ;;
-  *system*) power-menu ;;
+  *system*) show_system_menu ;;
   esac
 }
 
