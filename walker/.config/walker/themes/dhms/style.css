@@ -61,17 +61,19 @@ scrollbar {
   padding: 10px;
 }
 
-.item-quick-activation {
-  background: @secondary;
-  border-radius: 10px;
-  padding: 10px;
-  color: @base;
+child,
+child > * {
 }
 
-child:hover .item-box,
+child:hover .item-box {
+}
+
 child:selected .item-box {
-  background: alpha(@selected-text, 0.4);
-  transition : all 0.3s ease-in;
+}
+
+child:selected .item-box * {
+  color: @selected-text;
+  transition : all 0.1s ease-in;
 }
 
 .item-subtext {
@@ -89,10 +91,10 @@ child:selected .item-box {
 }
 
 .preview {
-  border-top: 1px solid @selected;
-  padding: 10px;
-  border-radius: 10px;
-  color: @text;
+  /* border-top: 1px solid @selected; */
+  /* padding: 10px; */
+  /* border-radius: 10px; */
+  /* color: @text; */
 }
 
 .calc .item-text {
@@ -130,7 +132,7 @@ child:selected .item-box {
 }
 
 .keybind {
-  color: @subtext;
+  color: #99A8A4;
 }
 
 .keybind-bind {
@@ -140,7 +142,7 @@ child:selected .item-box {
 
 .error {
   padding: 10px;
-  background: @error;
+  background: #933636;
   color: @base;
 }
 
