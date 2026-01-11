@@ -54,6 +54,8 @@ scrollbar {
 
 .list {
   color: @text;
+  border-radius: 20px;
+  border: 1px solid @border;
 }
 
 .item-box {
