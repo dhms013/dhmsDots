@@ -30,10 +30,10 @@ scrollbar {
 }
 
 .box {
-  background: @background;
-  padding: 20px;
-  border-radius: 20px;
-  border: 2px solid @border;
+  /* background: @background; */
+  /* padding: 20px; */
+  /* border-radius: 20px; */
+  /* border: 2px solid @border; */
 }
 
 .search-container {
@@ -47,15 +47,15 @@ scrollbar {
 
 .input {
   background: @base;
-  color: @text;
+  color: @selected-text;
   caret-color: @text;
   padding: 10px;
 }
 
 .list {
   color: @text;
-  border-radius: 20px;
-  border: 1px solid @border;
+  border-radius: 10px;
+  border: 1.5px solid @border;
 }
 
 .item-box {

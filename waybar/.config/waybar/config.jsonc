@@ -25,7 +25,7 @@
     "clock",
     "custom/notification",
     "group/tray-expander",
-    "power-profiles-daemon",
+    // "power-profiles-daemon",
     "battery"
   ],
   "hyprland/workspaces": {
@@ -200,7 +200,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
-    "on-click": "powerprofilesctl",
+    "on-click": "~/.config/scripts/power-menu",
     "states": {
       "warning": 20,
       "critical": 10

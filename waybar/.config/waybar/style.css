@@ -47,7 +47,7 @@ tooltip label {
     border-radius: 0;
     min-height: 0;
     padding: 0;
-    font-family: 'BitstromWera Nerd Font';
+    font-family: 'Symbols Nerd Font';
     font-size: 11px;
     font-weight: 700;
 }
@@ -110,18 +110,6 @@ window#waybar.empty #window {
   padding-right: 5px;
   padding-left: 5px;
 }
-
-/* #network, */
-/* #custom-notification, */
-/* #pulseaudio { */
-/*   padding-left: 11.5px; */
-/* } */
-
-/* tooltip { */
-/*   padding: 2px; */
-/*   background-color: @background; */
-/*   border-radius: 15px; */
-/* } */
 
 #custom-update {
   font-size: 10px;
