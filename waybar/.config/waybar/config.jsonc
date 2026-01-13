@@ -72,8 +72,7 @@
   },
   "custom/notification": {
     "format": "",
-    "on-click": "~/.config/scripts/notification-menu",
-    "on-click-right": "xdg-terminal-exec --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
+    "on-click": "xdg-terminal-exec --title=float -e sh -c 'makoctl history && echo \"---\" && read -p \"Dismiss all active? (y/N): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
     "tooltip": false,
     "restart-interval": 1
   },
