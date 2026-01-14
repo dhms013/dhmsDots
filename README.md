@@ -68,7 +68,7 @@ Install it first `by yourself` 🙃
 The [setup.sh](./setup.sh) installs packages that listed in [pkgList](./packages/pkgList)
 This includes (but is not limited to):
 
-- paru (edit for [yay](https://github.com/Jguer/yay) if you prefer that)
+- yay (edit for [paru](https://github.com/Morganamilo/paru) if you prefer that)
 - stow
 - neovim
 - ghostty
@@ -150,7 +150,7 @@ Log out and log back in if needed.
 ---
 
 ## Thanks to :
-1. [Omarchy](https://github.com/basecamp/omarchy/tree/master?tab=readme-ov-file#)
+1. [Omarchy](https://omarchy.org/)
 My first linux that provide so many inspiration for me to make this repo
 2. [Typecraft Dev](https://github.com/typecraft-dev)
 Because the [setup.sh](./setup.sh) is copy-paste with some adjustment from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)

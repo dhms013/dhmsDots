@@ -16,7 +16,7 @@ EOF
 
 # Package list (single file: official + AUR mixed)
 PKGS=$(cat packages/pkgList)
-PARU="paru -S --needed --noconfirm --skipreview"
+YAY="yay -S --needed --noconfirm --skipreview"
 
 BOOTSTRAP="base-devel git"
 PACMAN="sudo pacman -S --needed --noconfirm"
@@ -27,25 +27,25 @@ print_logo
 echo "==> Installing bootstrap packages (for building AUR helper)"
 $PACMAN $BOOTSTRAP
 
-if ! command -v paru >/dev/null; then
-  echo "==> Installing paru"
-  if [ -d /tmp/paru ]; then
-    echo "==> Removing existing /tmp/paru directory"
-    rm -rf /tmp/paru
+if ! command -v yay >/dev/null; then
+  echo "==> Installing yay"
+  if [ -d /tmp/yay ]; then
+    echo "==> Removing existing /tmp/yay directory"
+    rm -rf /tmp/yay
   fi
-  git clone https://aur.archlinux.org/paru.git /tmp/paru
-  cd /tmp/paru
+  git clone https://aur.archlinux.org/yay.git /tmp/yay
+  cd /tmp/yay
   makepkg -si --noconfirm
   cd -
-  rm -rf /tmp/paru
+  rm -rf /tmp/yay
 else
-  echo "==> paru already installed"
+  echo "==> yay already installed"
 fi
 
-echo "==> Installing all packages (official + AUR) via paru"
+echo "==> Installing all packages (official + AUR) via yay"
 for pkg in $PKGS; do
   echo "==> Installing: $pkg"
-  $PARU "$pkg" || echo "==> Failed to install $pkg, continuing..."
+  $YAY "$pkg" || echo "==> Failed to install $pkg, continuing..."
 done
 
 echo "==> Stowing dotfiles"
