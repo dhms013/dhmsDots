@@ -64,6 +64,13 @@ show_theme_menu() {
   walker -m menus:themesMenu --width 800 --minheight 400
 }
 
+show_install_menu() {
+  case $(menu "Install" "󰣇  Package\n󰣇  AUR") in
+  *Package*) terminal pkg-install ;;
+  *AUR*) terminal pkg-aur-install ;;
+  *) show_main_menu ;;
+  esac
+}
 show_setup_menu() {
   options="󱐋  Power Profile\n󰱔  DNS\n  Security"
 
@@ -104,16 +111,16 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n󰸌  Themes\n  Background\n  Setup\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n  Background\n󰉉  Install\n󰸌  Themes\n  Setup\n  System")"
 }
 
 go_to_menu() {
   case "${1,,}" in
   *apps*) walker -p "Launch…" ;;
-  *theme*) show_theme_menu ;;
   *background*) waypaper ;;
+  *install*) show_install_menu ;;
+  *theme*) show_theme_menu ;;
   *setup*) show_setup_menu ;;
-  *power*) show_setup_power_menu ;;
   *system*) show_system_menu ;;
   esac
 }
