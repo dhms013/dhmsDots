@@ -97,7 +97,7 @@ show_system_menu() {
   case $(menu "System" "󰒲     Suspend\n    Lock\n󰜉    Reboot\n󰐥    Shutdown") in
   *Suspend*) systemctl suspend ;;
   *Lock*) pidof hyprlock || hyprlock ;;
-  *Restart*) systemctl reboot ;;
+  *Reboot*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;
   *) back_to show_main_menu ;;
   esac
