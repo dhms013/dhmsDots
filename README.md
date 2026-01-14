@@ -17,7 +17,7 @@ If it breaks on your machine, you fix it.
 - No guarantees
 - No support
 - Of course you can use this with other distro with Hyprland. But you'll need to edit the setup.sh by yourself, or simply just copy-paste (or stow) the dotfiles 🤣
-- $mainMod usually using windows key, but please read the note inside [keybindings.conf](./hypr/.config/hyprkeybindings.conf) or simply edit the [input.conf](./hypr/.config/hyprinput.conf)
+- $mainMod usually using windows key, but please read the note inside [keybindings.conf](./hypr/.config/hypr/keybindings.conf) or simply edit the [input.conf](./hypr/.config/hypr/input.conf)
 - If something breaks, you fix it yourself.
 
 ---
