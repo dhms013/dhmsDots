@@ -58,7 +58,7 @@ sh ~/.config/scripts/services
 # Set initial theme
 echo "==> Setting up theme"
 ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
-ln -snf ~/.config/themes/current/theme/backgrounds/green-street.png ~/.config/themes/current/background
+ln -snf ~/.config/themes/current/theme/backgrounds/1.png ~/.config/themes/current/background
 
 # Set Background
 echo "==> setting up background"
