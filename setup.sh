@@ -49,7 +49,7 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
-stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd systemd themes walker waybar waypaper yazi
+stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd systemd themes uwsm walker waybar waypaper yazi
 
 # Enable services
 echo "==> Enabling services"

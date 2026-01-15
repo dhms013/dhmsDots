@@ -68,7 +68,7 @@ show_install_menu() {
   case $(menu "Install" "󰣇  Package\n󰣇  AUR") in
   *Package*) terminal pkg-install ;;
   *AUR*) terminal pkg-aur-install ;;
-  *) show_main_menu ;;
+  *) show_setup_menu ;;
   esac
 }
 show_setup_menu() {
@@ -135,7 +135,7 @@ show_system_menu() {
 # fi
 
 get_all_options() {
-  static="󰀻  Apps\n  Background\n󰱔  DNS\n󰉉  Install\n󰣇  Package\n󰣇  AUR\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security\n󰈷  Fingerprint\n  Fido2\n  Update\n󰒲  Suspend\n  Lock\n󰜉  Reboot\n󰐥  Shutdown"
+  static="󰀻  Apps\n  Background\n󰱔  DNS\n󰉉  Install\n󰣇  Package\n󰣇  AUR\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security\n󰈷  Fingerprint\n  Fido2\n  Update\n󰒲     Suspend\n    Lock\n󰜉    Reboot\n󰐥    Shutdown"
   echo -e "$static"
 }
 execute_selection() {
