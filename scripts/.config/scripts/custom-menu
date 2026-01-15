@@ -115,10 +115,71 @@ show_system_menu() {
   esac
 }
 
-show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n  Setup\n  System")"
-}
+# show_main_menu() {
+#   go_to_menu "$(menu "Go" "󰀻  Apps\n  Setup\n  System")"
+# }
+#
+# go_to_menu() {
+#   case "${1,,}" in
+#   *apps*) walker -p "Launch…" ;;
+#   *setup*) show_setup_menu ;;
+#   *system*) show_system_menu ;;
+#   esac
+# }
+#
+# if [[ -n "$1" ]]; then
+#   BACK_TO_EXIT=true
+#   go_to_menu "$1"
+# else
+#   show_main_menu
+# fi
 
+get_all_options() {
+  static="󰀻  Apps\n  Background\n󰱔  DNS\n󰉉  Install\n󰣇  Package\n󰣇  AUR\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security\n󰈷  Fingerprint\n  Fido2\n  Update\n󰒲  Suspend\n  Lock\n󰜉  Reboot\n󰐥  Shutdown"
+  echo -e "$static"
+}
+execute_selection() {
+  local sel="$1"
+  case "$sel" in
+  *Apps*) walker -p "Launch…" ;;
+  *Background*) waypaper ;;
+  *DNS*) present_terminal setup-dns ;;
+  *Package*) terminal pkg-install ;;
+  *AUR*) terminal pkg-aur-install ;;
+  *Remove*) terminal pkg-remove ;;
+  *Themes*) show_theme_menu ;;
+  *Fingerprint*) present_terminal setup-fingerprint ;;
+  *Fido2*) present_terminal setup-fido2 ;;
+  *Update*) present_terminal pkg-update ;;
+  *Power*) show_setup_power_menu ;;
+  *Suspend*) systemctl suspend ;;
+  *Lock*) hyprlock ;;
+  *Reboot*) systemctl reboot ;;
+  *Shutdown*) systemctl poweroff ;;
+  esac
+}
+show_main_menu() {
+  main_options="󰀻  Apps\n  Setup\n  System"
+  selection=$(menu "Go" "$main_options")
+  if [[ -n "$selection" ]]; then
+    case "$selection" in
+    *Apps*) walker -p "Launch…" ;;
+    *Setup*) show_setup_menu ;;
+    *System*) show_system_menu ;;
+    *)
+      # Treat as search query for sub-menus
+      all_opts=$(get_all_options)
+      filtered=$(echo -e "$all_opts" | grep -iF "$selection")
+      if [[ -n "$filtered" ]]; then
+        sub_selection=$(menu "Results for '$selection'" "$filtered")
+        if [[ -n "$sub_selection" ]]; then
+          execute_selection "$sub_selection"
+        fi
+      fi
+      ;;
+    esac
+  fi
+}
 go_to_menu() {
   case "${1,,}" in
   *apps*) walker -p "Launch…" ;;
@@ -126,7 +187,6 @@ go_to_menu() {
   *system*) show_system_menu ;;
   esac
 }
-
 if [[ -n "$1" ]]; then
   BACK_TO_EXIT=true
   go_to_menu "$1"

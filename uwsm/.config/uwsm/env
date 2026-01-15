@@ -1,0 +1,2 @@
+export PATH=$HOME/.config/scripts:$PATH
+source ~/.config/uwsm/default
