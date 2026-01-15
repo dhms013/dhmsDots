@@ -21,11 +21,9 @@
     "network",
     "bluetooth",
     "pulseaudio",
-    "custom/ddc_brightness",
     "clock",
     "custom/notification",
     "group/tray-expander",
-    // "power-profiles-daemon",
     "battery"
   ],
   "hyprland/workspaces": {
