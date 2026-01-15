@@ -1,0 +1,6 @@
+#!/bin/bash
+
+  show-logo
+  echo "Updating..."
+  yay -Syu --noconfirm
+  show-done

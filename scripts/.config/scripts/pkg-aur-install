@@ -20,6 +20,7 @@ pkg_names=$(yay -Slqa | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
   # Convert newline-separated selections to space-separated for yay
+  show-logo
   echo "$pkg_names" | tr '\n' ' ' | xargs yay -S --noconfirm
   sudo updatedb
   show-done

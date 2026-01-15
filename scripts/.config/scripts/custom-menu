@@ -72,12 +72,17 @@ show_install_menu() {
   esac
 }
 show_setup_menu() {
-  options="󱐋  Power Profile\n󰱔  DNS\n  Security"
+  options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security\n  Update"
 
   case $(menu "Setup" "$options") in
-  *Power*) show_setup_power_menu ;;
+  *Background*) waypaper ;;
   *DNS*) present_terminal setup-dns ;;
+  *Install*) show_install_menu ;;
+  *Power*) show_setup_power_menu ;;
+  *Remove*) terminal pkg-remove ;;
+  *Theme*) show_theme_menu ;;
   *Security*) show_setup_security_menu ;;
+  *Update*) present_terminal pkg-update ;;
   *) show_main_menu ;;
   esac
 }
@@ -111,16 +116,12 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n  Background\n󰉉  Install\n󰭌  Remove\n󰸌  Themes\n  Setup\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n  Setup\n  System")"
 }
 
 go_to_menu() {
   case "${1,,}" in
   *apps*) walker -p "Launch…" ;;
-  *background*) waypaper ;;
-  *install*) show_install_menu ;;
-  *remove*) terminal pkg-remove ;;
-  *theme*) show_theme_menu ;;
   *setup*) show_setup_menu ;;
   *system*) show_system_menu ;;
   esac
