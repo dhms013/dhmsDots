@@ -1,3 +1,4 @@
 systemd/.config/systemd/user/graphical-session.target.wants/
 themes/.config/themes/current/background
 themes/.config/themes/current/theme
+waypaper/.config/waypaper/config.ini
