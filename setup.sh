@@ -49,7 +49,11 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
-stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar waypaper yazi
+stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd systemd themes walker waybar waypaper yazi
+
+# Enable services
+echo "==> Enabling services"
+sh ~/.config/scripts/services
 
 # Set initial theme
 echo "==> Setting up theme"
@@ -61,6 +65,7 @@ echo "==> setting up background"
 awww-daemon &
 awww img ~/.config/themes/current/background
 
+# Make sure there's no conflict with existing theme configs from stow
 rm -rf ~/.config/btop/themes/current.theme
 rm -rf ~/.config/mako/config
 rm -rf ~/.config/nvim/lua/plugins/theme.lua
