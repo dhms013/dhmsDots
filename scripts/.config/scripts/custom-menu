@@ -111,7 +111,7 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n  Background\n󰉉  Install\n󰸌  Themes\n  Setup\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n  Background\n󰉉  Install\n󰭌  Remove\n󰸌  Themes\n  Setup\n  System")"
 }
 
 go_to_menu() {
@@ -119,6 +119,7 @@ go_to_menu() {
   *apps*) walker -p "Launch…" ;;
   *background*) waypaper ;;
   *install*) show_install_menu ;;
+  *remove*) terminal pkg-remove ;;
   *theme*) show_theme_menu ;;
   *setup*) show_setup_menu ;;
   *system*) show_system_menu ;;
