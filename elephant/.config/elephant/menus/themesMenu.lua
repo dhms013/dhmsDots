@@ -54,7 +54,7 @@ function GetEntries()
 					Preview = preview_path,
 					PreviewType = "file",
 					Actions = {
-						activate = os.getenv("HOME") .. "/.config/scripts/theme-set " .. theme_name,
+						activate = "theme-set " .. theme_name,
 					},
 				})
 			end
