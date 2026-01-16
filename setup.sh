@@ -21,6 +21,19 @@ YAY="yay -S --needed --noconfirm --skipreview"
 BOOTSTRAP="base-devel git"
 PACMAN="sudo pacman -S --needed --noconfirm"
 
+# Request sudo password upfront
+echo "==> This script requires sudo privileges. Please enter your password:"
+sudo -v
+
+# Keep sudo alive throughout the script
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
+sudo usermod -aG input ${USER}
+
 # Main execution
 print_logo
 
@@ -49,11 +62,28 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
-stow --adopt bash btop elephant environment.d eza fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd systemd themes uwsm walker waybar waypaper yazi
+stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
+cp -R ./config/* ~/.config/
 
 # Enable services
 echo "==> Enabling services"
 sh ~/.config/scripts/services
+
+# Set dark mode
+gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+gsettings set org.gnome.desktop.interface icon-theme "Yaru-prussiangreen-dark"
+
+sudo gtk-update-icon-cache /usr/share/icons/Yaru
+
+# Make sure user dirs are up to date,
+# and make default direrctiries for screenshoots and screenrecords
+xdg-user-dirs-update
+mkdir -p ~/Pictures/Screenshots
+mkdir -p ~/Videos/Screenrecords
+
+# Set default applications
+sh ./packages/mimetypes.sh
 
 # Set initial theme
 echo "==> Setting up theme"
@@ -73,6 +103,9 @@ ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.
 ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
 ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
 
+echo ""
+echo ""
+print_logo
 echo ""
 echo "╔════════════════════════════════════════════╗"
 echo "║  Setup complete! Please reboot to start    ║"
