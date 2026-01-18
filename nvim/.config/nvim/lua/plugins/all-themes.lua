@@ -63,4 +63,9 @@ return {
     lazy = true,
     priority = 1000,
   },
+  {
+    "craftzdog/solarized-osaka.nvim",
+    lazy = true,
+    priority = 1000,
+  },
 }
