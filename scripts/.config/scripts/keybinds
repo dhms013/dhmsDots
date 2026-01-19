@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A script to display Hyprland keybindings defined in your configuration
+# A script to display Hyprland keybinds defined in your configuration
 # using walker for an interactive search menu.
 
 declare -A KEYCODE_SYM_MAP
@@ -76,12 +76,13 @@ parse_keycodes() {
   fi
 }
 
-# Fetch dynamic keybindings from Hyprland
+# Fetch dynamic keybinds from Hyprland
 dynamic_bindings() {
   hyprctl -j binds |
     jq -r '.[] | {modmask, key, keycode, description, dispatcher, arg} | "\(.modmask),\(.key)@\(.keycode),\(.description),\(.dispatcher),\(.arg)"' |
     sed -r \
       -e 's/null//' \
+      -e 's,~/.config/scripts/,,' \
       -e 's,uwsm app -- ,,' \
       -e 's,uwsm-app -- ,,' \
       -e 's/@0//' \
@@ -109,7 +110,7 @@ static_bindings() {
   echo "SHIFT ALT,L,Copy URL from Web App,extension,copy-url"
 }
 
-# Parse and format keybindings
+# Parse and format keybinds
 #
 # `awk` does the heavy lifting:
 # - Set the field separator to a comma ','.
@@ -170,7 +171,7 @@ prioritize_entries() {
     sort -k1,1n -k2,2 |
     cut -f2-
 }
-output_keybindings() {
+output_keybinds() {
   build_keymap_cache
 
   {
@@ -184,11 +185,11 @@ output_keybindings() {
 }
 
 if [[ "$1" == "--print" || "$1" == "-p" ]]; then
-  output_keybindings
+  output_keybinds
 else
   monitor_height=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .height')
   menu_height=$((monitor_height * 40 / 100))
 
-  output_keybindings |
-    walker --dmenu -p 'Keybindings' --width 400 --height "$menu_height"
+  output_keybinds |
+    walker --dmenu -p 'Keybinds' --width 400 --height "$menu_height"
 fi
