@@ -62,6 +62,9 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
+rm -rf ~/.config/hypr
+rm -rf ~/.config/kitty
+
 stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
 cp -R ./config/* ~/.config/
 
