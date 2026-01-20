@@ -24,19 +24,6 @@ PACMAN="sudo pacman -S --needed --noconfirm"
 # Main execution
 print_logo
 
-# Request sudo password upfront
-echo "==> This script requires sudo privileges. Please enter your password:"
-sudo -v
-
-# Keep sudo alive throughout the script
-while true; do
-  sudo -n true
-  sleep 60
-  kill -0 "$$" || exit
-done 2>/dev/null &
-
-sudo usermod -aG input ${USER}
-
 echo "==> Installing bootstrap packages (for building AUR helper)"
 $PACMAN $BOOTSTRAP
 
@@ -55,6 +42,19 @@ else
   echo "==> yay already installed"
 fi
 
+# Request sudo password upfront
+echo "==> This script requires sudo privileges. Please enter your password:"
+sudo -v
+
+# Keep sudo alive throughout the script
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
+sudo usermod -aG input ${USER}
+
 echo "==> Installing all packages (official + AUR) via yay"
 for pkg in $PKGS; do
   echo "==> Installing: $pkg"
@@ -66,8 +66,10 @@ rm -rf ~/.bashrc
 rm -rf ~/.config/hypr
 rm -rf ~/.config/kitty
 
-stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
+stow --adopt applications bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
 cp -R ./config/* ~/.config/
+
+chmod -R 775 ~/.config/scripts/
 
 # Set dark mode
 gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
@@ -116,8 +118,5 @@ echo "║  Setup complete! Please reboot to start    ║"
 echo "║  Hyprland with your new configuration.     ║"
 echo "╚════════════════════════════════════════════╝"
 echo ""
-read -p "Reboot now? [Y/n] " -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  systemctl reboot
-fi
+systemctl reboot
