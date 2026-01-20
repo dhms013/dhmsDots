@@ -33,7 +33,7 @@ scrollbar {
 }
 
 .box {
-  background: @background;
+  background: alpha(@base, 0.75);
   padding: 10px;
   border-radius: 17px;
   border: 2px solid @border;
@@ -50,7 +50,7 @@ scrollbar {
 
 .input {
   box-shadow: inset 0 0 9px @border;
-  background: @base;
+  /* background: alpha(@base, 0.75); */
   color: @selected-text;
   caret-color: @text;
   padding: 10px;
