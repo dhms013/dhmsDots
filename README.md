@@ -129,7 +129,7 @@ Install any distro/OS that you like (maybe you'll need to edit the setup.sh if y
 
 ```bash
 sudo pacman -S git
-git clone https://github.com/yourname/dhmsDots.git
+git clone https://github.com/dhms013/dhmsDots.git
 cd dhmsDots
 ```
 
