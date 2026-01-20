@@ -78,7 +78,7 @@ sudo gtk-update-icon-cache /usr/share/icons/Yaru
 
 # Make sure user dirs are up to date,
 # and make default direrctiries for screenshoots and screenrecords
-xdg-user-dirs-update
+mkdir -p ~/.config/themes/current/
 mkdir -p ~/Pictures/Screenshots
 mkdir -p ~/Videos/Screenrecords
 
@@ -88,7 +88,7 @@ sh ./packages/mimetypes.sh
 # Set initial theme
 echo "==> Setting up theme"
 ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
-ln -snf ~/.config/themes/current/theme/backgrounds/1.png ~/.config/themes/current/background
+ln -snf ~/.config/themes/current/theme/dhms/backgrounds/1.png ~/.config/themes/current/background
 
 # Set Background
 echo "==> setting up background"
