@@ -191,5 +191,5 @@ else
   menu_height=$((monitor_height * 40 / 100))
 
   output_keybinds |
-    walker --dmenu -p 'Keybinds' --width 400 --height "$menu_height"
+    walker --dmenu -p 'Keybinds' --width 600 --height "$menu_height"
 fi

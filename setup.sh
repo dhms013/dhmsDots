@@ -68,10 +68,6 @@ rm -rf ~/.config/kitty
 stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
 cp -R ./config/* ~/.config/
 
-# Enable services
-echo "==> Enabling services"
-sh ~/.config/scripts/services
-
 # Set dark mode
 gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
 gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
@@ -105,6 +101,10 @@ rm -rf ~/.config/nvim/lua/plugins/theme.lua
 ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
 ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
 ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
+
+# Enable services
+echo "==> Enabling services"
+sh ~/.config/scripts/services
 
 echo ""
 echo ""
