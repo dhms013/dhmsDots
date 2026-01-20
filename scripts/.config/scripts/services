@@ -7,4 +7,3 @@ systemctl --user enable waybar.service
 sleep 1
 systemctl --user restart elephant.service
 systemctl --user restart swayosd-server.service
-systemctl --user restart waybar.service

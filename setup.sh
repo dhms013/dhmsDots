@@ -62,6 +62,7 @@ for pkg in $PKGS; do
 done
 
 echo "==> Stowing dotfiles"
+rm -rf ~/.bashrc
 rm -rf ~/.config/hypr
 rm -rf ~/.config/kitty
 

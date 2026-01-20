@@ -5,6 +5,8 @@ base
 bash-completion
 bat
 bluetui
+bluez
+bluez-utils
 brightnessctl
 btop
 cava
