@@ -16,10 +16,13 @@ EOF
 
 # Package list (single file: official + AUR mixed)
 PKGS=$(cat packages/pkgList)
-YAY="yay -S --needed --noconfirm --skipreview"
+YAY="yay -S --needed --noconfirm"
 
 BOOTSTRAP="base-devel git"
 PACMAN="sudo pacman -S --needed --noconfirm"
+
+# Main execution
+print_logo
 
 # Request sudo password upfront
 echo "==> This script requires sudo privileges. Please enter your password:"
@@ -33,9 +36,6 @@ while true; do
 done 2>/dev/null &
 
 sudo usermod -aG input ${USER}
-
-# Main execution
-print_logo
 
 echo "==> Installing bootstrap packages (for building AUR helper)"
 $PACMAN $BOOTSTRAP
