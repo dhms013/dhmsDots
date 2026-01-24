@@ -80,3 +80,13 @@ img2png() {
     -define png:exclude-chunk=all \
     "${img%.*}-optimized.png"
 }
+
+gcp() {
+  if [ -z "$1" ]; then
+    echo "Error: No commit message provided."
+    echo "Usage: gcp \"Your commit message\""
+    return 1
+  fi
+  echo "Adding all files, committing with message: \"$1\", and pushing..."
+  git add -A && git commit -m "$1" && git push
+}
