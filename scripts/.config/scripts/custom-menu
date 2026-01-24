@@ -130,6 +130,7 @@ execute_selection() {
   *Fingerprint*) present_terminal setup-fingerprint ;;
   *Install*) show_install_menu ;;
   *Lock*) hyprlock ;;
+  *Logout*) hyprctl dispatch exit ;;
   *Package*) terminal pkg-install ;;
   *Power*) show_setup_power_menu ;;
   *Reboot*) systemctl reboot ;;
