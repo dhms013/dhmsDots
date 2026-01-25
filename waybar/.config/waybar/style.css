@@ -78,6 +78,7 @@ window#waybar.empty #window {
     background: transparent;
     opacity: 0; 
 }
+
 #custom-menu,
 #temperature,
 #cpu,
@@ -88,6 +89,7 @@ window#waybar.empty #window {
 #workspaces button,
 #custom-update,
 #window,
+#mpris,
 #network,
 #bluetooth,
 #pulseaudio,

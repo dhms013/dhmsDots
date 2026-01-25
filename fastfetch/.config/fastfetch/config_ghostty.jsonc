@@ -71,7 +71,7 @@
       "type": "command",
       "key": "│ ├󰘬",
       "keyColor": "blue",
-      "text": "echo \"I use Arch, btw.\""
+      "text": "git -C $HOME/dhmsDots rev-parse --abbrev-ref HEAD"
     },
     {
       "type": "kernel",
@@ -91,6 +91,11 @@
     {
       "type": "terminal",
       "key": "│ ├",
+      "keyColor": "blue"
+    },
+    {
+      "type": "shell",
+      "key": "│ ├",
       "keyColor": "blue"
     },
     {

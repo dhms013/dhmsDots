@@ -68,6 +68,19 @@
     },
     "swap-icon-label": false
   },
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} <i>{dynamic}</i>",
+    "max-length": 30,
+    "player": "playerctld",
+    "player-icons": {
+      "default": "▶"
+      // "mpv": "🎵"
+    },
+    "status-icons": {
+      "paused": "⏸"
+    }
+  },
   "custom/notification": {
     "format": "",
     "on-click": "makoctl restore",
