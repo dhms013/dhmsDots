@@ -1,0 +1,26 @@
+@define-color background-color #000715;
+@define-color border-color #827ece;
+@define-color label #ffffff;
+@define-color image #a89ef5;
+@define-color progress #c4b5ff;
+
+/* Rounded Corners */
+window {
+    border-radius: 10px;
+}
+
+#osd {
+    border-radius: 10px;
+}
+
+progressbar {
+    border-radius: 10px;
+}
+
+progressbar progress {
+    border-radius: 10px;
+}
+
+progressbar trough {
+    border-radius: 10px;
+}
