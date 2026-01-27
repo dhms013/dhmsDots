@@ -60,6 +60,10 @@ aur_install_and_launch() {
   present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2 && setsid gtk-launch $3"
 }
 
+show_background_menu() {
+  walker -m menus:backgroundSelector
+}
+
 show_theme_menu() {
   walker -m menus:themesMenu --width 800 --minheight 400
 }
@@ -75,7 +79,7 @@ show_setup_menu() {
   options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security\n  Update"
 
   case $(menu "Setup" "$options") in
-  *Background*) waypaper ;;
+  *Background*) show_background_menu ;;
   *DNS*) present_terminal setup-dns ;;
   *Install*) show_install_menu ;;
   *Power*) show_setup_power_menu ;;
@@ -124,7 +128,7 @@ execute_selection() {
   local sel="$1"
   case "$sel" in
   *AUR*) terminal pkg-aur-install ;;
-  *Background*) waypaper ;;
+  *Background*) show_background_menu ;;
   *DNS*) present_terminal setup-dns ;;
   *Fido2*) present_terminal setup-fido2 ;;
   *Fingerprint*) present_terminal setup-fingerprint ;;
@@ -143,7 +147,7 @@ execute_selection() {
   esac
 }
 show_main_menu() {
-  main_options="󰀻  Apps\n  Setup\n  System"
+  main_options="  Update\n  Setup\n  System"
   selection=$(menu "Go" "$main_options")
   if [[ -n "$selection" ]]; then
     case "$selection" in
