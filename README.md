@@ -88,8 +88,8 @@ This repo manages configs for:
 - applications (.local/share/)
 - bash
 - btop
+- elephant
 - environment.d
-- eza
 - fastfetch
 - ghostty
 - hypr
@@ -99,11 +99,12 @@ This repo manages configs for:
 - nvim
 - scripts (used in hypr and waybar)
 - starship
+- swayosd
 - systemd
 - themes
+- uwsm
 - walker
 - waybar
-- waypaper
 - yazi
 
 Existing configs will be replaced.
