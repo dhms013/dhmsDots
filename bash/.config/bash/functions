@@ -90,3 +90,21 @@ gcp() {
   echo "Adding all files, committing with message: \"$1\", and pushing..."
   git add -A && git commit -m "$1" && git push
 }
+
+gcpf() {
+  if [ -z "$1" ]; then
+    echo "Error: No commit message provided."
+    echo "Usage: gcp \"Your commit message\""
+    return 1
+  fi
+  if [ -z "$2" ]; then
+    echo "Error: No source branch provided"
+    return 1
+  fi
+  if [ -z "$3" ]; then
+    echo "Error: No target branch provided"
+    return 1
+  fi
+  echo "Adding all files, committing with message: \"$1\", and pushing..."
+ git add -A && git commit -m "$1" && git pull --rebase origin "$2" && git push --force --set-upstream origin "$3"
+}

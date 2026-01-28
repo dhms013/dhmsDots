@@ -5,3 +5,4 @@ vim.opt.relativenumber = false
 vim.g.autoformat = true
 vim.opt.guifont = "DejaVuSansMono:7.5"
 vim.opt.scrolloff = 999
+vim.opt.wrap = true
