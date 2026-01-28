@@ -1,5 +1,5 @@
 Name = "themesMenu"
-NamePretty = "ThemesMenu"
+NamePretty = "Themes Menu"
 
 -- The main function elephant will call
 function GetEntries()
