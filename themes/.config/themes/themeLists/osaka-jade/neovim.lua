@@ -8,11 +8,11 @@
 -- 	end,
 -- }
 return {
-  { "ribru17/sbamboo.nvim" },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "bamboo",
-    },
-  },
+	{ "ribru17/bamboo.nvim" },
+	{
+		"LazyVim/LazyVim",
+		opts = {
+			colorscheme = "bamboo",
+		},
+	},
 }
