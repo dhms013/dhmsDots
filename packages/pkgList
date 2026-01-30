@@ -41,6 +41,7 @@ noto-fonts-cjk
 noto-fonts-emoji
 npm
 power-profiles-daemon
+python-gobject
 qpwgraph-git
 qt5-wayland
 qt5ct

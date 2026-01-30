@@ -65,12 +65,12 @@ show_background_menu() {
 }
 
 show_theme_menu() {
-  walker -m menus:themesMenu --width 800 --minheight 400
+  walker -m menus:themesMenu
 }
 
 show_install_menu() {
-  case $(menu "Install" "󰣇  Package\n󰣇  AUR") in
-  *Package*) terminal pkg-install ;;
+  case $(menu "Install" "󰣇  Pacman\n󰣇  AUR") in
+  *Pacman*) terminal pkg-install ;;
   *AUR*) terminal pkg-aur-install ;;
   *) show_setup_menu ;;
   esac
@@ -119,59 +119,31 @@ show_system_menu() {
   esac
 }
 
-get_all_options() {
-  static="󰣇  AUR\n  Background\n󰱔  DNS\n  Fido2\n󰈷  Fingerprint\n󰉉  Install\n    Lock\n󰣇  Package\n󱐋  Power Profile\n  Security\n󰜉    Reboot\n󰭌  Remove\n󰐥    Shutdown\n󰒲     Suspend\n󰸌  Themes"
-  echo -e "$static"
-}
-execute_selection() {
-  local sel="$1"
-  case "$sel" in
-  *AUR*) terminal pkg-aur-install ;;
-  *Background*) show_background_menu ;;
-  *DNS*) present_terminal setup-dns ;;
-  *Fido2*) present_terminal setup-fido2 ;;
-  *Fingerprint*) present_terminal setup-fingerprint ;;
-  *Install*) show_install_menu ;;
-  *Lock*) hyprlock ;;
-  *Logout*) hyprctl dispatch exit ;;
-  *Package*) terminal pkg-install ;;
-  *Power*) show_setup_power_menu ;;
-  *Reboot*) systemctl reboot ;;
-  *Remove*) terminal pkg-remove ;;
-  *Security*) show_setup_security_menu ;;
-  *Shutdown*) systemctl poweroff ;;
-  *Suspend*) systemctl suspend ;;
-  *Themes*) show_theme_menu ;;
-  esac
-}
 show_main_menu() {
-  main_options="  Update\n  Setup\n  System"
-  selection=$(menu "Go" "$main_options")
-  if [[ -n "$selection" ]]; then
-    case "$selection" in
-    *Apps*) walker -p "Launch…" ;;
-    *Update*) present_terminal pkg-update ;;
-    *Setup*) show_setup_menu ;;
-    *System*) show_system_menu ;;
-    *)
-      # Treat as search query for sub-menus
-      all_opts=$(get_all_options)
-      filtered=$(echo -e "$all_opts" | grep -iF "$selection")
-      if [[ -n "$filtered" ]]; then
-        sub_selection=$(menu "Results for '$selection'" "$filtered")
-        if [[ -n "$sub_selection" ]]; then
-          execute_selection "$sub_selection"
-        fi
-      fi
-      ;;
-    esac
-  fi
+  go_to_menu "$(menu "Go" "  Update\n  Setup\n  System")"
 }
+
 go_to_menu() {
   case "${1,,}" in
-  *apps*) walker -p "Launch…" ;;
+  *aur*) terminal pkg-aur-install ;;
+  *background*) show_background_menu ;;
+  *dns*) present_terminal setup-dns ;;
+  *fido2*) present_terminal setup-fido2 ;;
+  *fingerprint*) present_terminal setup-fingerprint ;;
+  *install*) show_install_menu ;;
+  *lock*) hyprlock ;;
+  *logout*) hyprctl dispatch exit ;;
+  *pacman*) terminal pkg-install ;;
+  *power*) show_setup_power_menu ;;
+  *reboot*) systemctl reboot ;;
+  *remove*) terminal pkg-remove ;;
+  *security*) show_setup_security_menu ;;
   *setup*) show_setup_menu ;;
+  *shutdown*) systemctl poweroff ;;
+  *suspend*) systemctl suspend ;;
   *system*) show_system_menu ;;
+  *themes*) show_theme_menu ;;
+  *update*) present_terminal pkg-update ;;
   esac
 }
 if [[ -n "$1" ]]; then
