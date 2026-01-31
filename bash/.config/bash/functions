@@ -92,7 +92,7 @@ gcp() {
     return 1
   fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
-  gadd && gcm "$1" && gp --force --set-upstream origin "$2"
+  gadd . && gcm "$1" && gp --force --set-upstream origin "$2"
 }
 
 gcpf() {
@@ -112,5 +112,5 @@ gcpf() {
     return 1
   fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
- gadd && gcm "$1" && gpr origin "$2" && gp --force --set-upstream origin "$3"
+ gadd . && gcm "$1" && gpr origin "$2" && gp --force --set-upstream origin "$3"
 }

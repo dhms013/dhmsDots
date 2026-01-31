@@ -1,27 +1,43 @@
 #!/bin/bash
 
-if [[ -z $1 && $1 != "CNCLD" ]]; then
+if [[ -z $1 ]]; then
   echo "Usage: theme-set <theme-name>"
   exit 1
 fi
 
-THEMES_DIR="$HOME/.config/themes/themeLists/"
-CURRENT_THEME_DIR="$HOME/.config/themes/current/theme"
+CURRENT_THEME_PATH="$HOME/.config/themes/current/theme"
+NEXT_THEME_PATH="$HOME/.config/themes/current/next-theme"
+USER_THEMES_PATH="$HOME/.config/themes/themeLists/"
 
 THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-THEME_PATH="$THEMES_DIR/$THEME_NAME"
 
-# Check if the theme entered exists
-if [[ ! -d "$THEME_PATH" ]]; then
-  echo "Theme '$THEME_NAME' does not exist in $THEMES_DIR"
+if [[ -d "$USER_THEMES_PATH/$THEME_NAME" ]]; then
+  THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
+  notify-send 'theme changed to: ' $THEME_NAME
+else
+  echo "Theme '$THEME_NAME' does not exist"
+  notify-send check doesnt-exists
   exit 1
 fi
 
-# Update theme symlinks
-ln -nsf "$THEME_PATH" "$CURRENT_THEME_DIR"
+# Setup clean next theme directory (for atomic theme config swapping)
+rm -rf "$NEXT_THEME_PATH"
+mkdir -p "$NEXT_THEME_PATH"
 
-# Update backgrounds using the first backgrounds
+# Copy static configs
+cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null
 
+# Generate dynamic configs
+theme-test-template
+
+# Swap next theme in as current
+rm -rf "$CURRENT_THEME_PATH"
+mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH"
+
+# Store theme name for reference
+echo "$THEME_NAME" >"$HOME/.config/themes/current/theme.name"
+
+# Change background with theme
 ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
 awww img ~/.config/themes/current/background --transition-type 'random' --transition-fps 60 --transition-duration 1
 
@@ -48,3 +64,54 @@ systemctl --user restart elephant.service
 
 pkill walker
 walker --gapplication-service
+
+##!/bin/bash
+#
+#if [[ -z $1 && $1 != "CNCLD" ]]; then
+#  echo "Usage: theme-set <theme-name>"
+#  exit 1
+#fi
+#
+#THEMES_DIR="$HOME/.config/themes/themeLists/"
+#CURRENT_THEME_DIR="$HOME/.config/themes/current/theme"
+#
+#THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+#THEME_PATH="$THEMES_DIR/$THEME_NAME"
+#
+## Check if the theme entered exists
+#if [[ ! -d "$THEME_PATH" ]]; then
+#  echo "Theme '$THEME_NAME' does not exist in $THEMES_DIR"
+#  exit 1
+#fi
+#
+## Update theme symlinks
+#ln -nsf "$THEME_PATH" "$CURRENT_THEME_DIR"
+#
+## Update backgrounds using the first backgrounds
+#
+#ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
+#awww img ~/.config/themes/current/background --transition-type 'random' --transition-fps 60 --transition-duration 1
+#
+#systemctl --user restart waybar
+#
+#xdg-terminal-exec waybar &
+#
+#if pgrep -x kitty; then
+#  killall -SIGUSR1 kitty
+#fi
+#
+#if pgrep -x ghostty; then
+#  killall -SIGUSR2 ghostty
+#fi
+#
+#hyprctl reload
+#pkill -SIGUSR2 btop
+#makoctl reload
+#
+#pkill swayosd-server
+#systemctl --user restart swayosd-server.service
+#
+#systemctl --user restart elephant.service
+#
+#pkill walker
+#walker --gapplication-service

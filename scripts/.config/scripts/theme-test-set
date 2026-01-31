@@ -1,0 +1,74 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+  echo "Usage: theme-test-set <theme-name>"
+  exit 1
+fi
+
+CURRENT_THEME_PATH="$HOME/.config/test/current/theme"
+NEXT_THEME_PATH="$HOME/.config/test/current/next-theme"
+USER_THEMES_PATH="$HOME/.config/test/themes"
+
+THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+if [[ -d "$USER_THEMES_PATH/$THEME_NAME" ]]; then
+  THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
+  notify-send $THEME_PATH
+else
+  echo "Theme '$THEME_NAME' does not exist"
+  notify-send check doesnt-exists
+  exit 1
+fi
+
+# Setup clean next theme directory (for atomic theme config swapping)
+rm -rf "$NEXT_THEME_PATH"
+mkdir -p "$NEXT_THEME_PATH"
+
+notify-send setup-clean
+
+# Copy static configs
+cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null
+
+notify-send cp-static
+
+# Generate dynamic configs
+theme-test-template
+
+notify-send theme-test-template
+
+# Swap next theme in as current
+rm -rf "$CURRENT_THEME_PATH"
+mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH"
+
+# Store theme name for reference
+echo "$THEME_NAME" >"$HOME/.config/test/current/theme.name"
+
+# Change background with theme
+ln -sf "$(find ~/.config/test/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/test/current/background
+awww img ~/.config/test/current/background --transition-type 'random' --transition-fps 60 --transition-duration 1
+
+systemctl --user restart waybar
+
+xdg-terminal-exec waybar &
+
+if pgrep -x kitty; then
+  killall -SIGUSR1 kitty
+fi
+
+if pgrep -x ghostty; then
+  killall -SIGUSR2 ghostty
+fi
+
+hyprctl reload
+pkill -SIGUSR2 btop
+makoctl reload
+
+pkill swayosd-server
+systemctl --user restart swayosd-server.service
+
+systemctl --user restart elephant.service
+
+pkill walker
+walker --gapplication-service
+
+notify-send a a
