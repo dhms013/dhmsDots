@@ -2,4 +2,4 @@
 
 show-logo
 echo "Updating..."
-yay -Syu --noconfirm
+yay -Syyu --noconfirm
