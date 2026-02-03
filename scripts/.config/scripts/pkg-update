@@ -1,5 +1,7 @@
 #!/bin/bash
 
 show-logo
+sudo -v
 echo "Updating..."
 yay -Syyu --noconfirm
+show-done

@@ -68,6 +68,17 @@ show_theme_menu() {
   walker -m menus:themesMenu
 }
 
+show_screenrecord_menu() {
+  screenrecord --stop-recording && exit 0
+
+  case $(menu "Screenrecord" "  Without audio\n  With desktop audio\n  With desktop + microphone audio") in
+  *"Without audio") screenrecord ;;
+  *"With desktop audio") screenrecord --with-desktop-audio ;;
+  *"With desktop + microphone audio") screenrecord --with-desktop-audio --with-microphone-audio ;;
+  *) back_to show_main-menu ;;
+  esac
+}
+
 show_install_menu() {
   case $(menu "Install" "󰣇  Pacman\n󰣇  AUR") in
   *Pacman*) terminal pkg-install ;;
@@ -137,6 +148,7 @@ go_to_menu() {
   *power*) show_setup_power_menu ;;
   *reboot*) systemctl reboot ;;
   *remove*) terminal pkg-remove ;;
+  *screenrecord*) show_screenrecord_menu ;;
   *security*) show_setup_security_menu ;;
   *setup*) show_setup_menu ;;
   *shutdown*) systemctl poweroff ;;

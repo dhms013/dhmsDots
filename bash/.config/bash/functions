@@ -87,28 +87,26 @@ gcp() {
     echo "Usage: gcp \"Your commit message\""
     return 1
   fi
-  if [ -z "$2" ]; then
-    echo "Error: No source branch provided"
-    return 1
-  fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
-  gadd . && gcm "$1" && gp --force --set-upstream origin "$2"
+  gadd . && gcm "$1" && gp
 }
 
 gcpf() {
   if [ -z "$1" ]; then
     echo "Error: No commit message provided."
-    echo "Usage: gcp \"Your commit message\" <source branch> <target branch>"
+    echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   if [ -z "$2" ]; then
     echo "Error: No source branch provided"
     echo "Usage: gcp \"Your commit message\" <source branch> <target branch>"
+    echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   if [ -z "$3" ]; then
     echo "Error: No target branch provided"
     echo "Usage: gcp \"Your commit message\" <source branch> <target branch>"
+    echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
