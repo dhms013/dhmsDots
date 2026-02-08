@@ -1,0 +1,28 @@
+# Name: Ado
+
+[colors]
+[colors.primary]
+background = '#0D0D0F'
+foreground = '#DFDEE6'
+
+# Normal colors
+[colors.normal]
+black = '#333242'
+red = '#903034'
+green = '#014761'
+yellow = '#8BB0C6'
+blue = '#4545F5'
+magenta = '#25516A'
+cyan = '#45C1DD'
+white = '#DAD8E3'
+
+# Bright colors
+[colors.bright]
+black = '#908EAA'
+red = '#D7878B'
+green = '#33C6FC'
+yellow = '#7DC0D3'
+blue = '#A2A2FA'
+magenta = '#76AFCF'
+cyan = '#A2E0EE'
+white = '#ECEBF1'

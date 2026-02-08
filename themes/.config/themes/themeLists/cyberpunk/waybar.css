@@ -1,0 +1,42 @@
+@define-color foreground #ff3c3c;
+@define-color background #090300;
+
+@keyframes terminal-glow {
+  from {
+    text-shadow: 0 0 2px #ff3c3c, 0 0 4px #ff3c3c;
+  }
+  to {
+    text-shadow: 0 0 4px #ff3c3c, 0 0 8px #ff3c3c, 0 0 12px #ff3c3c;
+  }
+}
+
+@keyframes glitch {
+  from {
+    opacity: 1;
+    text-shadow: 0 0 4px #ff3c3c;
+    color: #ff3c3c;
+  }
+  to {
+    opacity: 0.85;
+    text-shadow: -0.75px 0 #ff3c3c, 0.75px 0 #ff1100;
+    color: #ff3c3c;
+  }
+}
+
+#clock,
+#cpu,
+#battery,
+#pulseaudio,
+#bluetooth,
+#network,
+#custom-omarchy,
+#custom-expand-icon,
+#custom-voxtype {
+  text-shadow: 0 0 4px #ff3c3c, 0 0 8px #ff3c3c;
+  animation: terminal-glow 7.5s ease-in-out infinite alternate;
+}
+
+#workspaces button.active {
+  text-shadow: -1px 0 #ff3c3c, 1px 0 #ff1100, 0 0 4px #ff3c3c;
+  animation: glitch 0.3s ease-in-out infinite alternate;
+}

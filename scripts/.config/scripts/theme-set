@@ -28,7 +28,7 @@ mkdir -p "$NEXT_THEME_PATH"
 cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null
 
 # Generate dynamic configs
-theme-test-template
+theme-template
 
 # Swap next theme in as current
 rm -rf "$CURRENT_THEME_PATH"

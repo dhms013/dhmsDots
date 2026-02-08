@@ -3,3 +3,4 @@ export SUDO_EDITOR="$EDITOR"
 export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers --line-range :500 {}'"
 export BAT_THEME=ansi
 export PATH="$PATH:${HOME}/.config/scripts"
+. "$HOME/.cargo/env"
