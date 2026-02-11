@@ -5,12 +5,15 @@ hide_action_hints = true                                                    # gl
 
 [placeholders]
 "default" = { input = " Search...", list = "No Results" } # placeholders for input and empty list, key is the providers name, so f.e. "desktopapplications" or "menus:other"
+"menus:themesMenu" = { input = " Select Theme...", list = "No Themes Found" }
+"menus:backgroundSelector" = { input = " Select Background...", list = "No Backgrounds Found" }
 
 [keybinds]
 quick_activate = []
 
 [columns]
 "symbols" = 1 # providers to be queried by default
+# "menus:backgroundSelector" = 4
 
 [providers]
 max_results = 256 # 256 should be enough for everyone
