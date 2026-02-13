@@ -66,7 +66,8 @@ rm -rf ~/.bashrc
 rm -rf ~/.config/hypr
 rm -rf ~/.config/kitty
 
-stow --adopt applications bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
+stow --adopt ./applications/.local/share/applications/hidden/ ./applications/.local/share/applications/imv.desktop ./applications/.local/share/applications/mpv.desktop bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
+
 cp -R ./config/* ~/.config/
 
 chmod -R 775 ~/.config/scripts/
