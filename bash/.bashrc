@@ -4,4 +4,4 @@
 
 source ~/.config/bash/rc
 
-fastfetch
+show-logo
