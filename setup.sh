@@ -11,6 +11,10 @@ export BOOTSTRAP="base-devel git"
 export PKGS="$(cat "$PKG_DIR/pkgList" 2>/dev/null || cat packages/pkgList)"
 
 # run stages
+
+sudo mv /etc/pacman.conf /etc/pacman.conf.bak
+sudo cp -r ./packages/pacman/pacman.conf /etc/pacman.conf
+
 source "$PKG_DIR/logo.sh"
 source "$PKG_DIR/bootstrap.sh"
 source "$PKG_DIR/sudo.sh"
