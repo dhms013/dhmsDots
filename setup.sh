@@ -76,13 +76,32 @@ cp -R ./applications/ ~/.local/share/
 cp -R ./config/* ~/.config/
 chmod -R 775 ~/.config/scripts/
 
-source ~/.bashrc
+sudo updatedb
 
 echo "==> Creating user directories"
 
 mkdir -p ~/.config/themes/current/
 mkdir -p ~/Pictures/Screenshots
 mkdir -p ~/Videos/Screenrecords
+
+CONFIG_FILE="/etc/sddm.conf"
+THEME_NAME="dhms"
+BACKUP_FILE="${CONFIG_FILE}.bak"
+
+echo "Setting SDDM theme to '${THEME_NAME}'..."
+
+if [ -f "$CONFIG_FILE" ]; then
+  echo "Existing /etc/sddm.conf found. Backing it up to ${BACKUP_FILE}"
+  sudo mv -f "$CONFIG_FILE" "$BACKUP_FILE"
+else
+  echo "No existing /etc/sddm.conf found. Creating a new one."
+fi
+
+echo "Creating new /etc/sddm.conf with theme override..."
+sudo tee "$CONFIG_FILE" >/dev/null <<EOF
+[Theme]
+Current=${THEME_NAME}
+EOF
 
 echo "==> Setting default applications"
 sh ./packages/mimetypes.sh
@@ -97,7 +116,12 @@ sudo gtk-update-icon-cache /usr/share/icons/Yaru
 
 echo "==> Setting initial theme"
 
-theme-set dhms
+ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
+ln -snf ~/.config/themes/current/theme/backgrounds/1.png ~/.config/themes/current/background
+
+echo "==> setting up background"
+awww-daemon &
+awww img ~/.config/themes/current/background
 
 echo "==> Linking theme consumers"
 
