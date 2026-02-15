@@ -3,8 +3,11 @@ $PACMAN $BOOTSTRAP
 
 if ! command -v yay >/dev/null; then
   echo "==> Installing yay"
-  rm -rf /tmp/yay
-  git clone https://aur.archlinux.org/yay-bin.git /tmp/yay
+  if [ -d /tmp/yay ]; then
+    echo "==> Removing existing /tmp/yay directory"
+    rm -rf /tmp/yay
+  fi
+  git clone https://aur.archlinux.org/yay.git /tmp/yay
   cd /tmp/yay
   makepkg -si --noconfirm
   cd -
