@@ -76,13 +76,13 @@ cp -R ./applications/ ~/.local/share/
 cp -R ./config/* ~/.config/
 chmod -R 775 ~/.config/scripts/
 
-sudo updatedb
-
 echo "==> Creating user directories"
 
 mkdir -p ~/.config/themes/current/
 mkdir -p ~/Pictures/Screenshots
 mkdir -p ~/Videos/Screenrecords
+
+sudo cp -r ./sddm/dhms /usr/share/sddm/themes/
 
 CONFIG_FILE="/etc/sddm.conf"
 THEME_NAME="dhms"
@@ -136,6 +136,8 @@ ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/the
 # Enable services
 echo "==> Enabling services"
 sh ~/.config/scripts/services
+systemctl --user enable --now hypridle.service
+sudo updatedb
 
 echo ""
 echo "╔════════════════════════════════════════════╗"
