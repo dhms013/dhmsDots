@@ -9,3 +9,5 @@ stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-pi
 cp -R ./applications/ ~/.local/share/
 cp -R ./config/* ~/.config/
 chmod -R 775 ~/.config/scripts/
+
+source ~/.bashrc

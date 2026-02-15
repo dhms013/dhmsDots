@@ -97,12 +97,13 @@ This repo manages configs for:
 - kitty
 - mako
 - nvim
+- sddm theme
 - scripts (used in hypr and waybar)
 - starship
 - swayosd
 - systemd
 - themes
-- uwsm
+- uwsm (yes. I use uwsm because it easier 🤣)
 - walker
 - waybar
 - yazi

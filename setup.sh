@@ -21,6 +21,7 @@ source "$PKG_DIR/dirs.sh"
 source "$PKG_DIR/theme.sh"
 source "$PKG_DIR/defaults.sh"
 source "$PKG_DIR/services.sh"
+source "$PKG_DIR/sddm.sh"
 
 source "$PKG_DIR/logo.sh"
 
