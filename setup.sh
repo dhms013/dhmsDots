@@ -12,7 +12,20 @@ export PKGS="$(cat "$PKG_DIR/pkgList" 2>/dev/null || cat packages/pkgList)"
 
 # run stages
 source "$PKG_DIR/logo.sh"
-source "$PKG_DIR/bootstrap.sh"
+echo "==> Installing bootstrap packages"
+$PACMAN $BOOTSTRAP
+
+if ! command -v yay >/dev/null; then
+  echo "==> Installing yay"
+  rm -rf /tmp/yay
+  git clone https://aur.archlinux.org/yay.git /tmp/yay
+  cd /tmp/yay
+  makepkg -si --noconfirm
+  cd -
+  rm -rf /tmp/yay
+else
+  echo "==> yay already installed"
+fi
 source "$PKG_DIR/sudo.sh"
 source "$PKG_DIR/groups.sh"
 source "$PKG_DIR/install.sh"
