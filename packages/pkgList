@@ -40,6 +40,7 @@ noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 npm
+plocate
 power-profiles-daemon
 python-gobject
 qpwgraph-git

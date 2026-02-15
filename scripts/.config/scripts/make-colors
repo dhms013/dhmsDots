@@ -1,0 +1,506 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  echo "Usage: $(basename "$0") <theme_dir> [theme_dir ...]" >&2
+  exit 1
+}
+
+log_info() {
+  if [ -t 1 ]; then
+    printf '\033[34m%s\033[0m %s\n' "[INFO]" "$*"
+  else
+    printf '%s %s\n' "[INFO]" "$*"
+  fi
+}
+
+log_success() {
+  if [ -t 1 ]; then
+    printf '\033[32m%s\033[0m %s\n' "[SUCCESS]" "$*"
+  else
+    printf '%s %s\n' "[SUCCESS]" "$*"
+  fi
+}
+
+log_skip() {
+  if [ -t 1 ]; then
+    printf '\033[33m%s\033[0m %s\n' "[SKIP]" "$*"
+  else
+    printf '%s %s\n' "[SKIP]" "$*"
+  fi
+}
+
+log_error() {
+  if [ -t 2 ]; then
+    printf '\033[31m%s\033[0m %s\n' "[FAILURE]" "$*" >&2
+  else
+    printf '%s %s\n' "[FAILURE]" "$*" >&2
+  fi
+}
+
+get_first() {
+  for val in "$@"; do
+    if [ -n "$val" ]; then
+      echo "$val"
+      return 0
+    fi
+  done
+  return 0
+}
+
+filter_hex_color() {
+  case "$1" in
+    \#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
+      echo "$1"
+      ;;
+  esac
+}
+
+get_toml_value() {
+  file="$1"
+  section="$2"
+  key="$3"
+
+  [ -f "$file" ] || return 0
+
+  awk -v section="$section" -v key="$key" '
+    function trim(s) {
+      sub(/^[[:space:]]+/, "", s)
+      sub(/[[:space:]]+$/, "", s)
+      return s
+    }
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*\[/ {
+      in_section = ($0 == "[" section "]")
+      next
+    }
+    in_section && $0 ~ "^[[:space:]]*" key "[[:space:]]*=" {
+      sub(/^[^=]*=/, "", $0)
+      val = trim($0)
+      if (match(val, /"[^"]+"/)) {
+        val = substr(val, RSTART + 1, RLENGTH - 2)
+      } else if (match(val, /'\''[^'\'']+'\''/)) {
+        val = substr(val, RSTART + 1, RLENGTH - 2)
+      } else {
+        gsub(/^["'\'']|["'\'']$/, "", val)
+      }
+      print val
+      exit
+    }
+  ' "$file"
+}
+
+get_kitty_value() {
+  file="$1"
+  key="$2"
+
+  [ -f "$file" ] || return 0
+
+  awk -v key="$key" '
+    /^[[:space:]]*#/ { next }
+    $1 == key {
+      for (i = 2; i <= NF; i++) {
+        if ($i ~ /^#[0-9a-fA-F]{6}$/) {
+          print $i
+          exit
+        }
+      }
+    }
+  ' "$file"
+}
+
+get_warp_value() {
+  file="$1"
+  key="$2"
+
+  [ -f "$file" ] || return 0
+
+  awk -v key="$key" '
+    /^[[:space:]]*#/ { next }
+    $0 ~ "^[[:space:]]*" key ":" {
+      if (match($0, /"#[0-9a-fA-F]{6}"/)) {
+        print substr($0, RSTART + 1, RLENGTH - 2)
+      } else if (match($0, /#[0-9a-fA-F]{6}/)) {
+        print substr($0, RSTART, RLENGTH)
+      }
+      exit
+    }
+  ' "$file"
+}
+
+get_warp_terminal_value() {
+  file="$1"
+  group="$2"
+  key="$3"
+
+  [ -f "$file" ] || return 0
+
+  awk -v group="$group" -v key="$key" '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*terminal_colors:/ { in_tc = 1; next }
+    in_tc && $0 ~ /^[^[:space:]]/ { in_tc = 0; group_found = ""; next }
+    in_tc && $0 ~ /^[[:space:]]{2}normal:/ { group_found = "normal"; next }
+    in_tc && $0 ~ /^[[:space:]]{2}bright:/ { group_found = "bright"; next }
+    in_tc && group_found == group && $0 ~ "^[[:space:]]{4}" key ":" {
+      if (match($0, /"#[0-9a-fA-F]{6}"/)) {
+        print substr($0, RSTART + 1, RLENGTH - 2)
+      } else if (match($0, /#[0-9a-fA-F]{6}/)) {
+        print substr($0, RSTART, RLENGTH)
+      }
+      exit
+    }
+  ' "$file"
+}
+
+get_ghostty_value() {
+  file="$1"
+  key="$2"
+
+  [ -f "$file" ] || return 0
+
+  awk -v key="$key" '
+    /^[[:space:]]*#/ { next }
+    $1 == key {
+      for (i = 3; i <= NF; i++) {
+        if ($i ~ /^#[0-9a-fA-F]{6}$/) {
+          print $i
+          exit
+        }
+      }
+    }
+  ' "$file"
+}
+
+get_ghostty_palette_value() {
+  file="$1"
+  idx="$2"
+
+  [ -f "$file" ] || return 0
+
+  awk -v idx="$idx" '
+    /^[[:space:]]*#/ { next }
+    $1 == "palette" && $2 == "=" {
+      split($3, parts, "=")
+      if (parts[1] == idx && parts[2] ~ /^#[0-9a-fA-F]{6}$/) {
+        print parts[2]
+        exit
+      }
+    }
+  ' "$file"
+}
+
+process_theme() {
+  theme_dir="$1"
+  log_info "Processing $theme_dir"
+
+  case "$theme_dir" in
+    /*) theme_path="$theme_dir" ;;
+    *) theme_path="$(pwd)/$theme_dir" ;;
+  esac
+
+  if [ -e "$theme_path" ] && [ ! -d "$theme_path" ]; then
+    log_skip "Not a directory: $theme_path"
+    return 0
+  fi
+
+  if [ ! -d "$theme_path" ]; then
+    theme_base=$(basename "$theme_dir")
+    fallback_name="omarchy-${theme_base}-theme"
+    case "$theme_dir" in
+      */*)
+        theme_dirname=$(dirname "$theme_dir")
+        case "$theme_dirname" in
+          /*) fallback_dir="$theme_dirname" ;;
+          *) fallback_dir="$(pwd)/$theme_dirname" ;;
+        esac
+        fallback_path="$fallback_dir/$fallback_name"
+        ;;
+      *)
+        fallback_path="$(pwd)/$fallback_name"
+        ;;
+    esac
+    if [ -d "$fallback_path" ]; then
+      theme_path="$fallback_path"
+      log_info "Using fallback theme path: $theme_path"
+    else
+      log_error "Theme directory not found: $theme_path"
+      log_error "Also checked: $fallback_path"
+      return 1
+    fi
+  fi
+
+  if [ -e "$theme_path/colors.toml" ] || [ -L "$theme_path/colors.toml" ]; then
+    log_skip "colors.toml already exists in $theme_path"
+    return 0
+  fi
+
+  alacritty="$theme_path/alacritty.toml"
+  kitty="$theme_path/kitty.conf"
+  warp="$theme_path/warp.yaml"
+  ghostty="$theme_path/ghostty.conf"
+  has_alacritty=0
+  has_files=0
+  for file in "$alacritty" "$kitty" "$warp" "$ghostty"; do
+    if [ -s "$file" ]; then
+      has_files=1
+      [ "$file" = "$alacritty" ] && has_alacritty=1
+    fi
+  done
+
+  if [ "$has_files" -eq 0 ]; then
+    log_skip "No theme files found in $theme_path"
+    return 0
+  fi
+
+  if [ "$has_alacritty" -eq 1 ]; then
+    background=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.primary" "background")" \
+      "$(get_warp_value "$warp" "background")" \
+      "$(get_kitty_value "$kitty" "background")")
+
+    foreground=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.primary" "foreground")" \
+      "$(get_warp_value "$warp" "foreground")" \
+      "$(get_kitty_value "$kitty" "foreground")")
+
+    cursor=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.cursor" "cursor")" \
+      "$(get_warp_value "$warp" "cursor")" \
+      "$(get_kitty_value "$kitty" "cursor")" \
+      "$foreground")
+
+    alacritty_selection_background=$(filter_hex_color \
+      "$(get_toml_value "$alacritty" "colors.selection" "background")")
+    alacritty_selection_foreground=$(filter_hex_color \
+      "$(get_toml_value "$alacritty" "colors.selection" "text")")
+
+    selection_background=$(get_first \
+      "$alacritty_selection_background" \
+      "$(get_kitty_value "$kitty" "selection_background")")
+
+    selection_foreground=$(get_first \
+      "$alacritty_selection_foreground" \
+      "$(get_kitty_value "$kitty" "selection_foreground")" \
+      "$foreground")
+  else
+    background=$(get_first \
+      "$(get_ghostty_value "$ghostty" "background")" \
+      "$(get_warp_value "$warp" "background")" \
+      "$(get_kitty_value "$kitty" "background")")
+
+    foreground=$(get_first \
+      "$(get_ghostty_value "$ghostty" "foreground")" \
+      "$(get_warp_value "$warp" "foreground")" \
+      "$(get_kitty_value "$kitty" "foreground")")
+
+    cursor=$(get_first \
+      "$(get_ghostty_value "$ghostty" "cursor-color")" \
+      "$(get_warp_value "$warp" "cursor")" \
+      "$(get_kitty_value "$kitty" "cursor")" \
+      "$foreground")
+
+    selection_background=$(get_first \
+      "$(get_ghostty_value "$ghostty" "selection-background")" \
+      "$(get_kitty_value "$kitty" "selection_background")")
+
+    selection_foreground=$(get_first \
+      "$(get_ghostty_value "$ghostty" "selection-foreground")" \
+      "$(get_kitty_value "$kitty" "selection_foreground")" \
+      "$foreground")
+  fi
+
+  if [ "$has_alacritty" -eq 1 ]; then
+    color0=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "black")" \
+      "$(get_warp_terminal_value "$warp" "normal" "black")" \
+      "$(get_kitty_value "$kitty" "color0")")
+    color1=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "red")" \
+      "$(get_warp_terminal_value "$warp" "normal" "red")" \
+      "$(get_kitty_value "$kitty" "color1")")
+    color2=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "green")" \
+      "$(get_warp_terminal_value "$warp" "normal" "green")" \
+      "$(get_kitty_value "$kitty" "color2")")
+    color3=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "yellow")" \
+      "$(get_warp_terminal_value "$warp" "normal" "yellow")" \
+      "$(get_kitty_value "$kitty" "color3")")
+    color4=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "blue")" \
+      "$(get_warp_terminal_value "$warp" "normal" "blue")" \
+      "$(get_kitty_value "$kitty" "color4")")
+    color5=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "magenta")" \
+      "$(get_warp_terminal_value "$warp" "normal" "magenta")" \
+      "$(get_kitty_value "$kitty" "color5")")
+    color6=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "cyan")" \
+      "$(get_warp_terminal_value "$warp" "normal" "cyan")" \
+      "$(get_kitty_value "$kitty" "color6")")
+    color7=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.normal" "white")" \
+      "$(get_warp_terminal_value "$warp" "normal" "white")" \
+      "$(get_kitty_value "$kitty" "color7")")
+
+    color8=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "black")" \
+      "$(get_warp_terminal_value "$warp" "bright" "black")" \
+      "$(get_kitty_value "$kitty" "color8")")
+    color9=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "red")" \
+      "$(get_warp_terminal_value "$warp" "bright" "red")" \
+      "$(get_kitty_value "$kitty" "color9")")
+    color10=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "green")" \
+      "$(get_warp_terminal_value "$warp" "bright" "green")" \
+      "$(get_kitty_value "$kitty" "color10")")
+    color11=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "yellow")" \
+      "$(get_warp_terminal_value "$warp" "bright" "yellow")" \
+      "$(get_kitty_value "$kitty" "color11")")
+    color12=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "blue")" \
+      "$(get_warp_terminal_value "$warp" "bright" "blue")" \
+      "$(get_kitty_value "$kitty" "color12")")
+    color13=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "magenta")" \
+      "$(get_warp_terminal_value "$warp" "bright" "magenta")" \
+      "$(get_kitty_value "$kitty" "color13")")
+    color14=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "cyan")" \
+      "$(get_warp_terminal_value "$warp" "bright" "cyan")" \
+      "$(get_kitty_value "$kitty" "color14")")
+    color15=$(get_first \
+      "$(get_toml_value "$alacritty" "colors.bright" "white")" \
+      "$(get_warp_terminal_value "$warp" "bright" "white")" \
+      "$(get_kitty_value "$kitty" "color15")")
+  else
+    color0=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "0")" \
+      "$(get_warp_terminal_value "$warp" "normal" "black")" \
+      "$(get_kitty_value "$kitty" "color0")")
+    color1=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "1")" \
+      "$(get_warp_terminal_value "$warp" "normal" "red")" \
+      "$(get_kitty_value "$kitty" "color1")")
+    color2=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "2")" \
+      "$(get_warp_terminal_value "$warp" "normal" "green")" \
+      "$(get_kitty_value "$kitty" "color2")")
+    color3=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "3")" \
+      "$(get_warp_terminal_value "$warp" "normal" "yellow")" \
+      "$(get_kitty_value "$kitty" "color3")")
+    color4=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "4")" \
+      "$(get_warp_terminal_value "$warp" "normal" "blue")" \
+      "$(get_kitty_value "$kitty" "color4")")
+    color5=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "5")" \
+      "$(get_warp_terminal_value "$warp" "normal" "magenta")" \
+      "$(get_kitty_value "$kitty" "color5")")
+    color6=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "6")" \
+      "$(get_warp_terminal_value "$warp" "normal" "cyan")" \
+      "$(get_kitty_value "$kitty" "color6")")
+    color7=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "7")" \
+      "$(get_warp_terminal_value "$warp" "normal" "white")" \
+      "$(get_kitty_value "$kitty" "color7")")
+
+    color8=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "8")" \
+      "$(get_warp_terminal_value "$warp" "bright" "black")" \
+      "$(get_kitty_value "$kitty" "color8")")
+    color9=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "9")" \
+      "$(get_warp_terminal_value "$warp" "bright" "red")" \
+      "$(get_kitty_value "$kitty" "color9")")
+    color10=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "10")" \
+      "$(get_warp_terminal_value "$warp" "bright" "green")" \
+      "$(get_kitty_value "$kitty" "color10")")
+    color11=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "11")" \
+      "$(get_warp_terminal_value "$warp" "bright" "yellow")" \
+      "$(get_kitty_value "$kitty" "color11")")
+    color12=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "12")" \
+      "$(get_warp_terminal_value "$warp" "bright" "blue")" \
+      "$(get_kitty_value "$kitty" "color12")")
+    color13=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "13")" \
+      "$(get_warp_terminal_value "$warp" "bright" "magenta")" \
+      "$(get_kitty_value "$kitty" "color13")")
+    color14=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "14")" \
+      "$(get_warp_terminal_value "$warp" "bright" "cyan")" \
+      "$(get_kitty_value "$kitty" "color14")")
+    color15=$(get_first \
+      "$(get_ghostty_palette_value "$ghostty" "15")" \
+      "$(get_warp_terminal_value "$warp" "bright" "white")" \
+      "$(get_kitty_value "$kitty" "color15")")
+  fi
+
+  accent=$(get_first "$color4" "$(get_warp_value "$warp" "accent")")
+
+  selection_background=$(get_first "$selection_background" "$accent")
+  selection_foreground=$(get_first "$selection_foreground" "$foreground")
+
+  missing=""
+  for key in accent cursor foreground background selection_foreground selection_background \
+    color0 color1 color2 color3 color4 color5 color6 color7 \
+    color8 color9 color10 color11 color12 color13 color14 color15; do
+    eval "val=\${$key:-}"
+    if [ -z "$val" ]; then
+      missing="${missing}${missing:+, }$key"
+    fi
+  done
+
+  if [ -n "$missing" ]; then
+    log_error "Missing required colors for $theme_path: $missing"
+    return 1
+  fi
+
+  tmp_file="$theme_path/colors.toml.tmp.$$"
+  cat > "$tmp_file" <<EOF_COLORS
+accent = "$accent"
+cursor = "$cursor"
+foreground = "$foreground"
+background = "$background"
+selection_foreground = "$selection_foreground"
+selection_background = "$selection_background"
+
+color0 = "$color0"
+color1 = "$color1"
+color2 = "$color2"
+color3 = "$color3"
+color4 = "$color4"
+color5 = "$color5"
+color6 = "$color6"
+color7 = "$color7"
+color8 = "$color8"
+color9 = "$color9"
+color10 = "$color10"
+color11 = "$color11"
+color12 = "$color12"
+color13 = "$color13"
+color14 = "$color14"
+color15 = "$color15"
+EOF_COLORS
+
+  mv "$tmp_file" "$theme_path/colors.toml"
+  log_success "Wrote $theme_path/colors.toml"
+}
+
+[ "$#" -gt 0 ] || usage
+
+status=0
+for theme_dir in "$@"; do
+  if ! process_theme "$theme_dir"; then
+    status=1
+  fi
+done
+
+exit "$status"
