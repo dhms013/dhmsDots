@@ -17,6 +17,10 @@ if ! gum confirm "Continue with update?" \
   exit 1
 fi
 
+sudo -v
+echo "Updating..."
+yay -Syyu --noconfirm --cleanafter
+
 orphans=$(pacman -Qtdq || true)
 if [[ -n $orphans ]]; then
   echo -e "\e[32m\nRemove orphan system packages\e[0m"
@@ -26,8 +30,5 @@ if [[ -n $orphans ]]; then
   echo
 fi
 
-sudo -v
-echo "Updating..."
-yay -Syyu --noconfirm --cleanafter
 sudo updatedb
 show-done
