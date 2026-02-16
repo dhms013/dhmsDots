@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "==> Installing packages via yay"
 
 for pkg in $PKGS; do

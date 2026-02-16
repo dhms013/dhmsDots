@@ -1,3 +1,5 @@
+#!/bin/bash
+
 print_logo() {
   echo -e "\u001b[38;2;0;255;153m"
   cat <<"EOF"

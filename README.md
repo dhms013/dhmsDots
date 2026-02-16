@@ -140,6 +140,9 @@ cd dhmsDots
 ### 3. Run everything
 
 ```bash
+bash setup.sh 
+
+# command above is still experimental. If the setup.sh failed, use 
 sh setup.sh
 ```
 

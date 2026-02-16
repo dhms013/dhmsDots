@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Paths
 WALLPAPER_DIR="$HOME/.config/themes/current/theme/backgrounds"

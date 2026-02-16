@@ -1,27 +1,39 @@
 #!/bin/bash
-set -euo pipefail
 
-print_logo() {
-  cat <<"EOF"
+# Fallback function - automatically runs setup-old.sh on any error
+run_fallback() {
+  echo ""
+  echo "╔════════════════════════════════════════════╗"
+  echo "║  ⚠️  Modular setup encountered an error!   ║"
+  echo "║  Automatically falling back to old setup   ║"
+  echo "╚════════════════════════════════════════════╝"
+  echo ""
+  sleep 3
 
-██████╗ ██╗  ██╗███╗   ███╗███████╗          Z
-██╔══██╗██║  ██║████╗ ████║██╔════╝      Z    
-██║  ██║███████║██╔████╔██║███████╗    z      
-██║  ██║██╔══██║██║╚██╔╝██║╚════██║ z         
-██████╔╝██║  ██║██║ ╚═╝ ██║███████║
-╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
-                                   
-EOF
+  # Kill the sudo keep-alive loop if it's running
+  jobs -p | xargs -r kill 2>/dev/null
+
+  # Run the old setup script (exec replaces current process)
+  exec bash "$(dirname "${BASH_SOURCE[0]}")/setup-old.sh"
 }
 
-PKGS=$(cat packages/pkgList)
-YAY="yay -S --needed --noconfirm"
+# Set up error trap BEFORE set -e
+trap 'run_fallback' ERR
 
-BOOTSTRAP="base-devel git"
-PACMAN="sudo pacman -S --needed --noconfirm"
+set -euo pipefail
 
-# Main execution
-print_logo
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$BASE_DIR"
+PKG_DIR="$BASE_DIR/packages/scripts"
+
+# shared vars for stages
+export YAY="yay -S --needed --noconfirm"
+export PACMAN="sudo pacman -S --needed --noconfirm"
+export BOOTSTRAP="base-devel git"
+export PKGS="$(cat "$PKG_DIR/pkgList" 2>/dev/null || cat packages/pkgList)"
+
+# run stages
+source "$PKG_DIR/logo.sh"
 
 echo "==> edit pacman.conf"
 sudo mv /etc/pacman.conf /etc/pacman.conf.bak
@@ -58,86 +70,15 @@ done 2>/dev/null &
 
 sudo usermod -aG input ${USER}
 
-echo "==> Installing all packages (official + AUR) via yay"
-for pkg in $PKGS; do
-  echo "==> Installing: $pkg"
-  $YAY "$pkg" || echo "==> Failed to install $pkg, continuing..."
-done
+source "$PKG_DIR/install.sh"
+source "$PKG_DIR/dotfiles.sh"
+source "$PKG_DIR/dirs.sh"
+source "$PKG_DIR/theme.sh"
+source "$PKG_DIR/sddm.sh"
+source "$PKG_DIR/defaults.sh"
+source "$PKG_DIR/services.sh"
 
-echo "==> Stowing dotfiles"
-
-rm -rf ~/.bashrc
-rm -rf ~/.config/hypr
-rm -rf ~/.config/kitty
-
-stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
-
-cp -R ./applications/ ~/.local/share/
-cp -R ./config/* ~/.config/
-chmod -R 775 ~/.config/scripts/
-
-echo "==> Creating user directories"
-
-mkdir -p ~/.config/themes/current/
-mkdir -p ~/Pictures/Screenshots
-mkdir -p ~/Videos/Screenrecords
-
-sudo cp -r ./sddm/dhms /usr/share/sddm/themes/
-
-CONFIG_FILE="/etc/sddm.conf"
-THEME_NAME="dhms"
-BACKUP_FILE="${CONFIG_FILE}.bak"
-
-echo "Setting SDDM theme to '${THEME_NAME}'..."
-
-if [ -f "$CONFIG_FILE" ]; then
-  echo "Existing /etc/sddm.conf found. Backing it up to ${BACKUP_FILE}"
-  sudo mv -f "$CONFIG_FILE" "$BACKUP_FILE"
-else
-  echo "No existing /etc/sddm.conf found. Creating a new one."
-fi
-
-echo "Creating new /etc/sddm.conf with theme override..."
-sudo tee "$CONFIG_FILE" >/dev/null <<EOF
-[Theme]
-Current=${THEME_NAME}
-EOF
-
-echo "==> Setting default applications"
-sh ./packages/mimetypes.sh
-
-echo "==> Applying GTK and icon theme"
-
-gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
-gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-gsettings set org.gnome.desktop.interface icon-theme "Yaru-olive-dark"
-
-sudo gtk-update-icon-cache /usr/share/icons/Yaru
-
-echo "==> Setting initial theme"
-
-ln -snf ~/.config/themes/themeLists/dhms ~/.config/themes/current/theme
-ln -snf ~/.config/themes/current/theme/backgrounds/1.png ~/.config/themes/current/background
-
-echo "==> setting up background"
-awww-daemon &
-awww img ~/.config/themes/current/background
-
-echo "==> Linking theme consumers"
-
-rm -rf ~/.config/btop/themes/current.theme
-rm -rf ~/.config/mako/config
-rm -rf ~/.config/nvim/lua/plugins/theme.lua
-
-ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
-ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
-ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
-
-# Enable services
-echo "==> Enabling services"
-sh ~/.config/scripts/services
-systemctl --user enable --now hypridle.service
-sudo updatedb
+source "$PKG_DIR/logo.sh"
 
 echo ""
 echo "╔════════════════════════════════════════════╗"

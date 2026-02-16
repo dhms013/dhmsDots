@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "==> Creating user directories"
 
 mkdir -p ~/.config/themes/current/

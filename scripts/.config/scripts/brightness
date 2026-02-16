@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 use_brightnessctl() {
   [ -d /sys/class/power_supply/BAT* ] ||

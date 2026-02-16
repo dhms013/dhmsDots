@@ -19,6 +19,7 @@
 .window {
   background: alpha(@background, 0.95);
   border: solid 2px @accent;
+  border-radius: 13px;
   margin: 4px;
   padding: 18px;
 }

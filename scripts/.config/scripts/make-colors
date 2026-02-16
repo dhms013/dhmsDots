@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -eu
 
 usage() {
@@ -50,9 +50,9 @@ get_first() {
 
 filter_hex_color() {
   case "$1" in
-    \#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
-      echo "$1"
-      ;;
+  \#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
+    echo "$1"
+    ;;
   esac
 }
 
@@ -194,8 +194,8 @@ process_theme() {
   log_info "Processing $theme_dir"
 
   case "$theme_dir" in
-    /*) theme_path="$theme_dir" ;;
-    *) theme_path="$(pwd)/$theme_dir" ;;
+  /*) theme_path="$theme_dir" ;;
+  *) theme_path="$(pwd)/$theme_dir" ;;
   esac
 
   if [ -e "$theme_path" ] && [ ! -d "$theme_path" ]; then
@@ -207,17 +207,17 @@ process_theme() {
     theme_base=$(basename "$theme_dir")
     fallback_name="omarchy-${theme_base}-theme"
     case "$theme_dir" in
-      */*)
-        theme_dirname=$(dirname "$theme_dir")
-        case "$theme_dirname" in
-          /*) fallback_dir="$theme_dirname" ;;
-          *) fallback_dir="$(pwd)/$theme_dirname" ;;
-        esac
-        fallback_path="$fallback_dir/$fallback_name"
-        ;;
-      *)
-        fallback_path="$(pwd)/$fallback_name"
-        ;;
+    */*)
+      theme_dirname=$(dirname "$theme_dir")
+      case "$theme_dirname" in
+      /*) fallback_dir="$theme_dirname" ;;
+      *) fallback_dir="$(pwd)/$theme_dirname" ;;
+      esac
+      fallback_path="$fallback_dir/$fallback_name"
+      ;;
+    *)
+      fallback_path="$(pwd)/$fallback_name"
+      ;;
     esac
     if [ -d "$fallback_path" ]; then
       theme_path="$fallback_path"
@@ -464,7 +464,7 @@ process_theme() {
   fi
 
   tmp_file="$theme_path/colors.toml.tmp.$$"
-  cat > "$tmp_file" <<EOF_COLORS
+  cat >"$tmp_file" <<EOF_COLORS
 accent = "$accent"
 cursor = "$cursor"
 foreground = "$foreground"
