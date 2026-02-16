@@ -5,6 +5,14 @@ Rectangle {
     anchors.fill: parent
     color: "#000000"
 
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.BlankCursor
+        acceptedButtons: Qt.NoButton
+        propagateComposedEvents: true
+    }
+
     Column {
         anchors.centerIn: parent
         spacing: 120
@@ -19,20 +27,23 @@ Rectangle {
 
         TextField {
             id: passwordBox
-            width: 450
-            height: 70
-            font.pixelSize: 36
+            width: 500
+            height: 100
+            font.pixelSize: Math.round(height * 0.75)
             echoMode: TextInput.Password
             passwordCharacter: "•"
             color: "#59CF77"
             horizontalAlignment: TextInput.AlignHCenter
             placeholderText: "Enter password"
+            cursorDelegate: Item {
+              visible: false
+            }
             placeholderTextColor: "#A0FFFFFF"
             background: Rectangle {
                 color: "#00000000"
                 border.color: "#59CF77"
                 border.width: 5
-                radius: 14
+                radius: 65
             }
 
             focus: true

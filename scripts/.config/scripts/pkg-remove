@@ -16,10 +16,18 @@ fzf_args=(
 
 pkg_names=$(yay -Qqe | fzf "${fzf_args[@]}")
 
+show-logo
+
+if ! gum confirm "Are you sure you want to remove "$pkg_names"?" \
+  --prompt.foreground="#00FF00" \
+  --selected.background="#00FF00" \
+  --selected.foreground="#000000"; then
+  echo "Update cancelled"
+  exit 1
+fi
+
 if [[ -n "$pkg_names" ]]; then
-  # Convert newline-separated selections to space-separated for yay
-  show-logo
-  echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -Rns --noconfirm
+  echo "$pkg_names" | tr '\n' ' ' | xargs yay -Rns --noconfirm
   sudo updatedb
   show-done
 fi

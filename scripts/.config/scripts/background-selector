@@ -71,7 +71,7 @@ while true; do
     ;;
   q)
     rm -rf $CACHE_DIR &&
-      exit 0
+      return 1
     ;;
   esac
 done
