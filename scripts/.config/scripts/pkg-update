@@ -1,7 +1,30 @@
 #!/bin/bash
 
-show-logo
+gum style --border normal --border-foreground 6 --padding "1 2" \
+  "Ready to update?" \
+  "" \
+  "• You should not stop the update once you start!" \
+  "• Make sure you're connected to power or have a full battery" \
+  ""
+
+echo
+
+if ! gum confirm "Continue with update?"; then
+  echo "Update cancelled"
+  exit 1
+fi
+
+orphans=$(pacman -Qtdq || true)
+if [[ -n $orphans ]]; then
+  echo -e "\e[32m\nRemove orphan system packages\e[0m"
+  for pkg in $orphans; do
+    sudo pacman -Rs --noconfirm "$pkg" || true
+  done
+  echo
+fi
+
 sudo -v
 echo "Updating..."
-yay -Syyu --noconfirm
+yay -Syyu --noconfirm --cleanafter
+sudo updatedb
 show-done

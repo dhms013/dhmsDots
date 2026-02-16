@@ -20,5 +20,6 @@ if [[ -n "$pkg_names" ]]; then
   # Convert newline-separated selections to space-separated for yay
   show-logo
   echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
+  sudo updatedb
   show-done
 fi
