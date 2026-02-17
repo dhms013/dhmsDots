@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  REPO_URL=$(gum input --placeholder="Git repo URL for theme" --header="")
+else
+  REPO_URL="$1"
+fi
+
+if [ -z "$REPO_URL" ]; then
+  exit 1
+fi
+
+THEMES_DIR="$HOME/.config/themes/themeLists"
+THEME_NAME=$(basename "$REPO_URL" .git | sed -E 's/^omarchy-//; s/-theme$//')
+THEME_PATH="$THEMES_DIR/$THEME_NAME"
+
+# Remove existing theme if present
+if [ -d "$THEME_PATH" ]; then
+  rm -rf "$THEME_PATH"
+fi
+
+# Clone the repo directly to ~/.config/themes/themeLists
+if ! git clone "$REPO_URL" "$THEME_PATH"; then
+  echo "Error: Failed to clone theme repo."
+  exit 1
+fi
+
+# Apply the new theme with theme-set
+theme-set $THEME_NAME

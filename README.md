@@ -97,8 +97,8 @@ This repo manages configs for:
 - kitty
 - mako
 - nvim
-- sddm theme
 - scripts (used in hypr and waybar)
+- sddm theme
 - starship
 - swayosd
 - systemd
@@ -140,9 +140,6 @@ cd dhmsDots
 ### 3. Run everything
 
 ```bash
-bash setup.sh 
-
-# command above is still experimental. If the setup.sh failed, use 
 sh setup.sh
 ```
 

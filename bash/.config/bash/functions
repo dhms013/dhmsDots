@@ -91,24 +91,39 @@ gcp() {
   gadd . && gcm "$1" && gp
 }
 
+gcpchain() {
+  if [ -z "$1" ]; then
+    echo "Error: No commit message provided."
+    echo "Usage: gcpchain \"Your commit message\" \"source branch to merge from\""
+    return 1
+  fi
+  if [ -z "$2" ]; then
+    echo "Error: No source branch provided.."
+    echo "Usage: gcpchain \"Your commit message\" \"source branch to merge from\""
+    return 1
+  fi
+  echo "Running a chained commit, merge, and push with message: \"$1\" and merging from branch: \"$2\"..."
+  gadd . && gcm "$1" && gp gco main && gm origin/"$2" && gp && gco asrock
+}
+
 gcpf() {
   if [ -z "$1" ]; then
     echo "Error: No commit message provided."
-    echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
+    echo "Usage: gcpf \"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   if [ -z "$2" ]; then
     echo "Error: No source branch provided"
-    echo "Usage: gcp \"Your commit message\" <source branch> <target branch>"
+    echo "Usage: gcpf \"Your commit message\" <source branch> <target branch>"
     echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   if [ -z "$3" ]; then
     echo "Error: No target branch provided"
-    echo "Usage: gcp \"Your commit message\" <source branch> <target branch>"
-    echo "Usage: gcp \"Your commit message\" <source pull branch> <target push branch>"
+    echo "Usage: gcpf \"Your commit message\" <source branch> <target branch>"
+    echo "Usage: gcpf\"Your commit message\" <source pull branch> <target push branch>"
     return 1
   fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
- gadd . && gcm "$1" && gpr origin "$2" && gp --force --set-upstream origin "$3"
+  gadd . && gcm "$1" && gpr origin "$2" && gp --force --set-upstream origin "$3"
 }

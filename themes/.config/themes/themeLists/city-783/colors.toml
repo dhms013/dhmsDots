@@ -1,6 +1,6 @@
-accent = "#ad2222"
+accent = "#b9bec6"
 cursor = "#b9bec6"
-foreground = "#b9bec6"
+foreground = "#ad2222"
 background = "#181a1f"
 selection_foreground = "#b9bec6"
 selection_background = "#ad2222"

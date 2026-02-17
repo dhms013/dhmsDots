@@ -1,22 +1,5 @@
 #!/bin/bash
 
-gum style --border normal --foreground="#00FF00" --padding "1 2" \
-  "Ready to update?" \
-  "" \
-  "• You should not stop the update once you start!" \
-  "• Make sure you're connected to power or have a full battery" \
-  ""
-
-echo
-
-if ! gum confirm "Continue with update?" \
-  --prompt.foreground="#00FF00" \
-  --selected.background="#00FF00" \
-  --selected.foreground="#000000"; then
-  echo "Update cancelled"
-  exit 1
-fi
-
 sudo -v
 echo "Updating..."
 yay -Syyu --noconfirm --cleanafter

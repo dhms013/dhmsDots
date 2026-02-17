@@ -4,7 +4,7 @@ if [ -z "$BASE_DIR" ]; then
   BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 fi
 
-THEME_DIR="${BASE_DIR}/sddm/dhms"
+THEME_DIR="${BASE_DIR}/packages/sddm/dhms"
 TARGET_DIR="/usr/share/sddm/themes/dhms"
 
 echo "Copying SDDM theme from ${THEME_DIR} to ${TARGET_DIR}..."

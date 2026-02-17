@@ -16,17 +16,9 @@ fzf_args=(
 
 pkg_names=$(yay -Qqe | fzf "${fzf_args[@]}")
 
-show-logo
-
-if ! gum confirm "Are you sure you want to remove "$pkg_names"?" \
-  --prompt.foreground="#00FF00" \
-  --selected.background="#00FF00" \
-  --selected.foreground="#000000"; then
-  echo "Update cancelled"
-  exit 1
-fi
-
 if [[ -n "$pkg_names" ]]; then
+  sudo -v
+  echo "Removing $pkg_names..."
   echo "$pkg_names" | tr '\n' ' ' | xargs yay -Rns --noconfirm
   sudo updatedb
   show-done

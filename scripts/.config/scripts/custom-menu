@@ -36,10 +36,6 @@ menu() {
   echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 
-terminal() {
-  xdg-terminal-exec --app-id=dhms.terminal "$@"
-}
-
 present_terminal() {
   floating-terminal $1
 }
@@ -80,9 +76,10 @@ show_screenrecord_menu() {
 }
 
 show_install_menu() {
-  case $(menu "Install" "󰣇  Pacman\n󰣇  AUR") in
-  *Pacman*) terminal pkg-install ;;
-  *AUR*) terminal pkg-aur-install ;;
+  case $(menu "Install" "󰣇  Pacman\n󰣇  AUR\n󰸌  Themes") in
+  *Pacman*) present_terminal pkg-install ;;
+  *AUR*) present_terminal pkg-aur-install ;;
+  *Themes*) present_terminal theme-install ;;
   *) show_setup_menu ;;
   esac
 }
@@ -94,7 +91,7 @@ show_setup_menu() {
   *DNS*) present_terminal setup-dns ;;
   *Install*) show_install_menu ;;
   *Power*) show_setup_power_menu ;;
-  *Remove*) terminal pkg-remove ;;
+  *Remove*) present_terminal pkg-remove ;;
   *Theme*) show_theme_menu ;;
   *Security*) show_setup_security_menu ;;
   *) show_main_menu ;;
@@ -136,7 +133,7 @@ show_main_menu() {
 
 go_to_menu() {
   case "${1,,}" in
-  *aur*) terminal pkg-aur-install ;;
+  *aur*) present_terminal pkg-aur-install ;;
   *background*) show_background_menu ;;
   *dns*) present_terminal setup-dns ;;
   *fido2*) present_terminal setup-fido2 ;;
@@ -144,10 +141,10 @@ go_to_menu() {
   *install*) show_install_menu ;;
   *lock*) hyprlock ;;
   *logout*) hyprctl dispatch exit ;;
-  *pacman*) terminal pkg-install ;;
+  *pacman*) present_terminal pkg-install ;;
   *power*) show_setup_power_menu ;;
   *reboot*) systemctl reboot ;;
-  *remove*) terminal pkg-remove ;;
+  *remove*) present_terminal pkg-remove ;;
   *screenrecord*) show_screenrecord_menu ;;
   *security*) show_setup_security_menu ;;
   *setup*) show_setup_menu ;;
