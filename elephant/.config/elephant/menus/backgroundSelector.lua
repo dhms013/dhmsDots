@@ -1,6 +1,6 @@
 Name = "backgroundSelector"
 NamePretty = "Background Selector"
-Cache = true
+Cache = false
 HideFromProviderlist = true
 SearchName = true
 
