@@ -91,21 +91,6 @@ gcp() {
   gadd . && gcm "$1" && gp
 }
 
-gm() {
-  if [ -z "$1" ]; then
-    echo "Error: No origin branch provided."
-    echo "Usage: gm \"Your origin branch\" \"source branch to merge from\""
-    return 1
-  fi
-  if [ -z "$2" ]; then
-    echo "Error: No source branch provided.."
-    echo "Usage: gm \"Your origin branch\" \"source branch to merge from\""
-    return 1
-  fi
-  echo "Running a chained commit, merge, and push with message: \"$1\" and merging from branch: \"$2\"..."
- gco "$1" ; git merge origin/"$2" ; gp ; gco "$2"
-}
-
 gcpf() {
   if [ -z "$1" ]; then
     echo "Error: No commit message provided."
