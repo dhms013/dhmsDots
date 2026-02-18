@@ -1,9 +1,0 @@
-#!/bin/sh
-
-case ":${PATH}:" in
-    *:"$HOME/.config/scripts":*)
-        ;;
-    *)
-        export PATH="$HOME/.config/scripts:$PATH"
-        ;;
-esac

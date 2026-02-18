@@ -10,8 +10,8 @@ bluez-utils
 brightnessctl
 btop
 cava
-cliphist
 cloudflare-speed-cli-bin
+cmatrix
 discord
 dolphin
 elephant-all-git
@@ -33,6 +33,7 @@ imv
 jq
 kitty
 mako
+man-db
 mpv
 neovim
 nodejs
@@ -62,7 +63,6 @@ ttf-jetbrains-mono-nerd
 walker-git
 waybar
 wiremix
-wl-clipboard
 xdg-desktop-portal-gtk
 xdg-terminal-exec-git
 yaru-icon-theme
