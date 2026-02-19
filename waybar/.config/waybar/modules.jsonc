@@ -77,7 +77,7 @@
   },
   "memory": {
     "format": "  {used}G/{total}G",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
+    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e s-tui",
     "interval": 3
   },
   "clock": {
@@ -102,7 +102,7 @@
     "format-wifi": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-ethernet": "⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
     "format-disconnected": "",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e cloudflare-speed-cli",
+    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e bash -c 'show-logo && speedtest-cli && show-done'",
     "interval": 1
   },
   "network": {
