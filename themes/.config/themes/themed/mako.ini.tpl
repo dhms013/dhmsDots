@@ -1,5 +1,5 @@
 text-color={{ foreground }}
-border-color={{ foreground }}
+border-color={{ accent }}
 background-color={{ background }}
 width=250
 height=100
