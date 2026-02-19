@@ -10,7 +10,7 @@ function GetEntries()
 	local handle = io.popen(
 		"find '"
 			.. wallpaper_dir
-			.. "' -maxdepth 1 -type f -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.bmp' -o -name '*.webp' 2>/dev/null"
+			.. "' -maxdepth 1 -type f \\( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.bmp' -o -name '*.webp' \\) 2>/dev/null"
 	)
 	if handle then
 		for background in handle:lines() do
@@ -20,17 +20,10 @@ function GetEntries()
 					Text = filename,
 					Value = background,
 					Actions = {
-						activate = "ln -sf '"
-							.. background
-							.. "' "
-							.. os.getenv("HOME")
-							.. "/.config/themes/current/background && awww img '"
-							.. background
-							.. "' --transition-type 'random' --transition-fps 60 --transition-duration 1",
+						activate = "background-set '" .. background .. "'",
 					},
 					Preview = background,
 					PreviewType = "file",
-					-- Icon = background,
 				})
 			end
 		end

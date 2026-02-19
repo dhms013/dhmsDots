@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cmd="$*"
+exec yay -Rns --noconfirm $cmd
+sudo updatedb
