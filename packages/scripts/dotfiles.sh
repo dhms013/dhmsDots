@@ -2,7 +2,7 @@
 
 echo "==> Stowing dotfiles"
 
-PACKAGES=(bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar)
+PACKAGES=(bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes tmux walker waybar)
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_STOW="$HOME"
 
@@ -26,7 +26,7 @@ done
 
 cd "$BASE_DIR"
 
-stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes walker waybar
+stow --adopt bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes tmux walker waybar
 
 # rm -rf ~/.bashrc
 # rm -rf ~/.config/hypr

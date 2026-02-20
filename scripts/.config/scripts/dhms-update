@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# EXPERIMENTAL, DON'T RUN IT YET UNTIL TESTED !!!
+
 set -e
 
 show-logo
@@ -10,4 +12,5 @@ git -C $HOME/dhmsDots pull --autostash
 git -C $HOME/dhmsDots --no-pager diff --check || git -C $HOME/dhmsDots reset --merge
 
 pkg-update
+frmwr-updt
 migration-run

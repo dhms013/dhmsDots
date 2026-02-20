@@ -40,6 +40,7 @@ noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 npm
+opencode
 plocate
 power-profiles-daemon
 python-gobject
@@ -57,6 +58,7 @@ speedtest-cli
 starship
 stow
 swayosd-git
+tmux
 trash-cli
 telegram-desktop
 ttf-jetbrains-mono-nerd

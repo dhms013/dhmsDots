@@ -10,10 +10,11 @@ hide_action_hints = true                                                    # gl
 
 [keybinds]
 quick_activate = []
+next = ["Down", "ctrl j"]
+previous = ["Up", "ctrl k"]
 
 [columns]
 "symbols" = 1 # providers to be queried by default
-# "menus:backgroundSelector" = 4
 
 [providers]
 max_results = 256 # 256 should be enough for everyone
