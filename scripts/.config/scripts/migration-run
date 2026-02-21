@@ -12,7 +12,7 @@ for file in ~/dhmsDots/migrations/*.sh; do
   filename=$(basename "$file")
 
   if [[ ! -f "$STATE_DIR/$filename" && ! -f "$STATE_DIR/skipped/$filename" ]]; then
-    echo -e "\e[32m\nRunning migration (${filename%.sh})\e[0m"
+    echo "\033[38;2;0;204;119m\nRunning migration (${filename%.sh})\033[0m"
 
     if bash $file; then
       touch "$STATE_DIR/$filename"

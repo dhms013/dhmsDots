@@ -3,6 +3,7 @@
 systemctl --user enable elephant.service
 systemctl --user enable swayosd-server.service
 systemctl --user enable waybar.service
+systemctl --user enable hypridle.service
 
 sleep 1
 systemctl --user restart elephant.service
