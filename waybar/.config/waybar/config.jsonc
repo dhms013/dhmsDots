@@ -8,20 +8,32 @@
     "~/.config/waybar/modules.jsonc"
   ],
   "modules-left": [
+    "custom/space",
+    "custom/start",
     "temperature",
     "cpu",
     "memory",
+    "custom/end",
+    "custom/space",
     "hyprland/window"
   ],
   "modules-center": [
+    "custom/space",
+    "custom/start",
     "hyprland/workspaces",
+    "custom/end",
+    "custom/space",
     "custom/screenrecording-indicator"
   ],
   "modules-right": [
+    "custom/space",
+    "custom/start",
     "network#speed",
     "clock",
     "custom/notification",
     "group/tray-expander",
-    "battery"
+    "battery",
+    "custom/end",
+    "custom/space"
   ]
 }

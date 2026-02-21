@@ -1,0 +1,55 @@
+/*
+  (                                     )  (     
+  )\ )   )                 )         ( /(  )\ )  
+ (()/(( /(              ( /(     (   )\())(()/(  
+  /(_))\()) (  (  `  )  )\()) (  )( ((_)\  /(_)) 
+ (_))((_)\  )\ )\ /(/( ((_)\  )\(()\  ((_)(_))   
+ | _ \ |(_)((_|(_|(_)_\| |(_)((_)((_)/ _ \/ __|  
+ |  _/ ' \/ _ (_-< '_ \) ' \/ _ \ '_| (_) \__ \  
+ |_| |_||_\___/__/ .__/|_||_\___/_|  \___/|___/  
+               |_|                                                                                                                         ███    ███                         
+
+*/
+
+@define-color background-color #0f191c;
+@define-color border-color #11ff25;
+@define-color label #11ff25;
+@define-color image #11ff25;
+@define-color progress #ffd700;
+
+/* Cancel out Omarchy settings */
+window:not(:backdrop),
+window:backdrop {
+    border: none;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 18px;
+}
+
+
+/* Draw a new background */
+window:not(:backdrop) #container,
+window:backdrop #container {
+    border: 2px solid @border-color;
+    border-radius: 4px;
+    background-color: alpha(@background-color, 0.8);
+    padding: 18px;
+    background-clip: padding-box;
+    box-shadow: 2px 2px 9px 0px rgba(0, 0, 0, 0.9);
+}
+
+
+/*
+     )                                     
+  ( /(  (  (               )        )      
+  )\()) )\ )\ )  (      ( /(     ( /(      
+ ((_)\ ((_|()/(  )\  (  )\()) (  )\()) (   
+   ((_) _  ((_))((_) )\((_)\  )\((_)\  )\  
+  / _ \| | _| |_ | |((_) |(_)((_) |(_)((_) 
+ | (_) | / _` | || / _ \ '_ Y _ \ '_ Y _ \ 
+  \___/|_\__,_|\__/\___/_.__|___/_.__|___/ 
+                                           
+ 25-01-26
+*/

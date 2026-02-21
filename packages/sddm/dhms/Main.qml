@@ -13,6 +13,15 @@ Rectangle {
         propagateComposedEvents: true
     }
 
+    Image {
+        anchors.fill: parent
+        fillMode: Image.Stretch
+        source: "1.png"
+        asynchronous: true
+        cache: false
+        visible: status === Image.Ready
+      }
+
     Column {
         anchors.centerIn: parent
         spacing: 120

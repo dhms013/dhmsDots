@@ -1,4 +1,19 @@
 {
+  "custom/start": {
+    "format": " ",
+    "interval": "once",
+    "tooltip": false
+  },
+  "custom/end": {
+    "format": " ",
+    "interval": "once",
+    "tooltip": false
+  },
+  "custom/space": {
+    "format": "  ",
+    "interval": "once",
+    "tooltip": false
+  },
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{icon}",

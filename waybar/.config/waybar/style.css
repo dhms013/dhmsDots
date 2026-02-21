@@ -79,12 +79,29 @@ window#waybar.empty #window {
     opacity: 0; 
 }
 
+#custom-space,
+#custom-start,
+#custom-end {
+
+}
+
 #custom-menu,
 #temperature,
 #cpu,
 #custom-gpu,
 #custom-gpu-temp,
-#memory,
+#memory {
+  min-width: 15px;
+  /* margin: 2.5px; */
+  background-color: @background;
+  /* color: @foreground; */
+  border: 1px solid alpha(@foreground, 0.8);
+  border-radius: 13px;
+  /* padding: 0; */
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
 #network#speed,
 #workspaces button,
 #custom-update,
@@ -102,7 +119,6 @@ window#waybar.empty #window {
 #power-profiles-daemon,
 #battery {
   min-width: 15px;
-  /* font-family: 'Symbols Nerd Font'; */
   margin: 2.5px;
   background-color: @background;
   color: @foreground;

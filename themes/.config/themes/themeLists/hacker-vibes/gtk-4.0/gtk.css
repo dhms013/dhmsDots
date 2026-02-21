@@ -1,0 +1,718 @@
+/* Hacker Vibes Theme - GTK4/libadwaita CSS Variables */
+
+:root {
+  /* Core colors */
+  --hacker-bg: #0a0a0a;
+  --hacker-fg: #00ff00;
+  --hacker-accent: #39ff14;
+  --hacker-accent-light: #00ff41;
+  --hacker-secondary: #0d1117;
+  --hacker-dark: #003300;
+  
+  /* Libadwaita color variables */
+  --accent-bg-color: #39ff14;
+  --accent-fg-color: #0a0a0a;
+  --accent-color: #00ff00;
+  
+  --window-bg-color: #0a0a0a;
+  --window-fg-color: #00ff00;
+  
+  --view-bg-color: #0a0a0a;
+  --view-fg-color: #00ff00;
+  
+  --sidebar-bg-color: #0d1117;
+  --sidebar-fg-color: #00ff00;
+  --sidebar-backdrop-color: #0d1117;
+  --sidebar-shade-color: #003300;
+  
+  --headerbar-bg-color: #0d1117;
+  --headerbar-fg-color: #00ff00;
+  --headerbar-backdrop-color: #0d1117;
+  --headerbar-shade-color: #003300;
+  
+  --card-bg-color: #0d1117;
+  --card-fg-color: #00ff00;
+  
+  --popover-bg-color: #0d1117;
+  --popover-fg-color: #00ff00;
+  
+  --dialog-bg-color: #0a0a0a;
+  --dialog-fg-color: #00ff00;
+  
+  --borders: rgba(0, 255, 0, 0.2);
+}
+
+/* Override for backdrop windows */
+window:backdrop {
+  --window-bg-color: #0d1117;
+  --headerbar-bg-color: #0d1117;
+}
+
+/* GTK3 compatibility - define colors for legacy apps */
+@define-color accent_bg_color #39ff14;
+@define-color accent_fg_color #0a0a0a;
+@define-color accent_color #00ff00;
+
+@define-color window_bg_color #0a0a0a;
+@define-color window_fg_color #00ff00;
+
+@define-color view_bg_color #0a0a0a;
+@define-color view_fg_color #00ff00;
+@define-color sidebar_bg_color #0d1117;
+@define-color sidebar_fg_color #00ff00;
+@define-color sidebar_backdrop_color #0d1117;
+@define-color sidebar_shade_color #003300;
+
+@define-color headerbar_bg_color #0d1117;
+@define-color headerbar_fg_color #00ff00;
+@define-color headerbar_backdrop_color #0d1117;
+@define-color headerbar_shade_color #003300;
+@define-color card_bg_color #0d1117;
+@define-color card_fg_color #00ff00;
+
+@define-color popover_bg_color #0d1117;
+@define-color popover_fg_color #00ff00;
+
+@define-color dialog_bg_color #0a0a0a;
+@define-color dialog_fg_color #00ff00;
+
+@define-color borders alpha(#00ff00, 0.2);
+
+/* GTK3 legacy */
+@define-color theme_fg_color #00ff00;
+@define-color theme_text_color #00ff00;
+@define-color theme_bg_color #0a0a0a;
+@define-color theme_base_color #0a0a0a;
+@define-color theme_selected_bg_color #39ff14;
+@define-color theme_selected_fg_color #0a0a0a;
+@define-color insensitive_bg_color #0a0a0a;
+@define-color insensitive_fg_color #003300;
+@define-color insensitive_base_color #0a0a0a;
+@define-color theme_unfocused_fg_color #00ff00;
+@define-color theme_unfocused_text_color #00ff00;
+@define-color theme_unfocused_bg_color #0a0a0a;
+@define-color theme_unfocused_base_color #0a0a0a;
+@define-color theme_unfocused_selected_bg_color #39ff14;
+@define-color theme_unfocused_selected_fg_color #0a0a0a;
+@define-color unfocused_insensitive_color #003300;
+@define-color unfocused_borders alpha(#00ff00, 0.2);
+@define-color warning_color #ffff00;
+@define-color error_color #ff0000;
+@define-color success_color #00ff00;
+@define-color destructive_color #ff0000;
+@define-color content_view_bg #0a0a0a;
+@define-color text_view_bg #0a0a0a;
+
+/* =============================================
+   NAUTILUS/GTK4 LIBADWAITA SPECIFIC STYLING
+   ============================================= */
+
+/* Main window styling for libadwaita apps */
+window {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+window:backdrop {
+  background: #0d1117;
+}
+
+/* Headerbar and top bar */
+headerbar,
+.titlebar {
+  background: #0d1117;
+  color: #00ff00;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+headerbar:backdrop,
+.titlebar:backdrop {
+  background: #0d1117;
+  color: rgba(0, 255, 0, 0.7);
+}
+
+/* Sidebar styling - Nautilus left panel */
+.sidebar,
+.sidebar-pane,
+.navigation-sidebar {
+  background: #0d1117;
+  color: #00ff00;
+  border-right: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+.sidebar:backdrop,
+.sidebar-pane:backdrop,
+.navigation-sidebar:backdrop {
+  background: #0d1117;
+}
+
+/* Sidebar rows/items */
+.sidebar row,
+.navigation-sidebar row {
+  color: #00ff00;
+  background: transparent;
+  border-radius: 6px;
+  margin: 2px 6px;
+}
+
+.sidebar row:hover,
+.navigation-sidebar row:hover {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+.sidebar row:selected,
+.sidebar row:selected:hover,
+.navigation-sidebar row:selected {
+  background: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
+  font-weight: 600;
+}
+
+.sidebar row:selected label,
+.navigation-sidebar row:selected label {
+  color: #00ff00;
+}
+
+/* Content/view areas */
+.content,
+.view,
+filechooser stack view,
+filechooser stack scrolledwindow {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+/* Icon views and grids */
+iconview,
+gridview,
+contentview {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+iconview:selected,
+gridview row:selected,
+contentview:selected {
+  background: rgba(0, 255, 0, 0.4);
+  color: #00ff00;
+}
+
+iconview:hover,
+gridview row:hover {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+/* Tree/List views */
+treeview {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+treeview:selected {
+  background: rgba(0, 255, 0, 0.4);
+  color: #00ff00;
+}
+
+treeview:hover {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+treeview header button {
+  background: #0d1117;
+  color: #00ff00;
+  border: none;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+treeview header button:hover {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+/* Buttons */
+button {
+  background: #0d1117;
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 6px;
+}
+
+button:hover {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+button:checked,
+button:active {
+  background: #39ff14;
+  color: #0a0a0a;
+}
+
+button:disabled {
+  background: rgba(13, 17, 23, 0.5);
+  color: rgba(0, 255, 0, 0.4);
+}
+
+/* Suggested/Primary action buttons */
+button.suggested-action {
+  background: #39ff14;
+  color: #0a0a0a;
+}
+
+button.suggested-action:hover {
+  background: #50ff35;
+}
+
+/* Destructive buttons */
+button.destructive-action {
+  background: #ff0000;
+  color: #00ff00;
+}
+
+/* Flat buttons (toolbars) */
+button.flat {
+  background: transparent;
+  border: none;
+}
+
+button.flat:hover {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+/* Linked buttons (path bar, etc) */
+.linked button {
+  border-radius: 0;
+}
+
+.linked button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.linked button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+/* Entry/text input */
+entry {
+  background: #0d1117;
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 6px;
+}
+
+entry:focus {
+  border-color: #39ff14;
+  box-shadow: 0 0 0 1px rgba(57, 255, 20, 0.3);
+}
+
+entry:disabled {
+  background: rgba(13, 17, 23, 0.5);
+  color: rgba(0, 255, 0, 0.4);
+}
+
+entry selection {
+  background: #39ff14;
+  color: #0a0a0a;
+}
+
+/* Popovers and menus */
+popover,
+popover.menu,
+menu {
+  background: #0d1117;
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+popover modelbutton,
+menuitem,
+.menuitem {
+  color: #00ff00;
+  border-radius: 4px;
+  margin: 2px 4px;
+}
+
+popover modelbutton:hover,
+menuitem:hover {
+  background: rgba(0, 255, 0, 0.3);
+}
+
+/* Cards and containers */
+.card {
+  background: #0d1117;
+  color: #00ff00;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+.card:backdrop {
+  background: #0d1117;
+}
+
+/* Dialogs */
+dialog,
+.dialog,
+messagedialog,
+window.dialog {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+dialog headerbar,
+.dialog headerbar {
+  background: #0d1117;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+/* Notebooks/Tabs */
+notebook {
+  background: #0a0a0a;
+  border: none;
+}
+
+notebook header {
+  background: #0d1117;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+notebook header tabs tab {
+  background: transparent;
+  color: rgba(0, 255, 0, 0.6);
+  border: none;
+  padding: 6px 12px;
+}
+
+notebook header tabs tab:hover {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
+notebook header tabs tab:checked {
+  background: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
+  box-shadow: inset 0 -2px 0 0 #39ff14;
+}
+
+/* Scrollbars */
+scrollbar {
+  background: transparent;
+}
+
+scrollbar slider {
+  background: rgba(0, 255, 0, 0.2);
+  border-radius: 6px;
+}
+
+scrollbar slider:hover {
+  background: rgba(0, 255, 0, 0.5);
+}
+
+scrollbar slider:active {
+  background: #39ff14;
+}
+
+/* Scrolled windows */
+scrolledwindow {
+  background: #0a0a0a;
+}
+
+scrolledwindow viewport {
+  background: #0a0a0a;
+}
+
+/* Toolbars */
+toolbar {
+  background: #0d1117;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+toolbar button {
+  background: transparent;
+  border: none;
+}
+
+/* Search bars */
+searchbar {
+  background: #0d1117;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+searchbar entry {
+  background: #0a0a0a;
+}
+
+/* Lists */
+list {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+list row {
+  background: transparent;
+  color: #00ff00;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.05);
+}
+
+list row:hover {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+list row:selected,
+list row:selected:hover {
+  background: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
+}
+
+/* Flowbox (icon views) */
+flowbox {
+  background: #0a0a0a;
+}
+
+flowbox child {
+  background: transparent;
+  border-radius: 6px;
+}
+
+flowbox child:hover {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+flowbox child:selected {
+  background: rgba(0, 255, 0, 0.4);
+}
+
+/* Status pages (empty states) */
+statuspage {
+  color: #00ff00;
+}
+
+statuspage .dim-label {
+  color: rgba(0, 255, 0, 0.5);
+}
+
+/* Adwaita specific widgets */
+.adw-sidebar {
+  background: #0d1117;
+}
+
+.adw-toolbar-view content {
+  background: #0a0a0a;
+}
+
+.adw-header-bar {
+  background: #0d1117;
+}
+
+/* Toast notifications */
+toast {
+  background: #0d1117;
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+}
+
+/* Nautilus-specific selectors */
+window.nautilus-window,
+window.nautilus-window:backdrop {
+  background: #0a0a0a;
+}
+
+window.nautilus-window headerbar {
+  background: #0d1117;
+}
+
+window.nautilus-window flap .sidebar-pane {
+  background: #0d1117;
+}
+
+window.nautilus-window flap .content-pane {
+  background: #0a0a0a;
+}
+
+/* Split views */
+splitview sidebar,
+overlay-split-view sidebar {
+  background: #0d1117;
+}
+
+/* Preferences window */
+window.preferences windowhandle headerbar {
+  background: #0d1117;
+}
+
+preferencespage {
+  background: #0a0a0a;
+  color: #00ff00;
+}
+
+preferencesgroup {
+  background: #0d1117;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+/* Combo boxes and dropdowns */
+combobox button {
+  background: #0d1117;
+}
+
+dropdown button {
+  background: #0d1117;
+}
+
+dropdown popup {
+  background: #0d1117;
+}
+
+/* Switches */
+switch {
+  background: #003300;
+  border-radius: 12px;
+}
+
+switch:checked {
+  background: #39ff14;
+}
+
+switch slider {
+  background: #00ff00;
+}
+
+/* Checkboxes and radio buttons */
+checkbutton check,
+radiobutton radio {
+  background: #0d1117;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+checkbutton check:checked,
+radiobutton radio:checked {
+  background: #39ff14;
+  border-color: #39ff14;
+}
+
+/* Spin buttons */
+spinbutton {
+  background: #0d1117;
+}
+
+spinbutton button {
+  background: transparent;
+}
+
+/* Progress bars */
+progressbar trough {
+  background: #0d1117;
+  border-radius: 4px;
+}
+
+progressbar progress {
+  background: #39ff14;
+  border-radius: 4px;
+}
+
+levelbar trough {
+  background: #0d1117;
+}
+
+levelbar block.filled {
+  background: #39ff14;
+}
+
+/* Scale/sliders */
+scale trough {
+  background: #0d1117;
+  border-radius: 4px;
+}
+
+scale highlight {
+  background: #39ff14;
+  border-radius: 4px;
+}
+
+scale slider {
+  background: #00ff00;
+  border: 2px solid #39ff14;
+}
+
+/* Info bars */
+infobar {
+  background: #0d1117;
+  border-radius: 6px;
+}
+
+infobar.info {
+  background: rgba(0, 255, 255, 0.2);
+}
+
+infobar.warning {
+  background: rgba(255, 255, 0, 0.2);
+}
+
+infobar.error {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+/* Expander rows */
+expanderrow {
+  background: transparent;
+}
+
+expanderrow:hover {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* Action rows */
+actionrow {
+  background: transparent;
+}
+
+actionrow:hover {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* Window controls (close, minimize, maximize) */
+windowcontrols button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+}
+
+windowcontrols button:hover image {
+  background: rgba(0, 255, 0, 0.2);
+  border-radius: 50%;
+}
+
+/* Link buttons */
+button.link,
+.link {
+  color: #00ffff;
+}
+
+button.link:hover,
+.link:hover {
+  color: #7fffd4;
+}
+
+/* Selection styling */
+selection {
+  background: #39ff14;
+  color: #0a0a0a;
+}
+
+/* Text selection in views */
+textview text selection,
+entry selection {
+  background: #39ff14;
+  color: #0a0a0a;
+}
+
+/* Focus styling */
+:focus {
+  outline-color: rgba(57, 255, 20, 0.5);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(57, 255, 20, 0.5);
+  outline-offset: -2px;
+}

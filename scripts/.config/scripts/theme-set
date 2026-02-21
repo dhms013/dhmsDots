@@ -43,7 +43,7 @@ awww img ~/.config/themes/current/background --transition-type 'random' --transi
 
 systemctl --user restart waybar
 
-xdg-terminal-exec waybar &
+# xdg-terminal-exec waybar &
 
 if pgrep -x kitty; then
   killall -SIGUSR1 kitty
