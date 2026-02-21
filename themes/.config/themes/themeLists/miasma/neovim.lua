@@ -1,12 +1,12 @@
 return {
   {
-    "ribru17/bamboo.nvim",
+    "xero/miasma.nvim",
     priority = 1000,
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "bamboo",
+      colorscheme = "miasma",
     },
   },
 }

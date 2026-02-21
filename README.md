@@ -22,10 +22,21 @@ If it breaks on your machine, you fix it.
 
 ---
 
-## What this repo is
+## Table of Contents :
+1. [About](#about)
+2. [Default Apps](#default-apps)
+3. [Dependencies](#dependencies)
+4. [Installed Packages](#installed-packages)
+5. [Dotfiles](#dotfiles)
+6. [Installation](#installation)
+6. [Special Thanks](#special-thanks)
+
+---
+
+## About
 
 - A **post-install** helper for Hyprland configs
-- Installs my base packages (pacman + AUR)
+- Installs my base packages from pacman & AUR
 - Stows my dotfiles safely
 - Restores my preferred defaults for Hyprland usage
 
@@ -33,11 +44,9 @@ This repo assumes:
 - **Arch Linux** already installed (or other your beloved distro based on arch)
 - **Hyprland** already installed (if you choose other Desktop environment, you still able to steal some dotfiles from here)
 
-Nothing more, nothing less.
-
 ---
 
-## Default apps used in keybinds
+## Default Apps
 
 My Hyprland config uses the following defaults:
 
@@ -54,16 +63,15 @@ You can change them anytime by editing the Hyprland config after stowing.
 
 ---
 
-## Mandatory dependency
+## Dependencies
 
-- **Depend on what you need from this repo**
-
-This repo does not install Hyprland basic setup for you.
-Install it first `by yourself` 🙃
+- Hyprland (basic setup) Installed
+- Bash (I never use zsh or fish)
+- Internet connection~
 
 ---
 
-## Packages installed
+## Installed Packages
 
 The [setup.sh](./setup.sh) installs packages that listed in [pkgList](./packages/pkgList)
 This includes (but is not limited to):
@@ -81,7 +89,7 @@ You can freely add or remove packages before or after run [setup.sh](./setup.sh)
 
 ---
 
-## Dotfiles managed here
+## Dotfiles
 
 This repo manages configs for:
 
@@ -113,7 +121,7 @@ Backup them before stow runs.
 
 ---
 
-## How to use
+## Installation
 
 ### 1. Install your distro + Hyprland
 
@@ -130,28 +138,29 @@ Install any distro/OS that you like (maybe you'll need to edit the setup.sh if y
 ### 2. Clone the repo
 
 ```bash
-sudo pacman -S git
+sudo pacman -S git base-devel
 git clone https://github.com/dhms013/dhmsDots.git
 cd dhmsDots
+sh setup.sh
 ```
 
 ---
 
-### 3. Run everything
+### 3. Or, run using 1 command
 
 ```bash
-sh setup.sh
+sudo pacman -S git ; git clone https://github.com/dhms013/dhmsDots.git ;  sh setup.sh
 ```
 
 This will:
 - Install all listed packages
 - Stow dotfiles
 
-Log out and log back in if needed.
+Reboot. Recommended to make sure all the services is running
 
----
+--- 
 
-## Thanks to :
+## Special Thanks
 1. [Omarchy](https://omarchy.org/)
 My first linux that provide so many inspiration for me to make this repo
 2. [Typecraft Dev](https://github.com/typecraft-dev)
