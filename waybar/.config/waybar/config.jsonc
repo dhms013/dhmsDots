@@ -10,9 +10,7 @@
   "modules-left": [
     "custom/space",
     "custom/start",
-    "temperature",
-    "cpu",
-    "memory",
+    "group/left",
     "custom/end",
     "custom/space"
   ],
@@ -27,11 +25,25 @@
   "modules-right": [
     "custom/space",
     "custom/start",
-    "network#speed",
-    "clock",
+    "group/right",
     "group/tray-expander",
     "battery",
     "custom/end",
     "custom/space"
-  ]
+  ],
+  "group/left": {
+    "orientation": "inherit",
+    "modules": [
+      "temperature",
+      "cpu",
+      "memory"
+    ]
+  },
+  "group/right": {
+    "orientation": "inherit",
+    "modules": [
+      "network#speed",
+      "clock"
+    ]
+  }
 }

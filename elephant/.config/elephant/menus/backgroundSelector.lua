@@ -6,9 +6,9 @@ SearchName = true
 
 function FormatName(filename)
 	-- Remove leading number and dash
-	-- local name = filename:gsub("^%d+", ""):gsub("^%-", "")
+	local name = filename:gsub("^%d+", ""):gsub("^%-", "")
 	-- Remove extension
-	local name = filename:gsub("%.[^%.]+$", "")
+	name = name:gsub("%.[^%.]+$", "")
 	-- Replace dashes with spaces
 	name = name:gsub("-", " ")
 	-- Capitalize each word

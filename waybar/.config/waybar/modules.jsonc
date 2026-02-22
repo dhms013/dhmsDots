@@ -19,7 +19,7 @@
     "format": "{icon}",
     "format-icons": {
       // "default": "零",
-      // "active": " ",
+      // "active": "",
       "1": "一",
       "2": "二",
       "3": "三",

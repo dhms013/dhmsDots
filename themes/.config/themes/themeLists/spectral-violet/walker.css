@@ -1,0 +1,97 @@
+@define-color selected-text #a970dc;
+@define-color text #dcdcdc;
+@define-color base #282828;
+@define-color border #a970dc;
+@define-color foreground #dcdcdc;
+@define-color background #282828;
+@define-color highlight #332242;
+@define-color shadow #000000;
+@define-color accent #a970dc;
+@define-color hover #332242;
+@define-color disabled #55386e;
+@define-color active #764e9a;
+@define-color focus #764e9a;
+@define-color error #dc2828;
+
+window .box-wrapper {
+  background: alpha(@base, 0.7);
+  padding: 8px 2px;
+  color: @text;
+  border: 1px solid @border;
+  margin: 0;
+  backdrop-filter: blur(10px);
+}
+
+window .search-container,
+window .search {
+  background: transparent;
+  color: @foreground;
+  border: 1px solid alpha(@border, 0.5);
+  padding: 8px 12px;
+  margin: 4px 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+window .input {
+  color: @accent;
+  padding: 0;
+  font-weight: 300;
+}
+
+child {
+  padding: 0 2px;
+  background: transparent;
+  border-radius: 0;
+  border-left: 2px solid transparent;
+  transition: all 160ms ease-in-out;
+}
+
+child:hover .item-box,
+child:selected .item-box {
+  background: linear-gradient(90deg, alpha(@accent, 0.2), transparent 100%);
+  border-left: 2px solid alpha(@accent, 1);
+  transform: translateX(4px);
+  transition:
+    background 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    border-left 150ms ease;
+}
+
+child:hover .item-text,
+child:selected .item-text {
+  text-shadow: 0 0 1px alpha(@accent, 0.1);
+}
+
+child,
+.item-box {
+  transition:
+    background 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    border-left 150ms ease,
+    transform 150ms ease;
+}
+
+window .list child {
+  animation: slideIn 180ms ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* window .normal-icons, */
+/* window .item-box, */
+/* window .large-icons { */
+/*   -gtk-icon-size: 0; */
+/*   min-width: 0; */
+/*   padding: 0; */
+/*   margin: 0; */
+/* } */
+
