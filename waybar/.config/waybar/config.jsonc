@@ -14,23 +14,21 @@
     "cpu",
     "memory",
     "custom/end",
-    "custom/space",
-    "hyprland/window"
+    "custom/space"
   ],
   "modules-center": [
     "custom/space",
     "custom/start",
     "hyprland/workspaces",
+    "custom/screenrecording-indicator",
     "custom/end",
-    "custom/space",
-    "custom/screenrecording-indicator"
+    "custom/space"
   ],
   "modules-right": [
     "custom/space",
     "custom/start",
     "network#speed",
     "clock",
-    "custom/notification",
     "group/tray-expander",
     "battery",
     "custom/end",

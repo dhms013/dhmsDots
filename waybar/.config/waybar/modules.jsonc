@@ -72,7 +72,7 @@
   "custom/notification": {
     "format": "",
     "on-click": "makoctl restore",
-    "on-click-right": "xdg-terminal-exec --app-id=dhms.terminal -e sh -c 'makoctl history && echo \"---\" && read -p \"close? (Y/n): \" choice && [ \"$choice\" = \"y\" ] && makoctl dismiss -a && makoctl reload' &",
+    "on-click-right": "floating-terminal show-notification",
     "tooltip": false,
     "restart-interval": 1
   },
@@ -82,17 +82,17 @@
     "format": " {temperatureC}°C",
     "format-critical": "🔥 {temperatureC}°C",
     "tooltip": true,
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
+    // "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
     "interval": 3
   },
   "cpu": {
     "format": "󰍛 {usage}%",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
+    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e s-tui",
     "interval": 3
   },
   "memory": {
     "format": "  {used}G/{total}G",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e s-tui",
+    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
     "interval": 3
   },
   "clock": {
