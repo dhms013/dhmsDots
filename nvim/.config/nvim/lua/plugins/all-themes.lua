@@ -68,4 +68,10 @@ return {
     lazy = true,
     priority = 1000,
   },
+  {
+    "bjarneo/aether.nvim",
+    name = "aether",
+    lazy = true,
+    priority = 1000,
+  },
 }

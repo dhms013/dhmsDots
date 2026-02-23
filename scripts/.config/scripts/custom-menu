@@ -139,7 +139,7 @@ go_to_menu() {
   *fido2*) present_terminal setup-fido2 ;;
   *fingerprint*) present_terminal setup-fingerprint ;;
   *install*) show_install_menu ;;
-  *lock*) hyprlock ;;
+  *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *logout*) hyprctl dispatch exit ;;
   *pacman*) present_terminal pkg-install ;;
   *power*) show_setup_power_menu ;;
