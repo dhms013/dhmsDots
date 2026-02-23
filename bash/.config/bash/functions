@@ -102,7 +102,7 @@ gcpa() {
     exit 1
   fi
   echo "Adding all files, committing with message: \"$1\", and pushing..."
-  gadd . && gcm "$COMMIT_MSSG" && gp && mainasrock
+  gadd . && gcm "$COMMIT_MSSG" && gp && gco main && gm origin/asrock && gp && gco asrock
 }
 
 # SSH Port Forwarding Functions
