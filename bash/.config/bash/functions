@@ -105,7 +105,9 @@ gcpa() {
   gadd . && gcm "$COMMIT_MSSG" && gp
   gco main && gm origin/asrock
   sleep 1
-  gp
+  git status
+  gp origin main
+  sleep 1
   gco asrock
 }
 
