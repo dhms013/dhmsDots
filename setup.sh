@@ -1,4 +1,28 @@
 #!/bin/bash
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Remote bootstrap: if piped via curl, clone the repo and re-run from disk
+# ─────────────────────────────────────────────────────────────────────────────
+REPO_URL="https://github.com/dhms013/dhmsDots"
+CLONE_DIR="$HOME/.dhmsDots"
+
+if [[ -z "${BASH_SOURCE[0]}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURCE[0]}" == "/dev/stdin" ]]; then
+  echo "==> Detected remote execution via curl"
+  echo "==> Cloning dhmsDots to $CLONE_DIR..."
+
+  if [ -d "$CLONE_DIR" ]; then
+    echo "==> Repo already exists, pulling latest..."
+    git -C "$CLONE_DIR" pull
+  else
+    git clone --depth=1 "$REPO_URL" "$CLONE_DIR"
+  fi
+
+  echo "==> Re-executing install.sh from disk..."
+  exec bash "$CLONE_DIR/setup-new.sh"
+fi
+
+# curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/setup.sh | bash
+#
 set -euo pipefail
 
 print_logo() {
