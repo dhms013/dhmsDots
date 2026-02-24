@@ -4,7 +4,7 @@
 # Clones/updates the repo, then runs each modular script in order.
 #
 # Usage (remote bootstrap):
-#   curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
@@ -69,6 +69,13 @@ reboot_countdown() {
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
+
+# Pre-flight: ensure git is available before cloning
+if ! command -v git >/dev/null; then
+  echo "==> git not found, installing..."
+  sudo pacman -S --needed --noconfirm git
+fi
+
 bootstrap_repo
 cd "$DOTFILES_DIR"
 
