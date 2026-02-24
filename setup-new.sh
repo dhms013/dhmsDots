@@ -1,6 +1,31 @@
 #!/bin/bash
 
-# Fallback function - automatically runs setup-old.sh on any error
+# ─────────────────────────────────────────────────────────────────────────────
+# Remote bootstrap: if piped via curl, clone the repo and re-run from disk
+# ─────────────────────────────────────────────────────────────────────────────
+REPO_URL="https://github.com/dhms013/dhmsDots"
+CLONE_DIR="$HOME/.dhmsDots"
+
+if [[ -z "${BASH_SOURCE[0]}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURCE[0]}" == "/dev/stdin" ]]; then
+  echo "==> Detected remote execution via curl"
+  echo "==> Cloning dhmsDots to $CLONE_DIR..."
+
+  if [ -d "$CLONE_DIR" ]; then
+    echo "==> Repo already exists, pulling latest..."
+    git -C "$CLONE_DIR" pull
+  else
+    git clone --depth=1 "$REPO_URL" "$CLONE_DIR"
+  fi
+
+  echo "==> Re-executing install.sh from disk..."
+  exec bash "$CLONE_DIR/install.sh"
+fi
+
+# curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Fallback function - automatically runs setup.sh on any error
+# ─────────────────────────────────────────────────────────────────────────────
 run_fallback() {
   echo ""
   echo "╔════════════════════════════════════════════╗"
@@ -10,10 +35,7 @@ run_fallback() {
   echo ""
   sleep 3
 
-  # Kill the sudo keep-alive loop if it's running
   jobs -p | xargs -r kill 2>/dev/null
-
-  # Run the old setup script (exec replaces current process)
   exec bash "$(dirname "${BASH_SOURCE[0]}")/setup.sh"
 }
 
