@@ -86,7 +86,7 @@ tooltip label {
 #workspaces button.active {
     color: @accent;
     background-color: @background;
-    border-radius: 13px;
+    border-radius: 0 0 7.5px 7.5px;
     border-top: 1px;
     border-bottom: 1px;
     min-width: 20px;

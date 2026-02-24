@@ -3,13 +3,12 @@
 echo "==> Stowing dotfiles"
 
 PACKAGES=(bash btop elephant fastfetch ghostty hypr hyprland-preview-share-picker kitty mako nvim scripts starship swayosd themes tmux walker waybar)
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_STOW="$HOME"
 
 echo "Checking for existing files before stowing..."
 
 for pkg in "${PACKAGES[@]}"; do
-  pkg_path="$DOTFILES_DIR/$pkg"
+  pkg_path="$BASE_DIR/$pkg"
   [[ -d "$pkg_path" ]] || continue
 
   while IFS= read -r -d '' item; do

@@ -18,7 +18,7 @@ if [[ -z "${BASH_SOURCE[0]}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURCE[
   fi
 
   echo "==> Re-executing install.sh from disk..."
-  exec bash "$CLONE_DIR/install.sh"
+  exec bash "$CLONE_DIR/setup-new.sh"
 fi
 
 # curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
