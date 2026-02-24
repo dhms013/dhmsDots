@@ -17,7 +17,7 @@ apply_gtk_theme() {
 set_initial_theme() {
   echo "==> Setting initial theme: ${INITIAL_THEME}"
   ln -snf ~/.config/themes/themeLists/${INITIAL_THEME} ~/.config/themes/current/theme
-  ln -snf ~/.config/themes/current/theme/backgrounds/1.png ~/.config/themes/current/background
+  ln -snf ~/.config/themes/current/theme/backgrounds/green-street.png ~/.config/themes/current/background
 }
 
 set_wallpaper() {
