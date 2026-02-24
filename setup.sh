@@ -3,23 +3,24 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Remote bootstrap: if piped via curl, clone the repo and re-run from disk
 # ─────────────────────────────────────────────────────────────────────────────
-REPO_URL="https://github.com/dhms013/dhmsDots"
-CLONE_DIR="$HOME/.dhmsDots"
+REPO="dhms013/dhmsDots"
+BRANCH="main"
+DOTFILES_DIR="$HOME/.dhmsDots"
 
-if [[ -z "${BASH_SOURCE[0]}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURCE[0]}" == "/dev/stdin" ]]; then
-  echo "==> Detected remote execution via curl"
-  echo "==> Cloning dhmsDots to $CLONE_DIR..."
+echo "Installing dhmsDots..."
 
-  if [ -d "$CLONE_DIR" ]; then
-    echo "==> Repo already exists, pulling latest..."
-    git -C "$CLONE_DIR" pull
-  else
-    git clone --depth=1 "$REPO_URL" "$CLONE_DIR"
-  fi
-
-  echo "==> Re-executing install.sh from disk..."
-  exec bash "$CLONE_DIR/setup-new.sh"
+# Clone the repo
+if [ -d "$DOTFILES_DIR" ]; then
+  echo "Updating existing dotfiles..."
+  git -C "$DOTFILES_DIR" pull
+else
+  git clone --depth=1 "https://github.com/$REPO.git" "$DOTFILES_DIR"
 fi
+
+# Run your setup from inside the repo
+cd "$DOTFILES_DIR"
+# e.g. bash setup.sh, or stow, or symlink manually
+echo "Done!"
 
 # curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/setup.sh | bash
 #
