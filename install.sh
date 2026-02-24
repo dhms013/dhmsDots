@@ -70,6 +70,8 @@ reboot_countdown() {
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+sudo_keepalive
+
 # Pre-flight: ensure git is available before cloning
 if ! command -v git >/dev/null; then
   echo "==> git not found, installing..."
@@ -81,7 +83,6 @@ cd "$DOTFILES_DIR"
 
 run_module logo.sh
 
-sudo_keepalive
 sudo usermod -aG input "${USER}"
 
 run_module install.sh
