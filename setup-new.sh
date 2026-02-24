@@ -21,26 +21,26 @@ if [[ -z "${BASH_SOURCE[0]}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURCE[
   exec bash "$CLONE_DIR/setup-new.sh"
 fi
 
-# curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/setup-new.sh | bash
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Fallback function - automatically runs setup.sh on any error
-# ─────────────────────────────────────────────────────────────────────────────
-run_fallback() {
-  echo ""
-  echo "╔════════════════════════════════════════════╗"
-  echo "║  ⚠️  Modular setup encountered an error!   ║"
-  echo "║  Automatically falling back to old setup   ║"
-  echo "╚════════════════════════════════════════════╝"
-  echo ""
-  sleep 3
-
-  jobs -p | xargs -r kill 2>/dev/null
-  exec bash "$(dirname "${BASH_SOURCE[0]}")/setup.sh"
-}
-
-# Set up error trap BEFORE set -e
-trap 'run_fallback' ERR
+# # ─────────────────────────────────────────────────────────────────────────────
+# # Fallback function - automatically runs setup.sh on any error
+# # ─────────────────────────────────────────────────────────────────────────────
+# run_fallback() {
+#   echo ""
+#   echo "╔════════════════════════════════════════════╗"
+#   echo "║  ⚠️  Modular setup encountered an error!   ║"
+#   echo "║  Automatically falling back to old setup   ║"
+#   echo "╚════════════════════════════════════════════╝"
+#   echo ""
+#   sleep 3
+#
+#   jobs -p | xargs -r kill 2>/dev/null
+#   exec bash "$(dirname "${BASH_SOURCE[0]}")/setup.sh"
+# }
+#
+# # Set up error trap BEFORE set -e
+# trap 'run_fallback' ERR
 
 set -euo pipefail
 

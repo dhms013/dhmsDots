@@ -8,7 +8,7 @@ TARGET_STOW="$HOME"
 echo "Checking for existing files before stowing..."
 
 for pkg in "${PACKAGES[@]}"; do
-  pkg_path="$BASE_DIR/$pkg"
+  pkg_path="$DOTFILES_DIR/$pkg"
   [[ -d "$pkg_path" ]] || continue
 
   while IFS= read -r -d '' item; do
