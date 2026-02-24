@@ -123,6 +123,7 @@ Backup them before stow runs.
 
 ## Installation
 
+## Method 1
 ### 1. Install your distro + Hyprland
 
 1. Option 1
@@ -150,6 +151,12 @@ sh setup.sh
 
 ```bash
 sudo pacman -S git ; git clone https://github.com/dhms013/dhmsDots.git ;  sh setup.sh
+```
+
+## Method 2
+
+```
+curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
 ```
 
 This will:

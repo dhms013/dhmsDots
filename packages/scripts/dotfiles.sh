@@ -47,6 +47,7 @@ copy_extra_configs() {
   cp -R "$DOTFILES_DIR/applications/" ~/.local/share/
   cp -R "$DOTFILES_DIR/config/"* ~/.config/
   chmod -R 775 ~/.config/scripts/
+  mkdir -p ~/.config/themes/current/
 }
 
 stow_dotfiles
