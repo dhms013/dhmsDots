@@ -171,11 +171,16 @@ echo "║  Hyprland with your new configuration.     ║"
 echo "╚════════════════════════════════════════════╝"
 echo ""
 
-echo -n "Rebooting in: "
-for i in 5 4 3 2 1; do
-  echo -n "$i..."
-  sleep 1
-done
+gum spin --spinner "globe" --title "Rebooting in" --show-output -- \
+  bash -c '
+        for i in 5 4 3 2 1; do
+            echo -n "$i... "
+            sleep 1
+        done
+        echo "0"
+    '
+
 echo ""
+echo "Rebooting now..."
 
 systemctl reboot
