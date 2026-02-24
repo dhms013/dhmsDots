@@ -1,0 +1,70 @@
+# Main background
+theme[main_bg]="#2B2A27"
+
+# Main text color
+theme[main_fg]="#E6DCC6"
+
+# Title color for boxes
+theme[title]="#D9A441"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#7C9A4D"
+
+# Background color of selected item
+theme[selected_bg]="#3A3833"
+
+# Foreground of selected item
+theme[selected_fg]="#FFF6E6"
+
+# Inactive/disabled text
+theme[inactive_fg]="#6B675E"
+
+# Misc process text & small graphs
+theme[proc_misc]="#B07A8C"
+
+# Box outlines
+theme[cpu_box]="#7C9A4D"
+theme[mem_box]="#D9A441"
+theme[net_box]="#5E8C83"
+theme[proc_box]="#4A5D6B"
+theme[div_line]="#4A463F"
+
+# Temperature gradient
+theme[temp_start]="#7DB5AA"
+theme[temp_mid]="#D9A441"
+theme[temp_end]="#C65A3A"
+
+# CPU gradient
+theme[cpu_start]="#5E8C83"
+theme[cpu_mid]="#7C9A4D"
+theme[cpu_end]="#D9A441"
+
+# Memory free
+theme[free_start]="#4A5D6B"
+theme[free_mid]="#6F8796"
+theme[free_end]="#7DB5AA"
+
+# Cached
+theme[cached_start]="#D9A441"
+theme[cached_mid]="#F3C35C"
+theme[cached_end]="#F3C35C"
+
+# Available
+theme[available_start]="#7C9A4D"
+theme[available_mid]="#9DCB5C"
+theme[available_end]="#9DCB5C"
+
+# Used memory
+theme[used_start]="#C65A3A"
+theme[used_mid]="#E37B52"
+theme[used_end]="#E37B52"
+
+# Download
+theme[download_start]="#D9A441"
+theme[download_mid]="#7C9A4D"
+theme[download_end]="#5E8C83"
+
+# Upload
+theme[upload_start]="#5E8C83"
+theme[upload_mid]="#7C9A4D"
+theme[upload_end]="#D9A441"
