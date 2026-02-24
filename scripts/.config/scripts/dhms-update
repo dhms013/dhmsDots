@@ -6,6 +6,14 @@ set -e
 
 show-logo
 
+echo "==> This script requires sudo. Please enter your password:"
+sudo -v
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
+
 sudo -v
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots"
 yay -Syyu --noconfirm --cleanafter

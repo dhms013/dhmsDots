@@ -78,6 +78,7 @@ sudo_keepalive
 sudo usermod -aG input "${USER}"
 
 run_module install.sh
+run_module uninstall.sh
 run_module dotfiles.sh
 run_module dirs.sh
 run_module sddm.sh

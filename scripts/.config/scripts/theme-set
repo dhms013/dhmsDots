@@ -41,9 +41,9 @@ echo "$THEME_NAME" >"$HOME/.config/themes/current/theme.name"
 ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
 awww img ~/.config/themes/current/background --transition-type 'random' --transition-fps 60 --transition-duration 1
 
-systemctl --user restart waybar
+theme-gnome
 
-# xdg-terminal-exec waybar &
+systemctl --user restart waybar
 
 if pgrep -x kitty; then
   killall -SIGUSR1 kitty
