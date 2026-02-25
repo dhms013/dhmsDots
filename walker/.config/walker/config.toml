@@ -24,24 +24,12 @@ default = [
 ]
 
 [[providers.prefixes]]
-prefix = "/"
-provider = "providerlist"
-
-[[providers.prefixes]]
-prefix = "."
-provider = "files"
-
-[[providers.prefixes]]
 prefix = ":"
 provider = "symbols"
 
 [[providers.prefixes]]
 prefix = "="
 provider = "calc"
-
-[[providers.prefixes]]
-prefix = "@"
-provider = "websearch"
 
 [[providers.prefixes]]
 prefix = "$"

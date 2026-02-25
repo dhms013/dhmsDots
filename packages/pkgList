@@ -12,6 +12,12 @@ btop
 cava
 cmatrix
 discord
+elephant
+elephant-calc
+elephant-clipboard
+elephant-desktopapplications
+elephant-menus
+elephant-symbols
 eza
 expac
 fastfetch
@@ -62,7 +68,7 @@ trash-cli
 telegram-desktop
 tldr
 ttf-jetbrains-mono-nerd
-walker-bin
+walker-git
 waybar
 wiremix
 xdg-desktop-portal-gtk

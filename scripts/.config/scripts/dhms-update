@@ -25,4 +25,4 @@ git -C $HOME/.dhmsDots pull --autostash
 git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/dhmsDots reset --merge
 
 frmwr-updt
-migration-run
+migrate-run
