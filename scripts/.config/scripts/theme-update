@@ -1,0 +1,23 @@
+#!/bin/bash
+
+for dir in ~/.config/themes/themeLists/*/; do
+  [[ -d $dir ]] && [[ ! -L ${dir%/} ]] || continue
+  THEME_NAME=$(basename "$dir")
+
+  if [[ -d $dir/.git ]]; then
+    echo "Updating: $THEME_NAME"
+    git -C "$dir" pull
+
+  elif [[ -d $dir/.git_disabled ]]; then
+    CHOICE=$(gum choose --header="$THEME_NAME has git disabled. Do you want to re-enable and update?" "Re-enable and update" "Keep disabled")
+
+    if [[ "$CHOICE" = "Re-enable and update" ]]; then
+      mv "$dir/.git_disabled" "$dir/.git"
+      echo "Updating: $THEME_NAME"
+      git -C "$dir" pull
+
+    else
+      echo "Skipping: $THEME_NAME"
+    fi
+  fi
+done

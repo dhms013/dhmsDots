@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/HANCORE-linux/omarchy-lasthorizon-theme
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "v2.0.0"]
+	remote = origin
+	merge = refs/heads/v2.0.0
