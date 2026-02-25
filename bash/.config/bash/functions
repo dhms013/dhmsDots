@@ -110,6 +110,20 @@ gcpa() {
   gadd . && gcm "$COMMIT_MSSG" && gp && gco main && gm origin/asrock && gp && gco asrock
 }
 
+gcpt() {
+  if [ -z "$1" ]; then
+    COMMIT_MSSG=$(gum input --placeholder="Enter commit message" --header="")
+  else
+    COMMIT_MSSG="$1"
+  fi
+  if [ -z "$COMMIT_MSSG" ]; then
+    echo "Error: No commit message provided."
+    return 1
+  fi
+  echo "Run chainned git actions..."
+  gadd . && gcm "$COMMIT_MSSG" && gp && gco main && gm origin/thinkpad && gp && gco thinkpad
+}
+
 # SSH Port Forwarding Functions
 fip() {
   [[ $# -lt 2 ]] && echo "Usage: fip <host> <port1> [port2] ..." && return 1
