@@ -76,7 +76,7 @@ You can change them anytime by editing the Hyprland config after stowing.
 
 ## Installed Packages
 
-The [setup.sh](./setup.sh) installs packages that listed in [pkgList](./packages/pkgList)
+The [install.sh](./install.sh) installs packages that listed in [pkgList](./packages/pkgList)
 This includes (but is not limited to):
 
 - yay (edit for [paru](https://github.com/Morganamilo/paru) if you prefer that)
@@ -87,8 +87,6 @@ This includes (but is not limited to):
 - walker and elephant providers
 - nerd fonts
 - media tools, utilities, and Hyprland extras
-
-You can freely add or remove packages before or after run [setup.sh](./setup.sh)
 
 ---
 
@@ -136,29 +134,12 @@ Use archinstall
 Install manually by following [arch wiki](https://wiki.archlinux.org/title/Installation_guide) or some youtuber
 
 3. Option 3
-Install any distro/OS that you like (maybe you'll need to edit the setup.sh if you did)
+Install any distro/OS that you like (maybe you'll need to edit the install.sh if you did)
 ---
 
 ### 2. Clone the repo
 
 ```bash
-sudo pacman -S git base-devel
-git clone https://github.com/dhms013/dhmsDots.git
-cd dhmsDots
-sh setup.sh
-```
-
----
-
-### 3. Or, run using 1 command
-
-```bash
-sudo pacman -S git ; git clone https://github.com/dhms013/dhmsDots.git ;  sh setup.sh
-```
-
-## Method 2
-
-```
 curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
 ```
 
@@ -174,4 +155,4 @@ Reboot. Recommended to make sure all the services is running
 1. [Omarchy](https://omarchy.org/)
 My first linux that provide so many inspiration for me to make this repo
 2. [Typecraft Dev](https://github.com/typecraft-dev)
-Because the [setup.sh](./setup.sh) is copy-paste with some adjustment from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)
+Because the [install.sh](./install.sh) is copy-paste with some adjustment from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)
