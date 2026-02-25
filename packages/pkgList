@@ -21,6 +21,7 @@ elephant-symbols
 eza
 expac
 fastfetch
+fd
 fzf
 ghostty
 gnome-disk-utility
@@ -34,7 +35,7 @@ imagemagick
 impala
 imv
 jq
-kitty
+luarocks
 mako
 man-db
 mpv
@@ -67,6 +68,7 @@ tmux
 trash-cli
 telegram-desktop
 tldr
+tree-sitter-cli
 ttf-jetbrains-mono-nerd
 walker-git
 waybar
