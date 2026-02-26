@@ -13,12 +13,12 @@ If it breaks on your machine, you fix it.
 
 ## Notes
 
-- This repo is my personal backup
-- No guarantees
-- No support
+- This repo is my personal backup, and it's a keyboard driven hyprland setup.
+- No guarantees, no support
 - Of course you can use this with other distro with Hyprland. But you'll need to edit the setup.sh by yourself, or simply just copy-paste (or stow) the dotfiles 🤣
 - $mainMod usually using windows key, but I swap it with `ALT` button. please read the note inside [keybindings.conf](./hypr/.config/hypr/keybindings.conf) for other swapped button, or simply edit the [input.conf](./hypr/.config/hypr/input.conf)
 - If something breaks, you fix it yourself.
+- Contain a few themes from [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes), and you can easily install or update theme from there using [theme-install](./scripts/.config/scripts/theme-install) and [theme-update](./scripts/.config/scripts/theme-update)
 
 > [!IMPORTANT KEYBINDS]
 - $mainMod SHIFT + slash = Keybinds info

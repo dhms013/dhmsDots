@@ -10,46 +10,46 @@
 
 #battery.charging, 
 #battery.plugged {
-    color: @accent;
+  color: @accent;
 }
 
 #battery.warning:not(.charging) {
-    color: @warning;
+  color: @warning;
 }
 
 #battery.critical:not(.charging) {
-    background-color: @critical;
-    color: @background;
-    border-radius: 8px;
+  background-color: @critical;
+  color: @background;
+  border-radius: 8px;
 }
 
 #pulseaudio.muted {
-    color: @critical;
+  color: @critical;
 }
 
 #network.disconnected {
-    color: @critical;
+  color: @critical;
 }
 
 tooltip {
-    background-color: @background;
-    border: 2px solid @foreground;
-    border-radius: 8px;
+  background-color: @background;
+  border: 2px solid @foreground;
+  border-radius: 8px;
 }
 
 tooltip label {
     color: @foreground;
 }
 * {
-    background-color: transparent;
-    color: @foreground;
-    border: none;
-    border-radius: 0;
-    min-height: 0;
-    padding: 0;
-    font-family: 'Symbols Nerd Font';
-    font-size: 10px;
-    font-weight: 500;
+  background-color: transparent;
+  color: @foreground;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  padding: 0;
+  font-family: 'Symbols Nerd Font';
+  font-size: 10px;
+  font-weight: 500;
 }
 
 .modules-left {
@@ -74,30 +74,34 @@ tooltip label {
 }
 
 #workspaces button {
-    all: initial;
-    padding: 0;
-    margin: 0;
+  all: initial;
+  padding: 0;
+  margin: 0;
+  border: 0px solid alpha(@foreground, 0.8);
+  border-bottom-width: 1px;
 }
 
 #workspaces button.empty {
-    opacity: 0.3;
+  opacity: 0.3;
+  border: 0px solid alpha(@foreground, 0.8);
+  border-bottom-width: 1px;
 }
 
 #workspaces button.active {
-    color: @accent;
-    background-color: @background;
-    border-radius: 0 0 7.5px 7.5px;
-    border-top: 1px;
-    border-bottom: 1px;
-    min-width: 20px;
-    background-size: 200% 200%;
-    transition: all 0.3s ease-in-out;
-    border: 1px solid alpha(@foreground, 0.8);
+  color: @accent;
+  background-color: @background;
+  border-radius: 0 0 7.5px 7.5px;
+  border-top: 1px;
+  border-bottom: 1px;
+  min-width: 20px;
+  transition: all 0.3s ease-in-out;
+  border: 0px solid alpha(@foreground, 0.8);
+  border-bottom-width: 2px;
 }
 
 window#waybar.empty #window {
-    background: transparent;
-    opacity: 0; 
+  background: transparent;
+  opacity: 0;
 }
 
 #custom-space,
@@ -140,15 +144,15 @@ window#waybar.empty #window {
 }
 
 .hidden {
-    opacity: 0;
+  opacity: 0;
 }
 
 #custom-screenrecording-indicator {
-    min-width: 12px;
-    margin-left: 8.75px;
-    font-size: 10px;
+  min-width: 12px;
+  margin-left: 8.75px;
+  font-size: 10px;
 }
 
 #custom-screenrecording-indicator.active {
-    color: #a55555;
+  color: #a55555;
 }
