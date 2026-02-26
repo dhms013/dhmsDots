@@ -26,8 +26,6 @@
     "custom/space",
     "custom/start",
     "group/right",
-    "group/tray-expander",
-    "battery",
     "custom/end",
     "custom/space"
   ],
@@ -43,7 +41,9 @@
     "orientation": "inherit",
     "modules": [
       "network#speed",
-      "clock"
+      "clock",
+      "battery",
+      "group/tray-expander"
     ]
   }
 }

@@ -57,6 +57,7 @@ tooltip label {
   color: @foreground;
   border: 1px solid alpha(@foreground, 0.8);
   border-radius: 0 0 13px 0;
+  box-shadow: inset 0 0 3px @foreground;
 }
 
 .modules-center {
@@ -64,6 +65,7 @@ tooltip label {
   color: @foreground;
   border: 1px solid alpha(@foreground, 0.8);
   border-radius: 0 0 13px 13px;
+  box-shadow: inset 0 0 3px @foreground;
 }
 
 .modules-right {
@@ -71,6 +73,7 @@ tooltip label {
   color: @foreground;
   border: 1px solid alpha(@foreground, 0.8);
   border-radius: 0 0 0 13px ;
+  box-shadow: inset 0 0 3px @foreground;
 }
 
 #workspaces button {
@@ -78,6 +81,7 @@ tooltip label {
   padding: 0;
   margin: 0;
   border: 0px solid alpha(@foreground, 0.8);
+  border-radius: 0 0 7.5px 7.5px;
 }
 
 #workspaces button.empty {
@@ -88,13 +92,11 @@ tooltip label {
 #workspaces button.active {
   color: @accent;
   background-color: @background;
-  border-radius: 0 0 7.5px 7.5px;
-  border-top: 1px;
-  border-bottom: 1px;
   min-width: 20px;
   transition: all 0.3s ease-in-out;
   border: 0px solid alpha(@foreground, 0.8);
   border-bottom-width: 2px;
+  box-shadow: inset 0 0 2px @foreground;
 }
 
 window#waybar.empty #window {
