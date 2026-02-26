@@ -78,13 +78,11 @@ tooltip label {
   padding: 0;
   margin: 0;
   border: 0px solid alpha(@foreground, 0.8);
-  border-bottom-width: 1px;
 }
 
 #workspaces button.empty {
   opacity: 0.3;
   border: 0px solid alpha(@foreground, 0.8);
-  border-bottom-width: 1px;
 }
 
 #workspaces button.active {
