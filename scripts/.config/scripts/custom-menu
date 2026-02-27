@@ -119,7 +119,7 @@ show_setup_security_menu() {
 show_system_menu() {
   case $(menu "System" "󰒲    Suspend\n    Lock\n󰍃    Logout\n󰜉    Reboot\n󰐥    Shutdown") in
   *Suspend*) systemctl suspend ;;
-  *Lock*) hyprlock ;;
+  *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) hyprctl dispatch exit ;;
   *Reboot*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;

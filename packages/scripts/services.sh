@@ -6,7 +6,6 @@
 enable_services() {
   echo "==> Enabling services"
   sh ~/.config/scripts/services
-  systemctl --user enable --now hypridle.service
   sudo updatedb
 }
 
