@@ -1,5 +1,7 @@
 #!/bin/bash
 
-cmd="$*"
-exec yay -Rns --noconfirm $cmd
-sudo updatedb
+for pkg in "$@"; do
+  if pacman -Q "$pkg" &>/dev/null; then
+    sudo pacman -Rns --noconfirm "$pkg"
+  fi
+done

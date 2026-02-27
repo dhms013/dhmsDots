@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo -v
+sudo-keep
 echo "Updating..."
 yay -Syyu --noconfirm --cleanafter
 

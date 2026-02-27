@@ -2,8 +2,9 @@
 
 # Returns true if any of the commands passed in as arguments are missing on the system.
 
-for cmd in "$@"; do
-  if ! command -v "$cmd" &>/dev/null; then
+for pkg in "$@"; do
+  if ! pacman -Q "$pkg" &>/dev/null; then
+    echo "$pkg is missing..."
     exit 0
   fi
 done

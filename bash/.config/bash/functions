@@ -10,6 +10,7 @@ iso2sd() {
     echo -e "\nAvailable SD cards:"
     lsblk -d -o NAME | grep -E '^sd[a-z]' | awk '{print "/dev/"$1}'
   else
+    sudo-keep
     sudo dd bs=4M status=progress oflag=sync if="$1" of="$2"
     sudo eject $2
   fi

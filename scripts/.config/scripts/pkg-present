@@ -2,8 +2,9 @@
 
 # Returns true if all the commands passed in as arguments exit on the system.
 
-for cmd in "$@"; do
-  command -v "$cmd" &>/dev/null || exit 1
+for pkg in "$@"; do
+  pacman -Q "$pkg" &>/dev/null || exit 1
+  echo "$pkg is present..."
 done
 
 exit 0
