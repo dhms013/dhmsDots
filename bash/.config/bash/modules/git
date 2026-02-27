@@ -1,0 +1,41 @@
+gcp() {
+  if [ -z "$1" ]; then
+    COMMIT_MSSG=$(gum input --placeholder="Enter commit message" --header="")
+  else
+    COMMIT_MSSG="$1"
+  fi
+  if [ -z "$COMMIT_MSSG" ]; then
+    echo "Error: No commit message provided."
+    return 1
+  fi
+  echo "Adding all files, committing with message: \"$1\", and pushing..."
+  gadd . && gcm "$COMMIT_MSSG" && gp
+}
+
+gcpa() {
+  if [ -z "$1" ]; then
+    COMMIT_MSSG=$(gum input --placeholder="Enter commit message" --header="")
+  else
+    COMMIT_MSSG="$1"
+  fi
+  if [ -z "$COMMIT_MSSG" ]; then
+    echo "Error: No commit message provided."
+    return 1
+  fi
+  echo "Run chainned git actions..."
+  gadd . && gcm "$COMMIT_MSSG" && gp && gco main && gm origin/asrock && gp && gco asrock
+}
+
+gcpt() {
+  if [ -z "$1" ]; then
+    COMMIT_MSSG=$(gum input --placeholder="Enter commit message" --header="")
+  else
+    COMMIT_MSSG="$1"
+  fi
+  if [ -z "$COMMIT_MSSG" ]; then
+    echo "Error: No commit message provided."
+    return 1
+  fi
+  echo "Run chainned git actions..."
+  gadd . && gcm "$COMMIT_MSSG" && gp && gco main && gm origin/thinkpad && gp && gco thinkpad
+}
