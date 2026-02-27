@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CURRENT=$(hyprctl getoption general:layout | awk '/str:/ {print $2}')
+
+if [ "$CURRENT" = "scrolling" ]; then
+    hyprctl keyword general:layout dwindle
+    notify-send "Hyprland" "Layout: dwindle" --icon=preferences-system-windows 2>/dev/null || true
+else
+    hyprctl keyword general:layout scrolling
+    notify-send "Hyprland" "Layout: scrolling" --icon=preferences-system-windows 2>/dev/null || true
+fi

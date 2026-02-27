@@ -34,7 +34,8 @@
     "modules": [
       "temperature",
       "cpu",
-      "memory"
+      "memory",
+      "custom/idle-indicator"
     ]
   },
   "group/right": {

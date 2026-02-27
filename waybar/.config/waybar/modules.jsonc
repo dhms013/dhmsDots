@@ -216,6 +216,12 @@
       ]
     }
   },
+  "custom/idle-indicator": {
+    "on-click": "toggle-idle",
+    "exec": "$HOME/.config/scripts/toggle-idle-indicator",
+    "signal": 9,
+    "return-type": "json"
+  },
   "custom/ddc_brightness": {
     "format": "{icon}",
     "format-icons": [
