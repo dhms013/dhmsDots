@@ -8,5 +8,6 @@ setup_pacman() {
 }
 
 setup_pacman
+sudo pacman -Syyu
 keyrings
 yay -Syyu --noconfirm --cleanafter
