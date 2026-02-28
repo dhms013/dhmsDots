@@ -1,71 +1,11 @@
-##!/bin/bash
-#
-#CURRENT=$(hyprctl getoption general:layout | awk '/str:/ {print $2}')
-#
-#if [ "$CURRENT" = "scrolling" ]; then
-#  hyprctl keyword general:layout dwindle
-#  notify-send "  Hyprland" "Layout: dwindle" --icon=preferences-system-windows 2>/dev/null || true
-#else
-#  hyprctl keyword general:layout scrolling
-#  notify-send "  Hyprland" "Layout: scrolling" --icon=preferences-system-windows 2>/dev/null || true
-#fi
-
-#!/usr/bin/env bash
-# toggle-layout.sh — cycles Hyprland layout: scrolling → master → monocle → dwindle → ...
-
-# LAYOUTS=("scrolling" "master" "monocle" "dwindle")
-# STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-layout.state"
-#
-# # Read current index, default to 0
-# current=0
-# if [[ -f "$STATE_FILE" ]]; then
-#   current=$(cat "$STATE_FILE")
-# fi
-#
-# # Advance to next layout
-# next=$(((current + 1) % ${#LAYOUTS[@]}))
-# layout="${LAYOUTS[$next]}"
-#
-# # Apply layout
-# hyprctl keyword general:layout "$layout"
-#
-# # Persist new index
-# echo "$next" >"$STATE_FILE"
-#
-# # Optional: notify via dunst/libnotify
-# notify-send -t 2000 -i preferences-system-windows \
-#   "Hyprland" \
-#   "Layout switched → ${layout^}" 2>/dev/null || true
-
 #!/bin/bash
 
-LAYOUTS=("scrolling" "master" "monocle" "dwindle")
+CURRENT=$(hyprctl getoption general:layout | awk '/str:/ {print $2}')
 
-get_layout() {
-  hyprctl getoption general:layout -j 2>/dev/null |
-    python3 -c "import sys,json; print(json.load(sys.stdin)['str'])" 2>/dev/null
-}
-
-set_layout() {
-  local layout="$1"
-  local valid=false
-  for l in "${LAYOUTS[@]}"; do
-    [[ "$l" == "$layout" ]] && valid=true && break
-  done
-
-  if [[ "$valid" == "false" ]]; then
-    notify-send "Invalid layout: $layout" \
-      "Valid options: ${LAYOUTS[*]}" -u critical -t 3000
-    exit 1
-  fi
-
-  hyprctl keyword general:layout "$layout"
-  notify-send "Layout → ${layout^}" -t 2000
-}
-
-for arg in "$@"; do
-  case "$arg" in
-  --set=*) set_layout "${arg#*=}" ;;
-  --get) get_layout ;;
-  esac
-done
+if [ "$CURRENT" = "scrolling" ]; then
+  hyprctl keyword general:layout dwindle
+  notify-send "  Hyprland" "Layout: dwindle" --icon=preferences-system-windows 2>/dev/null || true
+else
+  hyprctl keyword general:layout scrolling
+  notify-send "  Hyprland" "Layout: scrolling" --icon=preferences-system-windows 2>/dev/null || true
+fi

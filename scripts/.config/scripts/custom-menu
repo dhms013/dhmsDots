@@ -127,23 +127,6 @@ show_system_menu() {
   esac
 }
 
-show_layout_menu() {
-  local current
-  current=$(toggle-layout --get)
-
-  local options="󰕰  Dwindle\n  Master\n  Monocle\n󱒇   Scrolling"
-  local preselect
-  preselect=$(echo -e "$options" | grep -i "$current")
-
-  case $(menu "Layout" "$options" "" "$preselect") in
-  *Dwindle*) toggle-layout --set=dwindle ;;
-  *Master*) toggle-layout --set=master ;;
-  *Monocle*) toggle-layout --set=monocle ;;
-  *Scrolling*) toggle-layout --set=scrolling ;;
-  *) back_to show_main_menu ;;
-  esac
-}
-
 show_main_menu() {
   go_to_menu "$(menu "Go" "  Update\n  Setup\n  System")"
 }
@@ -156,7 +139,6 @@ go_to_menu() {
   *fido2*) present_terminal setup-fido2 ;;
   *fingerprint*) present_terminal setup-fingerprint ;;
   *install*) show_install_menu ;;
-  *layout*) show_layout_menu ;;
   *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *logout*) hyprctl dispatch exit ;;
   *pacman*) present_terminal pkg-install ;;
