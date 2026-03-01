@@ -82,6 +82,7 @@ bootstrap_repo
 cd "$DOTFILES_DIR"
 
 run_module logo.sh
+run_module resolver.sh
 
 sudo usermod -aG input "${USER}"
 
