@@ -1,5 +1,6 @@
 #!/bin/bash
 
+show-logo
 sudo-keep
 echo "Updating..."
 yay -Syyu --noconfirm --cleanafter

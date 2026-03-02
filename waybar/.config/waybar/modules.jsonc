@@ -87,12 +87,12 @@
   },
   "cpu": {
     "format": "󰍛 {usage}%",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e s-tui",
+    "on-click": "floating-terminal s-tui",
     "interval": 3
   },
   "memory": {
     "format": "  {used}G/{total}G",
-    "on-click": "xdg-terminal-exec --app-id=dhms.terminal -e btop",
+    "on-click": "floating-terminal btop",
     "interval": 3
   },
   "clock": {

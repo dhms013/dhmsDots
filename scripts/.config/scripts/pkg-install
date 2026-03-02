@@ -17,7 +17,8 @@ fzf_args=(
 pkg_names=$(pacman -Slq | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
-  sudo -v
+  show-logo
+  sudo-keep
   echo "Installing $pkg_names..."
   echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
   sudo updatedb

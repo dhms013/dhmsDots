@@ -89,6 +89,7 @@ if [[ "--remove" == "$1" ]]; then
   remove_hyprlock_fingerprint_icon
 
   # Uninstall packages
+  show-logo
   print_info "Removing fingerprint packages..."
   sudo pacman -Rns --noconfirm fprintd
 
@@ -97,6 +98,7 @@ else
   print_success "Setting up fingerprint scanner for authentication.\n"
 
   # Install required packages
+  show-logo
   print_info "Installing required packages..."
   sudo pacman -S --noconfirm --needed fprintd usbutils
 

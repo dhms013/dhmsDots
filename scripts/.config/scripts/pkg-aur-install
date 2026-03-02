@@ -19,7 +19,8 @@ fzf_args=(
 pkg_names=$(yay -Slqa | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
-  sudo -v
+  show-logo
+  sudo-keep
   echo "Installing $pkg_names..."
   echo "$pkg_names" | tr '\n' ' ' | xargs yay -S --noconfirm
   sudo updatedb
