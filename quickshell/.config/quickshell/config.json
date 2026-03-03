@@ -1,0 +1,20 @@
+{
+  "_comment": "Quickshell bar + launcher configuration",
+
+  "workspaceMode": "kanji",
+  "_workspaceModeOptions": ["number", "kanji", "custom"],
+
+  "workspaceNames": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "_workspaceNamesNote": "Used only when workspaceMode is 'custom'. One entry per workspace 1-10. Nerd Font icons recommended."
+}

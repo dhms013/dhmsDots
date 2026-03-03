@@ -20,20 +20,37 @@ back_to() {
 menu() {
   local prompt="$1"
   local options="$2"
-  local extra="$3"
-  local preselect="$4"
+  # $3 (extra) and $4 (preselect) are accepted but ignored — Quickshell handles them
 
-  read -r -a args <<<"$extra"
+  local pipe="/tmp/qs-menu-$$"
+  mkfifo "$pipe" 2>/dev/null || {
+    echo ""
+    return
+  }
 
-  if [[ -n "$preselect" ]]; then
-    local index
-    index=$(echo -e "$options" | grep -nxF "$preselect" | cut -d: -f1)
-    if [[ -n "$index" ]]; then
-      args+=("-c" "$index")
-    fi
-  fi
+  # Build JSON
+  local json_options
+  json_options=$(echo -e "$options" | python3 -c "
+import sys, json
+lines = [l for l in sys.stdin.read().splitlines() if l.strip()]
+print(json.dumps(lines))
+")
 
-  echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
+  local json
+  json=$(python3 -c "
+import json, sys
+print(json.dumps({'prompt': sys.argv[1], 'options': json.loads(sys.argv[2]), 'pipe': sys.argv[3]}))
+" "$prompt" "$json_options" "$pipe")
+
+  # Signal quickshell to show the menu (non-blocking)
+  qs msg menu "$json" 2>/dev/null &
+
+  # Block until quickshell writes selection to pipe (or 30s timeout)
+  local result
+  result=$(timeout 30 cat "$pipe" 2>/dev/null)
+  rm -f "$pipe"
+
+  echo "$result"
 }
 
 present_terminal() {
@@ -67,11 +84,11 @@ show_theme_menu() {
 show_screenrecord_menu() {
   screenrecord --stop-recording && exit 0
 
-  case $(menu "Screenrecord" "  Without audio\n  With desktop audio\n  With desktop + microphone audio") in
+  case $(menu "Screenrecord" "  Without audio\n  With desktop audio\n  With desktop + microphone audio") in
   *"Without audio") screenrecord ;;
   *"With desktop audio") screenrecord --with-desktop-audio ;;
   *"With desktop + microphone audio") screenrecord --with-desktop-audio --with-microphone-audio ;;
-  *) back_to show_main-menu ;;
+  *) back_to show_main_menu ;;
   esac
 }
 
@@ -83,8 +100,9 @@ show_install_menu() {
   *) show_setup_menu ;;
   esac
 }
+
 show_setup_menu() {
-  options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
+  options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
 
   case $(menu "Setup" "$options") in
   *Background*) show_background_menu ;;
@@ -109,7 +127,7 @@ show_setup_power_menu() {
 }
 
 show_setup_security_menu() {
-  case $(menu "Setup" "󰈷  Fingerprint\n  Fido2") in
+  case $(menu "Setup" "󰈷  Fingerprint\n  Fido2") in
   *Fingerprint*) present_terminal setup-fingerprint ;;
   *Fido2*) present_terminal setup-fido2 ;;
   *) show_setup_menu ;;
@@ -117,7 +135,7 @@ show_setup_security_menu() {
 }
 
 show_system_menu() {
-  case $(menu "System" "󰒲    Suspend\n    Lock\n󰍃    Logout\n󰜉    Reboot\n󰐥    Shutdown") in
+  case $(menu "System" "󰒲    Suspend\n    Lock\n󰍃    Logout\n󰜉    Reboot\n󰐥    Shutdown") in
   *Suspend*) systemctl suspend ;;
   *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) hyprctl dispatch exit ;;
@@ -128,7 +146,7 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "  Update\n  Setup\n  System")"
+  go_to_menu "$(menu "Go" "  Update\n  Setup\n  System")"
 }
 
 go_to_menu() {
@@ -155,6 +173,7 @@ go_to_menu() {
   *update*) present_terminal pkg-update ;;
   esac
 }
+
 if [[ -n "$1" ]]; then
   BACK_TO_EXIT=true
   go_to_menu "$1"

@@ -134,7 +134,7 @@ Use archinstall
 Install manually by following [arch wiki](https://wiki.archlinux.org/title/Installation_guide) or some youtuber
 
 3. Option 3
-Install any distro/OS that you like (maybe you'll need to edit the install.sh if you did)
+Install any distro/OS that you like (maybe you'll need to edit the [install.sh](./install.sh) if you did)
 ---
 
 ### 2. Clone the repo
