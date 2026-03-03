@@ -98,7 +98,6 @@ This repo manages configs for:
 - bash
 - btop
 - elephant
-- environment.d
 - fastfetch
 - ghostty
 - hypr
