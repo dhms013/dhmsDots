@@ -21,7 +21,7 @@ If it breaks on your machine, you fix it.
 - Contain a few themes from [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes), and you can easily install or update theme from there using [theme-install](./scripts/.config/scripts/theme-install) and [theme-update](./scripts/.config/scripts/theme-update)
 
 > [!IMPORTANT KEYBINDS]
-- $mainMod SHIFT + slash = Keybinds info
+- SUPER SHIFT + slash = Keybinds info
 
 ---
 
@@ -94,7 +94,6 @@ This includes (but is not limited to):
 
 This repo manages configs for:
 
-- applications (.local/share/)
 - bash
 - btop
 - fastfetch
