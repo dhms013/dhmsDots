@@ -6,7 +6,7 @@ if pkg-present walker; then
   pkgdrop elephant
   pkgdrop elephant-calc
   pkgdrop elephant-clipboard
-  pkgdrop elephantdesktopapplications
+  pkgdrop elephant-desktopapplications
   pkgdrop elephant-menus
   pkgdrop elephant-symbols
 fi
