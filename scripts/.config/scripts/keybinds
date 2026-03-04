@@ -191,5 +191,5 @@ else
   menu_height=$((monitor_height * 40 / 100))
 
   output_keybinds |
-    walker --dmenu -p 'Keybinds' --width 600 --height "$menu_height"
+    rofi -dmenu -theme-str 'window { width: 35%; height: 45%; location: center; }' -p 'Keybinds' --width 800 --height "$menu_height"
 fi
