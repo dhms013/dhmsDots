@@ -1,0 +1,20 @@
+configuration {
+    modi:           "drun,calc";
+    show-icons:     true;
+    scroll-method:  1;
+    case-smart: true;
+    kb-remove-to-eol: "Control+p";
+    kb-accept-entry: "Control+n,Return";
+    kb-mode-complete: "Control+Page_Down";
+    kb-remove-char-back: "BackSpace";
+    kb-row-left: "Control+h";
+    kb-row-up:   "Control+k";
+    kb-row-down: "Control+j";
+    kb-row-right: "Control+l";
+    calc {
+        hint-result: "Res: ";
+        hint-welcome: "Calc";
+    }
+}
+
+@theme "~/.config/rofi/theme.rasi"

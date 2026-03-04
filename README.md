@@ -97,7 +97,6 @@ This repo manages configs for:
 - applications (.local/share/)
 - bash
 - btop
-- elephant
 - fastfetch
 - ghostty
 - hypr
@@ -105,6 +104,7 @@ This repo manages configs for:
 - kitty
 - mako
 - nvim
+- rofi
 - scripts (used in hypr and waybar)
 - sddm theme
 - starship
@@ -112,7 +112,6 @@ This repo manages configs for:
 - systemd
 - themes
 - uwsm (yes. I use uwsm because it easier 🤣)
-- walker
 - waybar
 - yazi
 

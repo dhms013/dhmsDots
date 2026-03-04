@@ -1,0 +1,48 @@
+#!/bin/bash
+
+BACKGROUND_DIR="$HOME/.config/themes/current/theme/backgrounds"
+
+[[ -d "$BACKGROUND_DIR" ]] || {
+  echo "No backgrounds directory found" >&2
+  exit 1
+}
+
+# Exact FormatName from original Lua
+format_name() {
+  local name="$1"
+  name=$(echo "$name" | sed -E 's/^[0-9]+//; s/^-//') # remove leading number + dash
+  name=$(echo "$name" | sed -E 's/\.[^.]+$//')        # remove extension
+  name=$(echo "$name" | sed 's/-/ /g')                # dashes → spaces
+  name=$(echo "$name" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2));}1')
+  echo "$name"
+}
+
+declare -A path_map
+entries=""
+
+while IFS= read -r bg_path; do
+  [[ -n "$bg_path" ]] || continue
+  filename=$(basename "$bg_path")
+  display=$(format_name "$filename")
+  path_map["$display"]="$bg_path"
+  entries+="${display}\x00icon\x1f${bg_path}\n"
+done < <(find "$BACKGROUND_DIR" -maxdepth 1 -type f \
+  \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' \
+  -o -name '*.gif' -o -name '*.bmp' -o -name '*.webp' \) 2>/dev/null | sort)
+
+selected=$(printf "%b" "$entries" | rofi -dmenu \
+  -i \
+  -show-icons \
+  -p "Select Wallpaper" \
+  -mesg "Search wallpapers..." \
+  -theme-str 'window { width: 45%; height: 45%; location: center; }' \
+  -theme-str 'listview { columns: 4; lines: 3; spacing: 14px; fixed-columns: true; }' \
+  -theme-str 'element { orientation: vertical; padding: 12px; background-color: rgba(20,20,30,0.85); border-radius: 14px; }' \
+  -theme-str 'element-icon { size: 210px; border-radius: 10px; }' \
+  -theme-str 'element-text { font: "sans-serif 11"; horizontal-align: 0.5; padding-top: 8px; }' \
+  -theme-str 'inputbar { padding: 10px; }')
+
+if [[ -n "$selected" ]]; then
+  full_path="${path_map[$selected]}"
+  [[ -n "$full_path" ]] && background-set "$full_path"
+fi

@@ -1,5 +1,5 @@
 add_newline = true
-command_timeout = 200
+command_timeout = 300
 format = "[$directory$git_branch$git_status]($style)$character"
 
 # Username module
@@ -12,8 +12,8 @@ disabled = false
 
 # Character module for the prompt symbol
 [character]
-success_symbol = '[➜](fg:#00ff99)'
-error_symbol = '[✗](fg:#ccffee)'
+success_symbol = '[➜](bold fg:#00ff99)'
+error_symbol = '[✗](bold red)'
 vicmd_symbol = '[❮](fg:#00cc77)'
 
 [directory]
@@ -56,39 +56,155 @@ deleted    = ""
 "Public" = "󰐕 "
 "Templates" = "󰏗 "
 
-# Docker context
+# Programming language modules
+ [aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+format = "[$symbol ]($style)"
+disabled = true
+
+[conda]
+symbol = " "
+
+[crystal]
+symbol = " "
+
+[dart]
+symbol = " "
+
 [docker_context]
 symbol = "󰡨 "
 style = "bg:#ccffee fg:#000000"
 format = '[ $symbol $context ]($style)'
+         
+[elixir]
+symbol = " "
 
-# Programming language modules
+[elm]
+symbol = " "
+
+[fennel]
+symbol = " "
+
 [golang]
 symbol = "󰟓 "
 style = "bg:#383838 fg:#00ff99"
 format = '[ $symbol ($version) ]($style)'
 
-[gradle]
-style = "bg:#383838 fg:#00ff99"
-format = '[ $symbol ($version) ]($style)'
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
 
 [java]
 symbol = "󰸭 "
 style = "bg:#383838 fg:#00ff99"
 format = '[ $symbol ($version) ]($style)'
 
+[julia]
+symbol = " "
+
+[kotlin]
+symbol = " "
+
+[lua]
+symbol = " "
+
 [nodejs]
 symbol = "󰌞󰛦"
 style = "bg:#383838 fg:#00ff99"
 format = '[ $symbol ($version) ]($style)'
 
-[rust]
-symbol = "󱘗"
-style = "bg:#383838 fg:#00ff99"
-format = '[ $symbol ($version) ]($style)'
+[ocaml]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
 
 [python]
 version_format = "${raw}"
 symbol = " 🐍 "
 style = "bg:#383838 fg:#00ff99"
 format = '[${symbol}${version} 󰌠($virtualenv)󰌠 ]($style)'
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = "󱘗"
+style = "bg:#383838 fg:#00ff99"
+format = '[ $symbol ($version) ]($style)'
+
+[scala]
+symbol = " "
+
+[swift]
+symbol = " "
+
+[zig]
+symbol = " "
+
+[gradle]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "

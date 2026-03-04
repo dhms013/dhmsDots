@@ -12,12 +12,6 @@ btop
 cava
 cmatrix
 discord
-elephant
-elephant-calc
-elephant-clipboard
-elephant-desktopapplications
-elephant-menus
-elephant-symbols
 eza
 expac
 fastfetch
@@ -58,6 +52,9 @@ qt5ct
 qt6-wayland
 qt6ct
 s-tui
+rofi
+rofi-calc
+rofi-emoji
 satty
 sddm
 slurp
@@ -71,7 +68,6 @@ telegram-desktop
 tldr
 tree-sitter-cli
 ttf-jetbrains-mono-nerd
-walker-git
 waybar
 wiremix
 xdg-desktop-portal-gtk

@@ -1,0 +1,101 @@
+#!/bin/bash
+
+THEME_DIR="$HOME/.config/themes/themeLists"
+
+[[ -d "$THEME_DIR" ]] || {
+  echo "No themeLists directory found" >&2
+  exit 1
+}
+
+declare -A name_map
+entries=""
+
+while IFS= read -r theme_path; do
+  [[ -n "$theme_path" ]] || continue
+  theme_name=$(basename "$theme_path")
+
+  # Exact preview logic from original Lua
+  preview_path=$(find -L "$theme_path" -maxdepth 1 -type f \
+    \( -name 'preview.png' -o -name 'preview.jpg' \) 2>/dev/null | head -n 1)
+
+  if [[ -z "$preview_path" ]]; then
+    preview_path=$(find -L "$theme_path/backgrounds" -maxdepth 1 -type f \
+      \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) 2>/dev/null | head -n 1)
+  fi
+
+  if [[ -n "$preview_path" ]]; then
+    # Exact display name formatting from original Lua
+    display_name=$(echo "$theme_name" | sed -E 's/[_-]/ /g')
+    display_name=$(echo "$display_name" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2));}1')
+
+    name_map["$display_name"]="$theme_name"
+    entries+="${display_name}\x00icon\x1f${preview_path}\n"
+  fi
+done < <(find -L "$THEME_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+
+selected=$(printf "%b" "$entries" | rofi -dmenu \
+  -i \
+  -show-icons \
+  -p "Select Theme" \
+  -mesg "Search themes..." \
+  -theme-str 'window { width: 45%; height: 45%; location: center; }' \
+  -theme-str 'listview { columns: 4; lines: 3; spacing: 14px; fixed-columns: true; }' \
+  -theme-str 'element { orientation: vertical; padding: 12px; background-color: rgba(20,20,30,0.85); border-radius: 14px; }' \
+  -theme-str 'element-icon { size: 210px; border-radius: 10px; }' \
+  -theme-str 'element-text { font: "sans-serif 11"; horizontal-align: 0.5; padding-top: 8px; }' \
+  -theme-str 'inputbar { padding: 10px; }')
+
+if [[ -n "$selected" ]]; then
+  theme_name="${name_map[$selected]}"
+  [[ -n "$theme_name" ]] && theme-set "$theme_name"
+fi
+
+# THEME_DIR="$HOME/.config/themes/themeLists"
+#
+# [[ -d "$THEME_DIR" ]] || {
+#   echo "No themeLists directory found" >&2
+# exit 1
+# }
+#
+# declare -A name_map
+# entries=""
+#
+# while IFS= read -r theme_path; do
+#   [[ -n "$theme_path" ]] || continue
+#   theme_name=$(basename "$theme_path")
+#
+#   # Exact same preview logic as original elephant Lua
+#   preview_path=$(find -L "$theme_path" -maxdepth 1 -type f \
+#     \( -name 'preview.png' -o -name 'preview.jpg' \) 2>/dev/null | head -n 1)
+#
+#   if [[ -z "$preview_path" ]]; then
+#     preview_path=$(find -L "$theme_path/backgrounds" -maxdepth 1 -type f \
+#       \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) 2>/dev/null | head -n 1)
+#   fi
+#
+#   if [[ -n "$preview_path" ]]; then
+#     display_name=$(echo "$theme_name" | sed -E 's/[_-]/ /g')
+#     display_name=$(echo "$display_name" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2));}1')
+#
+#     name_map["$display_name"]="$theme_name"
+#     entries+="${display_name}\x00icon\x1f${preview_path}\n"
+#   fi
+# done < <(find -L "$THEME_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+#
+# selected=$(printf "%b" "$entries" | rofi -dmenu \
+#   -i \
+#   -show-icons \
+#   -p "Select Theme..." \
+#   -mesg "Search themes..." \
+#   -theme-str 'window { width: 600px; height: 800px; location: center; }' \
+#   -theme-str 'inputbar { padding: 1px; }' \
+#   -theme-str 'listview { columns: 1; lines: 8; width: 100px;padding-left: 16px; spacing: 3px; }' \
+#   -theme-str 'element { orientation: horizontal; padding: 1px; border-radius: 12px; }' \
+#   -theme-str 'element-icon { size: 200px; border-radius: 10px; padding: 0; }' \
+#   -theme-str 'element-text { font: "sans-serif 13"; padding-left: 16px; horizontal-align: 0; width: 280px; }')
+#
+# if [[ -n "$selected" ]]; then
+#   theme_name="${name_map[$selected]}"
+#   [[ -n "$theme_name" ]] && theme-set "$theme_name"
+# fi
+#

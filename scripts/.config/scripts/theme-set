@@ -8,6 +8,8 @@ fi
 CURRENT_THEME_PATH="$HOME/.config/themes/current/theme"
 NEXT_THEME_PATH="$HOME/.config/themes/current/next-theme"
 USER_THEMES_PATH="$HOME/.config/themes/themeLists/"
+BG_DIR="$HOME/.config/themes/current/theme/backgrounds/"
+LINKED_BG="$HOME/.config/themes/current/background"
 
 THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
@@ -38,8 +40,8 @@ mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH"
 echo "$THEME_NAME" >"$HOME/.config/themes/current/theme.name"
 
 # Change background with theme
-ln -sf "$(find ~/.config/themes/current/theme/backgrounds/ -type f | sort | head -n 1)" ~/.config/themes/current/background
-awww img ~/.config/themes/current/background --transition-type 'random' --transition-fps 60 --transition-duration 1
+ln -sf "$(find "$BG_DIR" -type f | sort | head -n 1)" "$LINKED_BG"
+awww img "$LINKED_BG" --transition-type 'random' --transition-fps 60 --transition-duration 1
 
 theme-gnome
 
@@ -59,8 +61,3 @@ makoctl reload
 
 pkill swayosd-server
 systemctl --user restart swayosd-server.service
-
-systemctl --user restart elephant.service
-
-pkill walker
-walker --gapplication-service

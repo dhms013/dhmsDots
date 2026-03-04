@@ -6,10 +6,10 @@
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 
 STOW_PKGS=(
-  bash btop elephant fastfetch ghostty
+  bash btop fastfetch ghostty
   hypr hyprland-preview-share-picker
-  kitty mako nvim scripts starship
-  swayosd themes tmux walker waybar
+  kitty mako nvim rofi scripts starship
+  swayosd themes tmux waybar
 )
 
 backup_if_exists() {
@@ -44,7 +44,7 @@ stow_dotfiles() {
 
 copy_extra_configs() {
   echo "==> Copying application launchers and extra configs"
-  cp -R "$DOTFILES_DIR/applications/" ~/.local/share/
+  # cp -R "$DOTFILES_DIR/applications/" ~/.local/share/
   cp -R "$DOTFILES_DIR/config/"* ~/.config/
   chmod -R 775 ~/.config/scripts/
   mkdir -p ~/.config/themes/current/

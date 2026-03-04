@@ -33,7 +33,11 @@ menu() {
     fi
   fi
 
-  echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
+  # echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
+  echo -e "$options" | rofi -dmenu \
+    -theme ~/.config/rofi/theme.rasi \
+    -theme-str 'window { width: 250px; height: 300px;} listview { lines: 5; }' \
+    -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 
 present_terminal() {
@@ -87,12 +91,12 @@ show_setup_menu() {
   options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
 
   case $(menu "Setup" "$options") in
-  *Background*) show_background_menu ;;
+  *Background*) background-selector ;;
   *DNS*) present_terminal setup-dns ;;
   *Install*) show_install_menu ;;
   *Power*) show_setup_power_menu ;;
   *Remove*) present_terminal pkg-remove ;;
-  *Theme*) show_theme_menu ;;
+  *Theme*) theme-selector ;;
   *Security*) show_setup_security_menu ;;
   *) show_main_menu ;;
   esac
@@ -134,7 +138,7 @@ show_main_menu() {
 go_to_menu() {
   case "${1,,}" in
   *aur*) present_terminal pkg-aur-install ;;
-  *background*) show_background_menu ;;
+  *background*) background-selector ;;
   *dns*) present_terminal setup-dns ;;
   *fido2*) present_terminal setup-fido2 ;;
   *fingerprint*) present_terminal setup-fingerprint ;;
@@ -151,7 +155,7 @@ go_to_menu() {
   *shutdown*) systemctl poweroff ;;
   *suspend*) systemctl suspend ;;
   *system*) show_system_menu ;;
-  *themes*) show_theme_menu ;;
+  *themes*) theme-selector ;;
   *update*) present_terminal pkg-update ;;
   esac
 }

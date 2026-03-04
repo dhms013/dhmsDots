@@ -1,5 +1,5 @@
 * {
-  selected-text: {{ cursor }};
+  selected-text: {{ accent }};
   text: {{ foreground }};
   base: {{ background }};
   border: {{ foreground }};

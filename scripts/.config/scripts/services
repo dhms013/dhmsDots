@@ -1,10 +1,9 @@
 #!/bin/bash
 
-systemctl --user enable elephant.service
 systemctl --user enable swayosd-server.service
 systemctl --user enable waybar.service
 systemctl --user enable hypridle.service
 
 sleep 1
-systemctl --user restart elephant.service
 systemctl --user restart swayosd-server.service
+systemctl --user restart waybar.service
