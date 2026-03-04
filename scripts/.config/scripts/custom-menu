@@ -33,10 +33,9 @@ menu() {
     fi
   fi
 
-  # echo -e "$options" | walker --dmenu --width 250 --minheight 1 --maxheight 630 -p "$prompt…" "${args[@]}" 2>/dev/null
   echo -e "$options" | rofi -dmenu \
     -theme ~/.config/rofi/theme.rasi \
-    -theme-str 'window { width: 250px; height: 300px;} listview { lines: 5; }' \
+    -theme-str 'window { width: 250px; height: 300px;} listview { lines: 3; }' \
     -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 

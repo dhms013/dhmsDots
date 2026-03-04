@@ -20,7 +20,7 @@ If it breaks on your machine, you fix it.
 - If something breaks, you fix it yourself.
 - Contain a few themes from [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes), and you can easily install or update theme from there using [theme-install](./scripts/.config/scripts/theme-install) and [theme-update](./scripts/.config/scripts/theme-update)
 
-> [!IMPORTANT KEYBINDS]
+> [IMPORTANT KEYBINDS]
 - SUPER SHIFT + slash = Keybinds info
 
 ---

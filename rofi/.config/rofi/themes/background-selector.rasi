@@ -10,11 +10,11 @@ window {
     background-color: @base;
     border:           1px solid;
     border-color:     @border;
-    border-radius:    12px;
-    width:            280px;
-    height:           300px;
-    padding:          10px;
-    spacing:          10px;
+    border-radius:    25px;
+    width:            35%;
+    height:           38%;
+    location:         center;
+    padding:          20px;
 }
 
 mainbox {
@@ -32,46 +32,47 @@ inputbar {
 }
 
 entry {
-    placeholder:       " Search...";
+    placeholder:       " Search background...";
     placeholder-color: @border;
-    text-color:        @text;
+    text-color:        @selected-text;
+    cursor-color:      transparent;
 }
 
 listview {
     background-color: @base;
     border:           1px solid;
     border-color:     @border;
-    border-radius:    8px;
-    padding:          8px;
-    lines:            5;
-    spacing:          0;
+    border-radius:    18px;
+    padding:          1px;
+    columns:          3;
+    lines:            1;
+    spacing:          1px;
+    fixed-columns:    false;
     scrollbar:        false;
 }
 
 element {
-    padding:          10px 12px;
-    border-radius:    6px;
+    orientation: vertical;
+    padding:     10px;
+    border-radius: 12px;
     background-color: transparent;
-    text-color:       @text;
-    orientation:      horizontal;
-    spacing:          10px;
 }
 
 element-icon {
-    size:           20px;
-    vertical-align: 0.5;
+    size:        250px;
+    border-radius: 25px;
 }
 
 element-text {
-    vertical-align: 0.5;
-    text-color:     inherit;
+    font:            "sans-serif 11";
+    horizontal-align: 0.5;
+    padding-top:     2px;
+    text-color:      inherit;
 }
 
 element selected {
-    // background-color: transparent;
+    background-color: rgba(255,255,255,0.07);
+    border:           1px;
+    border-color:     @selected-text;
     text-color:       @selected-text;
-}
-
-element selected .element-icon {
-    text-color: @selected-text;
 }

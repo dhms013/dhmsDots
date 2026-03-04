@@ -8,6 +8,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 print_success() {
+  show-logo
   echo -e "${GREEN}$1${NC}"
 }
 
