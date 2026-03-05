@@ -3,7 +3,7 @@
 set -e
 
 CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
-MAIN_BRANCH=$(main)
+MAIN_BRANCH="main"
 
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
