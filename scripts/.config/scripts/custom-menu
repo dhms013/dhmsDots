@@ -155,7 +155,7 @@ go_to_menu() {
   *suspend*) systemctl suspend ;;
   *system*) show_system_menu ;;
   *themes*) theme-selector ;;
-  *update*) present_terminal pkg-update ;;
+  *update*) present_terminal dhms-update ;;
   esac
 }
 if [[ -n "$1" ]]; then

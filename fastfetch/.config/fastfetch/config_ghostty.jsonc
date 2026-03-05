@@ -71,7 +71,7 @@
       "type": "command",
       "key": "│ ├󰘬",
       "keyColor": "blue",
-      "text": "git -C $HOME/dhmsDots rev-parse --abbrev-ref HEAD"
+      "text": "git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD"
     },
     {
       "type": "kernel",
