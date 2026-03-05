@@ -1,6 +1,6 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# setup.sh — dhmsDots installer entry point
+# install.sh — dhmsDots installer entry point
 # Clones/updates the repo, then runs each modular script in order.
 #
 # Usage (remote bootstrap):
