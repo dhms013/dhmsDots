@@ -24,6 +24,6 @@ frmwr-updt
 migrate-run
 
 hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
-if [ -z "$CURRENT_BRANCH" ]; then
+if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
   git -C $HOME/.dhmsDots/ checkout "$CURRENT_BRANCH"
 fi
