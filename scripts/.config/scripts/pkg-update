@@ -3,6 +3,7 @@
 show-logo
 sudo-keep
 echo "Updating..."
+pkill -x hypridle
 yay -Syyu --noconfirm --cleanafter
 
 orphans=$(pacman -Qtdq || true)
@@ -15,4 +16,5 @@ if [[ -n $orphans ]]; then
 fi
 
 sudo updatedb
+uwsm-app -- hypridle >/dev/null 2>&1 &
 show-done

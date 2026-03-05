@@ -11,6 +11,7 @@ show-logo
 sudo-keep
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots"
+pkill -x hypridle
 keyrings
 yay -Syyu --noconfirm --cleanafter
 sudo updatedb
@@ -28,4 +29,5 @@ if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
   git -C $HOME/.dhmsDots/ checkout "$CURRENT_BRANCH"
 fi
 
+uwsm-app -- hypridle >/dev/null 2>&1 &
 show-done
