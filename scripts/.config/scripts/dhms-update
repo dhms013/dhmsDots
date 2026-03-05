@@ -12,7 +12,7 @@ sudo-keep
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots"
 keyrings
-pkg-update
+yay -Syyu --noconfirm --cleanafter
 sudo updatedb
 
 echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
