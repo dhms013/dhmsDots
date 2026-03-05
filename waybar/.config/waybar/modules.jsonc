@@ -41,7 +41,7 @@
   },
   "custom/menu": {
     "format": "𐤃𐤄𐤌𐤑",
-    "on-click": "~/.config/scripts/custom-menu",
+    "on-click": "custom-menu",
     "tooltip-format": "menu"
   },
   "hyprland/window": {
@@ -223,7 +223,7 @@
     "return-type": "json"
   },
   "custom/ddc_brightness": {
-    "format": "{icon}",
+    "format": "{icon} {percentage}%",
     "format-icons": [
       "",
       "",
@@ -231,11 +231,11 @@
       "",
       ""
     ],
-    "exec": "~/.config/scripts/brightness get",
+    "exec": "brightness get",
     "return-type": "json",
-    "on-scroll-up": "~/.config/scripts/brightness up",
-    "on-scroll-down": "~/.config/scripts/brightness down",
-    "on-click-right": "~/.config/scripts/brightness mid",
+    "on-scroll-up": "brightness up",
+    "on-scroll-down": "brightness down",
+    "on-click-right": "brightness mid",
     "interval": "once",
     "signal": 10,
     "tooltip": true,

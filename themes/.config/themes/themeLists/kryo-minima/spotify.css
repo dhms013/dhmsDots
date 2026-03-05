@@ -1,0 +1,70 @@
+:root {
+    --essential-positive: var(--spice-button) !important;
+    --background-positive: var(--spice-button) !important;
+    --text-positive: var(--spice-button) !important;
+    --text-announcement: var(--spice-button) !important;
+    --background-press: var(--spice-button-active) !important;
+}
+
+.encore-inverted-light-set {
+    --background-elevated-base: var(--spice-card) !important;
+    --background-base: var(--spice-card) !important;
+    --background-highlight: var(--spice-selected-row) !important;
+    --text-base: var(--spice-text) !important;
+    --text-subdued: var(--spice-subtext) !important;
+}
+
+.main-home-homeHeader,
+.main-entityHeader-background,
+.main-entityHeader-overlay,
+.main-entityHeader-backgroundColor {
+    background-color: var(--spice-main) !important;
+    background-image: none !important;
+}
+
+::-webkit-scrollbar {
+    width: 8px !important;
+    background-color: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--spice-misc) !important;
+    border-radius: 4px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--spice-subtext) !important;
+}
+
+.x-progressBar-fillColor {
+    background-color: var(--spice-button) !important;
+}
+
+.x-progressBar-sliderArea:hover .x-progressBar-fillColor,
+.x-progressBar-sliderArea:active .x-progressBar-fillColor {
+    background-color: var(--spice-button-active) !important;
+}
+
+input:checked ~ .x-toggle-indicatorWrapper {
+    background-color: var(--spice-button) !important;
+}
+
+button[aria-checked="true"] svg,
+button[data-encore-id="buttonSecondary"][aria-checked="true"] svg,
+.main-trackList-playingIcon {
+    color: var(--spice-button) !important;
+    fill: var(--spice-button) !important;
+}
+
+.lyrics-lyrics-background {
+    background-color: var(--spice-main) !important;
+}
+
+.main-contextMenu-menu {
+    background-color: var(--spice-card) !important;
+    border: 1px solid #26292f !important;
+}
+
+.main-contextMenu-menuItemButton:hover {
+    background-color: var(--spice-selected-row) !important;
+}

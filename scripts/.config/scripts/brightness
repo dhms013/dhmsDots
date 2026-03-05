@@ -1,9 +1,20 @@
 #!/bin/bash
 
-use_brightnessctl() {
-  [ -d /sys/class/power_supply/BAT* ] ||
-    ! (command -v ddcutil >/dev/null 2>&1 && ddcutil detect | grep -q "Display")
+_detect_backend() {
+  for bat in /sys/class/power_supply/BAT*; do
+    [ -d "$bat" ] && {
+      echo "brightnessctl"
+      return
+    }
+  done
+  if command -v ddcutil >/dev/null 2>&1 && ddcutil detect 2>/dev/null | grep -q "Display"; then
+    echo "ddcutil"
+  else
+    echo "brightnessctl"
+  fi
 }
+
+BACKEND=$(_detect_backend)
 
 update_waybar() {
   pkill -RTMIN+10 waybar
@@ -11,24 +22,23 @@ update_waybar() {
 
 case "${1:-get}" in
 get)
-  if use_brightnessctl; then
-    current=$(brightnessctl g 2>/dev/null)
-    max=$(brightnessctl m 2>/dev/null)
-    if [[ -n "$current" && -n "$max" && "$max" -gt 0 ]]; then
+  if [ "$BACKEND" = "brightnessctl" ]; then
+    read -r current max <<<"$(brightnessctl i 2>/dev/null | awk -F'[:()/]' '/Current brightness/{print $2+0, $3+0}')"
+    if [[ "$max" -gt 0 ]]; then
       perc=$((current * 100 / max))
     else
       perc=0
     fi
     echo "{\"percentage\": $perc}"
   else
-    v=$(ddcutil getvcp 10 | grep -oP "current value =\s*\K[0-9]+" 2>/dev/null)
+    v=$(ddcutil getvcp 10 2>/dev/null | grep -oP 'current value =\s*\K[0-9]+')
     echo "{\"percentage\": ${v:-0}}"
   fi
   ;;
 
 up)
-  if use_brightnessctl; then
-    brightnessctl s +5%
+  if [ "$BACKEND" = "brightnessctl" ]; then
+    brightnessctl -q s +5%
   else
     ddcutil setvcp 10 + 5
   fi
@@ -36,8 +46,8 @@ up)
   ;;
 
 down)
-  if use_brightnessctl; then
-    brightnessctl s -5%
+  if [ "$BACKEND" = "brightnessctl" ]; then
+    brightnessctl -q s 5%-
   else
     ddcutil setvcp 10 - 5
   fi
@@ -45,8 +55,8 @@ down)
   ;;
 
 mid)
-  if use_brightnessctl; then
-    brightnessctl s 50%
+  if [ "$BACKEND" = "brightnessctl" ]; then
+    brightnessctl -q s 50%
   else
     ddcutil setvcp 10 50
   fi

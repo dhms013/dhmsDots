@@ -1,0 +1,261 @@
+@define-color bg_color #111214;
+@define-color fg_color #d4d4d4;
+@define-color borders #26292f;
+@define-color accent #C80050;
+@define-color accent_dim #A00040;
+@define-color surface #181a1d;
+@define-color surface2 #1f2226;
+@define-color dim_fg #80868f;
+
+* {
+  color: @fg_color;
+  background-color: @bg_color;
+  border-color: @borders;
+  outline: none;
+}
+
+window,
+.window {
+  background-color: @bg_color;
+  color: @fg_color;
+  border: 1px solid @borders;
+}
+
+headerbar,
+.titlebar {
+  background-color: @surface;
+  color: @fg_color;
+  border-bottom: 1px solid @borders;
+  box-shadow: none;
+  padding: 4px 8px;
+}
+
+headerbar .title {
+  color: @fg_color;
+  font-weight: bold;
+}
+
+headerbar button {
+  background-color: transparent;
+  color: @fg_color;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+headerbar button:hover {
+  background-color: @surface2;
+  border-color: @borders;
+}
+
+headerbar button:active,
+headerbar button.suggested-action {
+  background-color: @accent;
+  color: #111214;
+  border-color: @accent;
+}
+
+button {
+  background-color: @surface;
+  color: @fg_color;
+  border: 1px solid @borders;
+  border-radius: 4px;
+  padding: 6px 12px;
+  box-shadow: none;
+}
+
+button:hover {
+  background-color: @surface2;
+  border-color: @dim_fg;
+}
+
+button:active,
+button:checked {
+  background-color: @accent;
+  color: #111214;
+  border-color: @accent;
+}
+
+button.suggested-action {
+  background-color: @accent;
+  color: #111214;
+  border-color: @accent;
+}
+
+button.destructive-action {
+  background-color: #ff0055;
+  color: #111214;
+  border-color: #ff0055;
+}
+
+entry,
+.entry {
+  background-color: @surface2;
+  color: @fg_color;
+  border: 1px solid @borders;
+  border-radius: 4px;
+  padding: 6px 10px;
+  caret-color: @accent;
+}
+
+entry:focus {
+  border-color: @accent;
+  box-shadow: 0 0 0 2px rgba(200, 0, 80, 0.2);
+}
+
+entry selection {
+  background-color: @accent;
+  color: #111214;
+}
+
+treeview,
+listview,
+.view {
+  background-color: @bg_color;
+  color: @fg_color;
+}
+
+treeview:selected,
+listview row:selected,
+.view:selected {
+  background-color: @accent;
+  color: #111214;
+}
+
+treeview:hover,
+listview row:hover {
+  background-color: @surface2;
+}
+
+menu,
+.menu,
+.context-menu {
+  background-color: @surface;
+  color: @fg_color;
+  border: 1px solid @borders;
+  border-radius: 4px;
+  padding: 4px 0;
+}
+
+menuitem {
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+menuitem:hover {
+  background-color: @accent;
+  color: #111214;
+}
+
+menuitem:disabled {
+  color: @dim_fg;
+}
+
+separator,
+.separator {
+  background-color: @borders;
+  min-height: 1px;
+  margin: 3px 6px;
+}
+
+scrollbar {
+  background-color: @bg_color;
+  border: none;
+}
+
+scrollbar slider {
+  background-color: @borders;
+  border-radius: 4px;
+  min-width: 6px;
+  min-height: 6px;
+}
+
+scrollbar slider:hover {
+  background-color: @dim_fg;
+}
+
+scrollbar slider:active {
+  background-color: @accent;
+}
+
+notebook {
+  background-color: @bg_color;
+}
+
+notebook header {
+  background-color: @surface;
+  border-bottom: 1px solid @borders;
+}
+
+notebook tab {
+  background-color: transparent;
+  color: @dim_fg;
+  padding: 6px 14px;
+  border: none;
+}
+
+notebook tab:checked {
+  background-color: @bg_color;
+  color: @fg_color;
+  border-bottom: 2px solid @accent;
+}
+
+tooltip {
+  background-color: @surface2;
+  color: @fg_color;
+  border: 1px solid @borders;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+progressbar trough {
+  background-color: @surface2;
+  border-radius: 4px;
+  min-height: 6px;
+}
+
+progressbar progress {
+  background-color: @accent;
+  border-radius: 4px;
+}
+
+checkbutton check,
+radiobutton radio {
+  background-color: @surface2;
+  border: 1px solid @borders;
+  border-radius: 3px;
+}
+
+checkbutton check:checked,
+radiobutton radio:checked {
+  background-color: @accent;
+  border-color: @accent;
+  color: #111214;
+}
+
+switch {
+  background-color: @borders;
+  border-radius: 12px;
+  min-height: 22px;
+  min-width: 44px;
+}
+
+switch:checked {
+  background-color: @accent;
+}
+
+switch slider {
+  background-color: @fg_color;
+  border-radius: 10px;
+  margin: 2px;
+}
+
+.titlebutton.close:hover {
+  background-color: #ff0055;
+}
+.titlebutton.maximize:hover {
+  background-color: @surface2;
+}
+.titlebutton.minimize:hover {
+  background-color: @surface2;
+}

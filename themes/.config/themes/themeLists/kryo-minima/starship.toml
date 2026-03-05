@@ -1,0 +1,38 @@
+add_newline = true
+command_timeout = 200
+format = "$conda[$directory$git_branch$git_status]($style)$character"
+
+[character]
+error_symbol = "[❯](fg:#ff0055)"
+success_symbol = "[❯](fg:#ff0055)"
+
+[directory]
+truncation_length = 2
+truncation_symbol = "…/"
+style = "fg:#C80050"
+repo_root_style = "fg:#C80050"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+format = "[$branch]($style) "
+style = "italic fg:#A00040"
+
+[git_status]
+format     = '[$all_status]($style)'
+style      = "fg:#780030"
+ahead      = "⇡${count} "
+diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
+behind     = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked  = "? "
+modified   = " "
+stashed    = ""
+staged     = ""
+renamed    = ""
+deleted    = ""
+
+[conda]
+format = '([$environment]($style)) '
+style = 'fg:#80868f'
+ignore_base = true

@@ -138,6 +138,7 @@ go_to_menu() {
   case "${1,,}" in
   *aur*) present_terminal pkg-aur-install ;;
   *background*) background-selector ;;
+  *dhms*) present_terminal dhms-update ;;
   *dns*) present_terminal setup-dns ;;
   *fido2*) present_terminal setup-fido2 ;;
   *fingerprint*) present_terminal setup-fingerprint ;;
