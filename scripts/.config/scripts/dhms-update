@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# EXPERIMENTAL, DON'T RUN IT YET UNTIL TESTED !!!
-
 set -e
+
+CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
+MAIN_BRANCH=$(main)
 
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
@@ -11,11 +12,11 @@ sudo-keep
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots"
 keyrings
-yay -Syyu --noconfirm --cleanafter
+pkg-update
 sudo updatedb
 
 echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
-git -C $HOME/.dhmsDots/ checkout main
+git -C $HOME/.dhmsDots/ checkout "$MAIN_BRANCH"
 git -C $HOME/.dhmsDots pull --autostash
 git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/dhmsDots reset --merge
 
@@ -23,3 +24,6 @@ frmwr-updt
 migrate-run
 
 hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
+if [ -z "$CURRENT_BRANCH" ]; then
+  git -C $HOME/.dhmsDots/ checkout "$CURRENT_BRANCH"
+fi

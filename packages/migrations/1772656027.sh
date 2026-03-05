@@ -15,4 +15,5 @@ if pkg-missing rofi; then
   pkgadd rofi
   pkgadd rofi-emoji
   pkgadd rofi-calc
+  stow rofi
 fi
