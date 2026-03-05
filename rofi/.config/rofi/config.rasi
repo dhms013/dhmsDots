@@ -11,10 +11,6 @@ configuration {
     kb-row-up:   "Control+k";
     kb-row-down: "Control+j";
     kb-row-right: "Control+l";
-    calc {
-        hint-result: "Res: ";
-        hint-welcome: "Calc";
-    }
 }
 
 @theme "~/.config/rofi/themes/theme.rasi"
