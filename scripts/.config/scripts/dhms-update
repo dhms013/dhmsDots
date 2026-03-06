@@ -9,7 +9,6 @@ hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
 show-logo
 sudo-keep
-toggle-idle
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
@@ -23,13 +22,7 @@ git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/.dhmsDots reset -
 
 frmwr-updt
 migrate-run
-toggle-idle
-
-hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
-if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
-  git -C $HOME/.dhmsDots/ checkout "$CURRENT_BRANCH"
-  git -C $HOME/.dhmsDots/ pull --rebase origin "$MAIN_BRANCH"
-fi
 
 show-done
 notify-send "Update finished"
+hyprctl dispatch tagwindow -- -noidle &>/dev/null || true

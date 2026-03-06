@@ -1,6 +1,6 @@
 echo "Replace walker-elephant with Rofi"
 
-if pkg-present walker; then
+if pkg-present walker-bin; then
   systemctl --user disable elephant.service
   pkgdrop walker-git
 fi

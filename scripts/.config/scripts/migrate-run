@@ -26,4 +26,5 @@ for file in ~/.dhmsDots/packages/migrations/*.sh; do
       fi
     fi
   fi
+  sudo updatedb
 done
