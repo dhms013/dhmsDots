@@ -5,34 +5,34 @@ format = "[$directory$git_branch$git_status]($style)$character"
 # Username module
 [username]
 show_always = true
-style_user = "bg:#000000 fg:#00ff99"
-style_root = "bg:#000000 fg:#ccffee"
+style_user = "bg:{{ background }} fg:{{ accent }}"
+style_root = "bg:{{ background }} fg:{{ accent }}"
 format = '[$user ]($style)'
 disabled = false
 
 # Character module for the prompt symbol
 [character]
-success_symbol = '[➜](bold fg:#00ff99)'
+success_symbol = '[➜](bold fg:{{ accent }})'
 error_symbol = '[✗](bold red)'
-vicmd_symbol = '[❮](fg:#00cc77)'
+vicmd_symbol = '[❮](fg:{{ accent }})'
 
 [directory]
 # truncation_length = 2
 # truncation_symbol = "…/"
 repo_root_style = "bold fg:#00cc77"
 repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
-style = "fg:#00cc77"
+style = "fg:{{ accent }}"
 format = "[$path]($style)"
 
 [git_branch]
 format = "[$symbol $branch]($style) "
 symbol = "󰘬"
-style = "italic cyan"
+style = "italic fg:{{ accent }}"
 
 [git_status]
 format     = '[$all_status]($style)'
 # format     = '[$all_status$ahead_behind]($style)'
-style      = "fg:#00ff99"
+style      = "fg:{{ accent }}"
 ahead      = "⇡${count} "
 diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
 behind     = "⇣${count} "

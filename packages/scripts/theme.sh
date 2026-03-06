@@ -35,6 +35,7 @@ link_theme_consumers() {
   ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
   ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
   ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
+  ln -sf ~/.config/themes/current/theme/starship.toml ~/.config/starship.toml
 }
 
 apply_gtk_theme
