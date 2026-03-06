@@ -8,7 +8,7 @@ if pkg-missing elephant; then
   pkgadd elephant
   pkgadd elephant-calc
   pkgadd elephant-clipboard
-  pkgadd elephantdesktopapplications
+  pkgadd elephant-desktopapplications
   pkgadd elephant-menus
   pkgadd elephant-symbols
   services
