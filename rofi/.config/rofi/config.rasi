@@ -3,6 +3,7 @@ configuration {
     show-icons:     true;
     scroll-method:  1;
     case-smart: true;
+    disable-history: true;
     kb-remove-to-eol: "Control+p";
     kb-accept-entry: "Control+n,Return";
     kb-mode-complete: "Control+Page_Down";

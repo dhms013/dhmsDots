@@ -9,9 +9,9 @@ hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
 show-logo
 sudo-keep
+toggle-idle
 
-echo -e "\033[38;2;0;204;119mUpdating dhmsDots"
-pkill -x hypridle
+echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
 yay -Syyu --noconfirm --cleanafter
 sudo updatedb
@@ -23,11 +23,12 @@ git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/dhmsDots reset --
 
 frmwr-updt
 migrate-run
+toggle-idle
 
 hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
 if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
   git -C $HOME/.dhmsDots/ checkout "$CURRENT_BRANCH"
 fi
 
-uwsm-app -- hypridle >/dev/null 2>&1 &
 show-done
+notify-send "Update finished"
