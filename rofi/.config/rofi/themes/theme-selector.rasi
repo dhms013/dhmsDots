@@ -11,11 +11,11 @@ window {
     border:           1px solid;
     border-color:     @border;
     border-radius:    25px;
-    width:            450px;
+    width:            350px;
     height:           800px;
     location:         center;
     padding:          20px;
-    spacing:          10px;
+    // spacing:          10px;
 }
 
 mainbox {
@@ -47,7 +47,6 @@ listview {
     columns:          1;
     lines:            8;
     scrollbar:        false;
-    padding:          14px;
 }
 
 element {
@@ -56,20 +55,16 @@ element {
     background-color: transparent;
     text-color:       @text;
     orientation:      vertical;
-    spacing:          1px;
     children:         [element-text, element-icon];
 }
 
 element-icon {
-    size:           195px;
-    border-radius:  10px;
-    padding:        0;
+    size:           210px;
 }
 
 element-text {
     horizontal-align: 0.5;
-    padding-bottom:   3px;
-    font:             "sans-serif 13";
+    font:             "sans-serif 11";
     text-color:       inherit;
 }
 

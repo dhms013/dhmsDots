@@ -35,7 +35,7 @@ menu() {
 
   echo -e "$options" | rofi -dmenu \
     -theme ~/.config/rofi/themes/theme.rasi \
-    -theme-str 'window { width: 250px; height: 300px;} listview { lines: 3; }' \
+    -theme-str 'window { width: 230px; height: 300px;} listview { lines: 5;}' \
     -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 
@@ -120,7 +120,7 @@ show_setup_security_menu() {
 }
 
 show_system_menu() {
-  case $(menu "System" "󰒲    Suspend\n    Lock\n󰍃    Logout\n󰜉    Reboot\n󰐥    Shutdown") in
+  case $(menu "System" "󰒲  Suspend\n  Lock\n󰍃  Logout\n󰜉  Reboot\n󰐥  Shutdown") in
   *Suspend*) systemctl suspend ;;
   *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) hyprctl dispatch exit ;;

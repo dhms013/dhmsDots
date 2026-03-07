@@ -11,8 +11,8 @@ window {
     border:           1px solid;
     border-color:     @border;
     border-radius:    25px;
-    width:            35%;
-    height:           38%;
+    width:            40%;
+    height:           37%;
     location:         center;
     padding:          20px;
 }
@@ -43,30 +43,24 @@ listview {
     border:           1px solid;
     border-color:     @border;
     border-radius:    18px;
-    padding:          1px;
     columns:          3;
     lines:            1;
-    spacing:          1px;
-    fixed-columns:    false;
-    scrollbar:        false;
 }
 
 element {
     orientation: vertical;
     padding:     10px;
-    border-radius: 12px;
+    border-radius: 16px;
     background-color: transparent;
 }
 
 element-icon {
     size:        250px;
-    border-radius: 25px;
 }
 
 element-text {
     font:            "sans-serif 11";
     horizontal-align: 0.5;
-    padding-top:     2px;
     text-color:      inherit;
 }
 
