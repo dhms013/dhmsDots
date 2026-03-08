@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo-keep
-
 # Where we store an empty file for each migration that has already been performed.
 STATE_DIR="$HOME/.local/state/dhms/migrations"
 mkdir -p "$STATE_DIR"

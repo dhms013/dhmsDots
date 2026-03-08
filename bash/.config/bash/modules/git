@@ -1,19 +1,19 @@
 gpr() {
+    local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    local REMOTE_BRANCH=$(git config --get "branch.$CURRENT_BRANCH.remote")
+
     if [ -z "$1" ]; then
-      REMOTE_BRANCH=$(gum input --placeholder="Enter remote branch" --header="")
-    else
-      REMOTE_BRANCH="$1"
-    fi
-    if [ -z "$2" ]; then
       TARGET_BRANCH=$(gum input --placeholder="Enter target branch" --header="")
     else
-      TARGET_BRANCH="$2"
+      TARGET_BRANCH="$1"
     fi
-    if [ -z "$REMOTE_BRANCH" ] || [ -z "$TARGET_BRANCH" ]; then
-      echo "Error: No remote branch and/or target branch provided"
-      echo "Usage: gpr <remote-branch> <target-branch>"
+
+    if [ -z "$TARGET_BRANCH" ]; then
+      echo "Error: No target branch provided"
+      echo "Usage: gpr <target-branch>"
       return 1
     fi
+
     git pull --rebase "$REMOTE_BRANCH" "$TARGET_BRANCH" && gp
   }
 
