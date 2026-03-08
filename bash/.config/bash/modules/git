@@ -3,7 +3,7 @@ gpr() {
     local REMOTE_BRANCH=$(git config --get "branch.$CURRENT_BRANCH.remote")
 
     if [ -z "$1" ]; then
-      TARGET_BRANCH=$(gum input --placeholder="Enter target branch" --header="")
+      TARGET_BRANCH=$(gum input --placeholder="Enter target branch" --header="Remote = $REMOTE_BRANCH")
     else
       TARGET_BRANCH="$1"
     fi
