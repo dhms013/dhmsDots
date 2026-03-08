@@ -91,7 +91,7 @@
     "interval": 3
   },
   "memory": {
-    "format": "  {used}G/{total}G",
+    "format": " {used}G/{total}G",
     "on-click": "floating-terminal btop",
     "interval": 3
   },
