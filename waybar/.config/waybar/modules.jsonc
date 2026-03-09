@@ -218,7 +218,7 @@
   },
   "custom/idle-indicator": {
     "on-click": "toggle-idle",
-    "exec": "$HOME/.config/scripts/toggle-idle-indicator",
+    "exec": "toggle-idle-indicator",
     "signal": 9,
     "return-type": "json"
   },
@@ -258,13 +258,13 @@
   },
   "custom/screenrecording-indicator": {
     "on-click": "screenrecord",
-    "exec": "~/.config/scripts/screenrecord-indicator",
+    "exec": "screenrecord-indicator",
     "signal": 8,
     "return-type": "json"
   },
   "custom/power": {
     "format": "󰐥",
-    "on-click": "~/.config/scripts/custom-menu system",
+    "on-click": "custom-menu system",
     "tooltip": false
   },
   "tray": {
