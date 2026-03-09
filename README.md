@@ -6,18 +6,12 @@ This repo is **not** a full distro, and not a framework.
 It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back
 with one command.
 
-If it helps you, feel free to steal it.
-If it breaks on your machine, you fix it.
-
 ---
 
 ## Notes
 
-- This repo is my personal backup, and it's a keyboard driven hyprland setup.
-- No guarantees, no support
-- Of course you can use this with other distro with Hyprland. But you'll need to edit the setup.sh by yourself, or simply just copy-paste (or stow) the dotfiles 🤣
+- This repo is my personal backup, and it's aiming to be a keyboard driven hyprland setup.
 - $mainMod usually using windows key, but I swap it with `ALT` button. please read the note inside [keybindings.conf](./hypr/.config/hypr/keybindings.conf) for other swapped button, or simply edit the [input.conf](./hypr/.config/hypr/input.conf)
-- If something breaks, you fix it yourself.
 - Contain a few themes from [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes), and you can easily install or update theme from there using [theme-install](./scripts/.config/scripts/theme-install) and [theme-update](./scripts/.config/scripts/theme-update)
 
 > [IMPORTANT KEYBINDS]
@@ -29,9 +23,8 @@ If it breaks on your machine, you fix it.
 1. [About](#about)
 2. [Default Apps](#default-apps)
 3. [Dependencies](#dependencies)
-4. [Installed Packages](#installed-packages)
-5. [Dotfiles](#dotfiles)
-6. [Installation](#installation)
+4. [Dotfiles](#dotfiles)
+5. [Installation](#installation)
 6. [Special Thanks](#special-thanks)
 
 ---
@@ -44,8 +37,7 @@ If it breaks on your machine, you fix it.
 - Restores my preferred defaults for Hyprland usage
 
 This repo assumes:
-- **Arch Linux** already installed (or other your beloved distro based on arch)
-- **Hyprland** already installed (if you choose other Desktop environment, you still able to steal some dotfiles from here)
+- **Arch Linux with Hyprland** is installed
 
 ---
 
@@ -62,8 +54,6 @@ My Hyprland config uses the following defaults:
 
 These apps are referenced directly in Hyprland keybinds.
 
-You can change them anytime by editing the Hyprland config after stowing.
-
 ---
 
 ## Dependencies
@@ -71,22 +61,6 @@ You can change them anytime by editing the Hyprland config after stowing.
 - Hyprland (basic setup) Installed
 - Bash (I never use zsh or fish)
 - Internet connection~
-
----
-
-## Installed Packages
-
-The [install.sh](./install.sh) installs packages that listed in [pkgList](./packages/pkgList)
-This includes (but is not limited to):
-
-- yay (edit for [paru](https://github.com/Morganamilo/paru) if you prefer that)
-- stow
-- neovim
-- ghostty
-- yazi
-- walker and elephant providers
-- nerd fonts
-- media tools, utilities, and Hyprland extras
 
 ---
 
@@ -108,9 +82,8 @@ This repo manages configs for:
 - sddm theme
 - starship
 - swayosd
-- systemd
 - themes
-- uwsm (yes. I use uwsm because it easier 🤣)
+- uwsm (yes. I use uwsm because it's easier 🤣)
 - waybar
 - yazi
 
@@ -121,20 +94,22 @@ Backup them before stow runs.
 
 ## Installation
 
-## Method 1
-### 1. Install your distro + Hyprland
+### 1. Manual
 
-1. Option 1
-Use archinstall
+1. Install arch + hyprland
+2. Clone the repo
+```
+git clone --depth=1 https://github.com/dhms013/dhmsDots.git $HOME/.dhmsDots
+```
+3. run installation
+```
+cd .dhmsDots
+sh install.sh
+```
 
-2. Option 2
-Install manually by following [arch wiki](https://wiki.archlinux.org/title/Installation_guide) or some youtuber
-
-3. Option 3
-Install any distro/OS that you like (maybe you'll need to edit the [install.sh](./install.sh) if you did)
 ---
 
-### 2. Clone the repo
+### 2. One line command
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
@@ -144,7 +119,7 @@ This will:
 - Install all listed packages
 - Stow dotfiles
 
-Reboot. Recommended to make sure all the services is running
+Reboot. Recommended to make sure all the configs is applied
 
 --- 
 
