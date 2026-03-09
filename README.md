@@ -1,8 +1,6 @@
 # dhmsDots
 
-Personal Hyprland **supplement** and post-install bootstrap for Arch Linux,
-
-This repo is **not** a full distro, and not a framework.
+Personal Hyprland **supplement** and post-install bootstrap for Arch Linux.
 It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back
 with one command.
 
@@ -78,7 +76,6 @@ This repo manages configs for:
 - mako
 - nvim
 - rofi
-- scripts (used in hypr and waybar)
 - sddm theme
 - starship
 - swayosd

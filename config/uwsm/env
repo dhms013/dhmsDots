@@ -1,2 +1,2 @@
-export PATH=$HOME/.config/scripts:$PATH
+export PATH=$HOME/.dhmsDots/bin:$PATH
 source ~/.config/uwsm/default

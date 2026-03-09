@@ -8,7 +8,7 @@ DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 STOW_PKGS=(
   bash btop fastfetch ghostty
   hypr hyprland-preview-share-picker
-  kitty mako nvim rofi scripts starship
+  kitty mako nvim rofi starship
   swayosd themes tmux waybar
 )
 
@@ -46,7 +46,7 @@ copy_extra_configs() {
   echo "==> Copying application launchers and extra configs"
   # cp -R "$DOTFILES_DIR/applications/" ~/.local/share/
   cp -R "$DOTFILES_DIR/config/"* ~/.config/
-  chmod -R 775 ~/.config/scripts/
+  chmod -R 775 ~/.dhmsDots/bin/
   mkdir -p ~/.config/themes/current/
 }
 

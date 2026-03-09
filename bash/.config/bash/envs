@@ -5,4 +5,4 @@ export BAT_THEME=ansi
 export MANPAGER="sh -c 'col -bx | bat --theme=default -l man -p'"
 export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
 export PATH=$JAVA_HOME/bin:$PATH
-export PATH="$PATH:${HOME}/.config/scripts"
+export PATH="$PATH:${HOME}/.dhmsDots/bin"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH="$HOME/.config/scripts:$PATH"
+export PATH="$HOME/.dhmsDots/bin:$PATH"
 
 # Set to true when going directly to a submenu, so we can exit directly
 BACK_TO_EXIT=false
