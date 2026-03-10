@@ -1,80 +1,79 @@
 @import "~/.config/themes/current/theme/rofi.rasi"
 
 * {
-    background-color: transparent;
-    text-color:       @text;
-    font:             "JetBrainsMono Nerd Font 10";
+  background-color: transparent;
+  text-color:       @text;
+  font:             "JetBrainsMono Nerd Font 10";
 }
 
 window {
-    background-color: @base;
-    border:           1px solid;
-    border-color:     @border;
-    border-radius:    25px;
-    width:            350px;
-    height:           800px;
-    location:         center;
-    padding:          20px;
-    // spacing:          10px;
+  location:                    south;
+  fullscreen:                  false;
+  width:                       1800px;
+  x-offset:                    0px;
+  y-offset:                    0px;
+  enabled:                     true;
+  margin:                      0px;
+  padding:                     0px;
+  border:                      2px solid;
+  border-radius:               16px 16px 0 0;
+  border-color:                @border;
+  background-color:            @background;
 }
 
 mainbox {
-    spacing:  10px;
-    children: [inputbar, listview];
+  enabled:                     true;
+  spacing:                     10px;
+  margin:                      0px;
+  padding:                     10px;
+  background-color:            @background;
+  children:                    [ "inputbar", "listview" ];
 }
 
 inputbar {
-    background-color: transparent;
-    border:           1px solid;
-    border-color:     @border;
-    border-radius:    8px;
-    padding:          10px 12px;
-    children:         [entry];
+  background-color:            @background;
+  border:                      1px solid;
+  border-color:                @border;
+  border-radius:               8px;
+  padding:                     10px 12px;
+  children:                    [entry];
 }
 
 entry {
-    placeholder:       " Search theme...";
-    placeholder-color: @border;
-    text-color:        @selected-text;
-    cursor-color:      transparent;
+ placeholder:                  " Search theme...";
+ placeholder-color:            @border;
+ text-color:                   @selected-text;
+ cursor-color:                 transparent;
 }
 
 listview {
-    background-color: @base;
-    border:           1px solid;
-    border-color:     @border;
-    border-radius:    18px;
-    columns:          1;
-    lines:            8;
-    scrollbar:        false;
+  background-color: @base;
+  border:           1px solid;
+  border-color:     @border;
+  border-radius:    8px 8px 0 0;
+  columns:          5;
+  lines:            1;
 }
 
 element {
-    padding:          0;
-    border-radius:    12px;
-    background-color: transparent;
-    text-color:       @text;
-    orientation:      vertical;
-    children:         [element-text, element-icon];
+  orientation:      vertical;
+  padding:          0;
+  background-color: transparent;
 }
 
 element-icon {
-    size:           210px;
+  size:             250px;
 }
 
 element-text {
-    horizontal-align: 0.5;
-    font:             "sans-serif 11";
-    text-color:       inherit;
+  font:            "sans-serif 11";
+  horizontal-align: 0.5;
+  text-color:      inherit;
 }
 
 element selected {
-    background-color: rgba(255,255,255,0.07);
-    border:           1px;
-    border-color:     @selected-text;
-    text-color:       @selected-text;
-}
-
-element selected .element-icon {
-    text-color: @selected-text;
+  background-color: rgba(255,255,255,0.07);
+  border:           2px;
+  border-color:     @selected-text;
+  text-color:       @selected-text;
 }

@@ -59,18 +59,14 @@ aur_install_and_launch() {
   present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2 && setsid gtk-launch $3"
 }
 
-show_background_menu() {
-  walker -m menus:backgroundSelector
-}
-
-show_theme_menu() {
-  walker -m menus:themesMenu
-}
-
 show_screenrecord_menu() {
   screenrecord --stop-recording && exit 0
 
-  case $(menu "Screenrecord" "  Without audio\n  With desktop audio\n  With desktop + microphone audio") in
+  selected=$(printf "  Without audio\n  With desktop audio\n  With desktop + microphone audio" | rofi -dmenu \
+    -i \
+    -theme-str 'window {width: 350px; height: 200px;}')
+
+  case "$selected" in
   *"Without audio") screenrecord ;;
   *"With desktop audio") screenrecord --with-desktop-audio ;;
   *"With desktop + microphone audio") screenrecord --with-desktop-audio --with-microphone-audio ;;

@@ -19,11 +19,17 @@ with one command.
 
 ## Table of Contents :
 1. [About](#about)
-2. [Default Apps](#default-apps)
-3. [Dependencies](#dependencies)
-4. [Dotfiles](#dotfiles)
-5. [Installation](#installation)
-6. [Special Thanks](#special-thanks)
+2. [Preview](#preview)
+3. [Default Apps](#default-apps)
+4. [Dependencies](#dependencies)
+5. [Dotfiles](#dotfiles)
+6. [Installation](#installation)
+7. [Special Thanks](#special-thanks)
+
+---
+
+## Preview
+
 
 ---
 

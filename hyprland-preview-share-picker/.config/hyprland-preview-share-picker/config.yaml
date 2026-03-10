@@ -3,7 +3,7 @@
 # relative paths are resolved relative to the location of the config file
 stylesheets: ["~/.config/themes/current/theme/hyprland-preview-share-picker.css"]
 # default page selected when the picker is opened
-default_page: windows
+default_page: outputs
 
 window:
   # height of the application window
@@ -39,16 +39,6 @@ classes:
   # css classname of the button containing the session restore checkbox and label
   restore_button: restore-button
 
-windows:
-  # minimum amount of image cards per row on the windows page
-  min_per_row: 3
-  # maximum amount of image cards per row on the windows page
-  max_per_row: 999
-  # number of clicks needed to select a window
-  clicks: 1
-  # spacing in pixels between the window cards
-  spacing: 12
-
 outputs:
   # number of clicks needed to select an output
   clicks: 1
@@ -59,6 +49,16 @@ outputs:
   show_label: false
   # size the output cards respectively to their scaling
   respect_output_scaling: true
+
+windows:
+  # minimum amount of image cards per row on the windows page
+  min_per_row: 3
+  # maximum amount of image cards per row on the windows page
+  max_per_row: 999
+  # number of clicks needed to select a window
+  clicks: 1
+  # spacing in pixels between the window cards
+  spacing: 12
 
 region:
   # command to run for region selection
