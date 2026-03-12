@@ -43,22 +43,6 @@ present_terminal() {
   floating-terminal $1
 }
 
-install() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm $2"
-}
-
-install_and_launch() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm $2 && setsid gtk-launch $3"
-}
-
-aur_install() {
-  present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2"
-}
-
-aur_install_and_launch() {
-  present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2 && setsid gtk-launch $3"
-}
-
 show_screenrecord_menu() {
   screenrecord --stop-recording && exit 0
 
@@ -75,7 +59,13 @@ show_screenrecord_menu() {
 }
 
 show_install_menu() {
-  case $(menu "Install" "󰣇  Pacman\n󰣇  AUR\n󰸌  Themes") in
+  local action="$1"
+
+  if [[ -z "$action" ]]; then
+    action=$(menu "Install" "󰣇  Pacman\n󰣇  AUR\n󰸌  Themes")
+  fi
+
+  case "$action" in
   *Pacman*) present_terminal pkg-install ;;
   *AUR*) present_terminal pkg-aur-install ;;
   *Themes*) present_terminal theme-install ;;
@@ -83,16 +73,21 @@ show_install_menu() {
   esac
 }
 show_setup_menu() {
-  options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
+  local action="$1"
+  local options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
 
-  case $(menu "Setup" "$options") in
+  if [[ -z "$action" ]]; then
+    action=$(menu "Setup" "$options")
+  fi
+
+  case "$action" in
   *Background*) background-selector ;;
   *DNS*) present_terminal setup-dns ;;
   *Install*) show_install_menu ;;
   *Power*) show_setup_power_menu ;;
   *Remove*) present_terminal pkg-remove ;;
   *Theme*) theme-selector ;;
-  *Security*) show_setup_security_menu ;;
+  *Security*) show_security_menu ;;
   *) show_main_menu ;;
   esac
 }
@@ -107,8 +102,14 @@ show_setup_power_menu() {
   fi
 }
 
-show_setup_security_menu() {
-  case $(menu "Setup" "󰈷  Fingerprint\n  Fido2") in
+show_security_menu() {
+  local action="$1"
+
+  if [[ -z "$action" ]]; then
+    action=$(menu "Setup" "󰈷  Fingerprint\n  Fido2")
+  fi
+
+  case "$action" in
   *Fingerprint*) present_terminal setup-fingerprint ;;
   *Fido2*) present_terminal setup-fido2 ;;
   *) show_setup_menu ;;
@@ -116,9 +117,15 @@ show_setup_security_menu() {
 }
 
 show_system_menu() {
-  case $(menu "System" "󰒲  Suspend\n  Lock\n󰍃  Logout\n󰜉  Reboot\n󰐥  Shutdown") in
+  local action="$1"
+
+  if [[ -z "$action" ]]; then
+    action=$(menu "System" "󰒲  Suspend\n  Lock\n󰍃  Logout\n󰜉  Reboot\n󰐥  Shutdown")
+  fi
+
+  case "$action" in
   *Suspend*) systemctl suspend ;;
-  *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
+  *Lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) hyprctl dispatch exit ;;
   *Reboot*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;
@@ -132,26 +139,26 @@ show_main_menu() {
 
 go_to_menu() {
   case "${1,,}" in
-  *aur*) present_terminal pkg-aur-install ;;
-  *background*) background-selector ;;
+  *aur*) show_install_menu AUR ;;
+  *background*) show_setup_menu Background ;;
   *dhms*) present_terminal dhms-update ;;
   *dns*) present_terminal setup-dns ;;
-  *fido2*) present_terminal setup-fido2 ;;
-  *fingerprint*) present_terminal setup-fingerprint ;;
+  *fido2*) show_security_menu Fido2 ;;
+  *fingerprint*) show_security_menu Fingerprint ;;
   *install*) show_install_menu ;;
-  *lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
-  *logout*) hyprctl dispatch exit ;;
-  *pacman*) present_terminal pkg-install ;;
+  *lock*) show_system_menu Lock ;;
+  *logout*) show_system_menu Logout ;;
+  *pacman*) show_install_menu Pacman ;;
   *power*) show_setup_power_menu ;;
-  *reboot*) systemctl reboot ;;
-  *remove*) present_terminal pkg-remove ;;
+  *reboot*) show_system_menu Reboot ;;
+  *remove*) show_setup_menu Remove ;;
   *screenrecord*) show_screenrecord_menu ;;
-  *security*) show_setup_security_menu ;;
+  *security*) show_security_menu ;;
   *setup*) show_setup_menu ;;
-  *shutdown*) systemctl poweroff ;;
-  *suspend*) systemctl suspend ;;
+  *shutdown*) show_system_menu Shutdown ;;
+  *suspend*) show_system_menu Suspend ;;
   *system*) show_system_menu ;;
-  *themes*) theme-selector ;;
+  *themes*) show_setup_menu Theme ;;
   *update*) present_terminal pkg-update ;;
   esac
 }
