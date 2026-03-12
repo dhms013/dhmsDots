@@ -36,11 +36,17 @@ It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back 
 
 ## Preview
 
+<details>
+<summary>Click to view screenshots</summary>
+<br>
+
 <img width="1920" height="1080" alt="screenshot-2026-03-10_09-50-39" src="https://github.com/user-attachments/assets/e18a46b2-bfde-4b34-8527-47359faa9766" />
 <br><br>
 <img width="1920" height="1080" alt="screenshot-2026-03-10_09-51-24" src="https://github.com/user-attachments/assets/cafe8d52-5a2b-4cd1-9b1d-7f2a345a8066" />
 <br><br>
 <img width="1920" height="1080" alt="screenshot-2026-03-10_09-50-53" src="https://github.com/user-attachments/assets/7df85a20-969a-4372-8632-f8ce3c3b6b8b" />
+
+</details>
 
 ---
 
