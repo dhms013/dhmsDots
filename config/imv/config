@@ -1,0 +1,5 @@
+[binds]
+h = prev
+k = prev
+l = next
+j = next
