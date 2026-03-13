@@ -2,7 +2,7 @@
   selected-text: {{ accent }};
   text: {{ foreground }};
   base: {{ background }};
-  border: {{ foreground }};
+  border: {{ accent }};
   foreground: {{ foreground }};
   background: {{ background }};
 }
