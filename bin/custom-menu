@@ -43,7 +43,7 @@ present_terminal() {
   floating-terminal $1
 }
 
-show_screenrecord_menu() {
+screenrecord_menu() {
   screenrecord --stop-recording && exit 0
 
   selected=$(printf "  Without audio\n  With desktop audio\n  With desktop + microphone audio" | rofi -dmenu \
@@ -54,11 +54,11 @@ show_screenrecord_menu() {
   *"Without audio") screenrecord ;;
   *"With desktop audio") screenrecord --with-desktop-audio ;;
   *"With desktop + microphone audio") screenrecord --with-desktop-audio --with-microphone-audio ;;
-  *) back_to show_main-menu ;;
+  *) back_to main-menu ;;
   esac
 }
 
-show_install_menu() {
+install_menu() {
   local action="$1"
 
   if [[ -z "$action" ]]; then
@@ -69,10 +69,10 @@ show_install_menu() {
   *Pacman*) present_terminal pkg-install ;;
   *AUR*) present_terminal pkg-aur-install ;;
   *Themes*) present_terminal theme-install ;;
-  *) show_setup_menu ;;
+  *) setup_menu ;;
   esac
 }
-show_setup_menu() {
+setup_menu() {
   local action="$1"
   local options="  Background\n󰱔  DNS\n󰉉  Install\n󱐋  Power Profile\n󰭌  Remove\n󰸌  Themes\n  Security"
 
@@ -83,26 +83,26 @@ show_setup_menu() {
   case "$action" in
   *Background*) background-selector ;;
   *DNS*) present_terminal setup-dns ;;
-  *Install*) show_install_menu ;;
-  *Power*) show_setup_power_menu ;;
+  *Install*) install_menu ;;
+  *Power*) setup_power_menu ;;
   *Remove*) present_terminal pkg-remove ;;
   *Theme*) theme-selector ;;
-  *Security*) show_security_menu ;;
-  *) show_main_menu ;;
+  *Security*) security_menu ;;
+  *) main_menu ;;
   esac
 }
 
-show_setup_power_menu() {
+setup_power_menu() {
   profile=$(menu "Power Profile" "$(powerprofiles-list)" "" "$(powerprofilesctl get)")
 
   if [[ "$profile" == "CNCLD" || -z "$profile" ]]; then
-    back_to show_setup_menu
+    back_to setup_menu
   else
     powerprofilesctl set "$profile"
   fi
 }
 
-show_security_menu() {
+security_menu() {
   local action="$1"
 
   if [[ -z "$action" ]]; then
@@ -112,11 +112,11 @@ show_security_menu() {
   case "$action" in
   *Fingerprint*) present_terminal setup-fingerprint ;;
   *Fido2*) present_terminal setup-fido2 ;;
-  *) show_setup_menu ;;
+  *) setup_menu ;;
   esac
 }
 
-show_system_menu() {
+system_menu() {
   local action="$1"
 
   if [[ -z "$action" ]]; then
@@ -129,36 +129,36 @@ show_system_menu() {
   *Logout*) hyprctl dispatch exit ;;
   *Reboot*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;
-  *) back_to show_main_menu ;;
+  *) back_to main_menu ;;
   esac
 }
 
-show_main_menu() {
+main_menu() {
   go_to_menu "$(menu "Go" "  Update\n  Setup\n  System")"
 }
 
 go_to_menu() {
   case "${1,,}" in
-  *aur*) show_install_menu AUR ;;
-  *background*) show_setup_menu Background ;;
+  *aur*) install_menu AUR ;;
+  *background*) setup_menu Background ;;
   *dhms*) present_terminal dhms-update ;;
   *dns*) present_terminal setup-dns ;;
-  *fido2*) show_security_menu Fido2 ;;
-  *fingerprint*) show_security_menu Fingerprint ;;
-  *install*) show_install_menu ;;
-  *lock*) show_system_menu Lock ;;
-  *logout*) show_system_menu Logout ;;
-  *pacman*) show_install_menu Pacman ;;
-  *power*) show_setup_power_menu ;;
-  *reboot*) show_system_menu Reboot ;;
-  *remove*) show_setup_menu Remove ;;
-  *screenrecord*) show_screenrecord_menu ;;
-  *security*) show_security_menu ;;
-  *setup*) show_setup_menu ;;
-  *shutdown*) show_system_menu Shutdown ;;
-  *suspend*) show_system_menu Suspend ;;
-  *system*) show_system_menu ;;
-  *themes*) show_setup_menu Theme ;;
+  *fido2*) security_menu Fido2 ;;
+  *fingerprint*) security_menu Fingerprint ;;
+  *install*) install_menu ;;
+  *lock*) system_menu Lock ;;
+  *logout*) system_menu Logout ;;
+  *pacman*) install_menu Pacman ;;
+  *power*) setup_power_menu ;;
+  *reboot*) system_menu Reboot ;;
+  *remove*) setup_menu Remove ;;
+  *screenrecord*) screenrecord_menu ;;
+  *security*) security_menu ;;
+  *setup*) setup_menu ;;
+  *shutdown*) system_menu Shutdown ;;
+  *suspend*) system_menu Suspend ;;
+  *system*) system_menu ;;
+  *themes*) setup_menu Theme ;;
   *update*) present_terminal pkg-update ;;
   esac
 }
@@ -166,5 +166,5 @@ if [[ -n "$1" ]]; then
   BACK_TO_EXIT=true
   go_to_menu "$1"
 else
-  show_main_menu
+  main_menu
 fi
