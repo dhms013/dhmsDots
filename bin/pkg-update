@@ -3,7 +3,10 @@
 show-logo
 sudo-keep
 echo "Updating..."
-hyprctl dispatch tagwindow +noidle &>/dev/null || true
+
+pkill -x hypridle
+pkill -RTMIN+9 waybar
+
 yay -Syyu --noconfirm --cleanafter
 
 orphans=$(pacman -Qtdq || true)
@@ -16,5 +19,8 @@ if [[ -n $orphans ]]; then
 fi
 
 sudo updatedb
-hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
+
+uwsm-app -- hypridle >/dev/null 2>&1 &
+pkill -RTMIN+9 waybar
+
 show-done
