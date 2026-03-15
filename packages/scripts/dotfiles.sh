@@ -44,7 +44,7 @@ stow_dotfiles() {
 
 copy_extra_configs() {
   echo "==> Copying application launchers and extra configs"
-  # cp -R "$DOTFILES_DIR/applications/" ~/.local/share/
+  cp -R "$DOTFILES_DIR/applications/" ~/.local/share/applications/
   cp -R "$DOTFILES_DIR/config/"* ~/.config/
   chmod -R 775 ~/.dhmsDots/bin/
   mkdir -p ~/.config/themes/current/
