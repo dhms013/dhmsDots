@@ -27,11 +27,6 @@ remove_config_scripts() {
   fi
 }
 
-set_bin_permissions() {
-  echo "==> Setting permissions on new scripts env"
-  chmod -R 775 "$DOTFILES_DIR/bin/"
-}
-
 reboot_countdown() {
   gum spin --spinner "globe" --title "Rebooting in" --show-output -- \
     bash -c '
@@ -47,7 +42,12 @@ reboot_countdown() {
   systemctl reboot
 }
 
+set_bin_permissions() {
+  echo "==> Setting permissions on new scripts env"
+  chmod -R 775 "$DOTFILES_DIR/bin/"
+  reboot_countdown
+}
+
 migrate_uwsm_env
 remove_config_scripts
 set_bin_permissions
-reboot_countdown
