@@ -87,7 +87,7 @@
   },
   "cpu": {
     "format": "󰍛 {usage}%",
-    "on-click": "floating-terminal s-tui",
+    "on-click": "floating-terminal btm",
     "interval": 3
   },
   "memory": {
