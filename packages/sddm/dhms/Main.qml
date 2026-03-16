@@ -20,7 +20,7 @@ Rectangle {
         asynchronous: true
         cache: false
         visible: status === Image.Ready
-      }
+    }
 
     Column {
         anchors.centerIn: parent
@@ -28,6 +28,7 @@ Rectangle {
 
         Image {
             id: logo
+
             source: "logo.png"
             fillMode: Image.PreserveAspectFit
             width: parent.parent.width * 0.25
@@ -36,30 +37,54 @@ Rectangle {
 
         TextField {
             id: passwordBox
+
+            property bool loginFailed: false
+
             width: 500
             height: 100
             font.pixelSize: Math.round(height * 0.75)
             echoMode: TextInput.Password
             passwordCharacter: "•"
-            color: "#59CF77"
             horizontalAlignment: TextInput.AlignHCenter
             placeholderText: "Enter password"
-            cursorDelegate: Item {
-              visible: false
-            }
             placeholderTextColor: "#A0FFFFFF"
+            color: loginFailed ? "#FF4D4D" : "#59CF77"
+            focus: true
+            onAccepted: {
+                loginFailed = true;
+                sddm.login(userModel.lastUser, text, sessionModel.lastIndex);
+            }
+            Component.onCompleted: forceActiveFocus()
+
+            Connections {
+                function onLoginFailed() {
+                    passwordBox.forceActiveFocus();
+                    resetTimer.start();
+                }
+
+                target: sddm
+            }
+
+            Timer {
+                id: resetTimer
+
+                interval: 1000
+                onTriggered: passwordBox.loginFailed = false
+            }
+
+            cursorDelegate: Item {
+                visible: false
+            }
+
             background: Rectangle {
                 color: "#00000000"
-                border.color: "#59CF77"
+                border.color: passwordBox.loginFailed ? "#FF4D4D" : "#59CF77"
                 border.width: 5
                 radius: 65
             }
 
-            focus: true
-            onAccepted: {
-                sddm.login(userModel.lastUser, text, sessionModel.lastIndex)
-            }
-            Component.onCompleted: forceActiveFocus()
         }
+
     }
+
 }
