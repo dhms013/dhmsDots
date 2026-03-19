@@ -7,7 +7,7 @@ alias ...='cd ../..'
 alias grep='grep --color=auto'
 alias waybar="systemctl --user restart waybar.service"
 alias fastfetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
-alias expac="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
+alias pkgs="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
 alias icat="clear; kitty +kitten icat"
 alias megumin="icat ~/.config/fastfetch/logo/megumin.gif"
 alias lv='nvim $(fzf -m --preview="bat --color=always {}")'

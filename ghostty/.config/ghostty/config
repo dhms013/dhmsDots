@@ -4,3 +4,15 @@ background-opacity = 0.8
 font-size = 7.5
 resize-overlay = "never"
 cursor-style = "underline"
+
+# new_split
+keybind = ctrl+shift+h=new_split:left
+keybind = ctrl+shift+j=new_split:down
+keybind = ctrl+shift+k=new_split:up
+keybind = ctrl+shift+l=new_split:right
+
+# goto_split
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:down
+keybind = performable:ctrl+k=goto_split:up
+keybind = performable:ctrl+l=goto_split:right
