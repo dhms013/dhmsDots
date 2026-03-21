@@ -126,7 +126,7 @@ system_menu() {
   case "$action" in
   *Suspend*) systemctl suspend ;;
   *Lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
-  *Logout*) hyprctl dispatch exit ;;
+  *Logout*) uwsm stop ;;
   *Reboot*) systemctl reboot ;;
   *Shutdown*) systemctl poweroff ;;
   *) back_to main_menu ;;

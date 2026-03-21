@@ -5,6 +5,13 @@ set -e
 CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
 MAIN_BRANCH="main"
 
+git_act() {
+  echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
+  git -C $HOME/.dhmsDots/ checkout "$MAIN_BRANCH"
+  git -C $HOME/.dhmsDots pull --autostash
+  git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/.dhmsDots reset --merge
+}
+
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
 show-logo
@@ -15,13 +22,11 @@ keyrings
 yay -Syyu --noconfirm --cleanafter
 sudo updatedb
 
-echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
-git -C $HOME/.dhmsDots/ checkout "$MAIN_BRANCH"
-git -C $HOME/.dhmsDots pull --autostash
-git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/.dhmsDots reset --merge
+git_act
 
 frmwr-updt
 migrate-run
+pkg-check-orphan
 
 show-done
 notify-send "Update finished"
