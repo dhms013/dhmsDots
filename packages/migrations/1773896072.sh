@@ -8,4 +8,4 @@ if pkg-missing bottom; then
   pkgadd bottom
 fi
 
-waybar
+systemctl --user restart waybar.service

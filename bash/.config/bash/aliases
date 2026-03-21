@@ -6,7 +6,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias grep='grep --color=auto'
 alias waybar="systemctl --user restart waybar.service"
-alias fastfetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
+alias fetch="clear; ~/.config/fastfetch/ffetch_wrapper.sh"
 alias pkgs="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
 alias icat="clear; kitty +kitten icat"
 alias megumin="icat ~/.config/fastfetch/logo/megumin.gif"
@@ -21,6 +21,7 @@ alias gs="git switch -c"
 alias gp="git push"
 alias gpull="git pull"
 alias gm="git merge"
+alias gstat="git status"
 alias mainasrock="gco main ; gm origin/asrock ; gp ; gco asrock"
 alias mainthinkpad="gco main ; gm origin/thinkpad ; gp ; gco thinkpad"
 alias boo="ghostty +boo"
