@@ -24,17 +24,7 @@ bootstrap_repo() {
   fi
 }
 
-# ── 2. Source a module script ─────────────────────────────────────────────────
-run_module() {
-  local script="$SCRIPTS_DIR/$1"
-  if [ -f "$script" ]; then
-    bash "$script"
-  else
-    echo "==> Warning: module not found: $script"
-  fi
-}
-
-# ── 3. Sudo keepalive (runs in background for duration of script) ─────────────
+# ── 2. Sudo keepalive (runs in background for duration of script) ─────────────
 sudo_keepalive() {
   echo "==> This script requires sudo. Please enter your password:"
   sudo -v
@@ -43,6 +33,16 @@ sudo_keepalive() {
     sleep 60
     kill -0 "$$" || exit
   done 2>/dev/null &
+}
+
+# ── 3. Source a module script ─────────────────────────────────────────────────
+run_module() {
+  local script="$SCRIPTS_DIR/$1"
+  if [ -f "$script" ]; then
+    bash "$script"
+  else
+    echo "==> Warning: module not found: $script"
+  fi
 }
 
 # ── 4. Countdown reboot ───────────────────────────────────────────────────────

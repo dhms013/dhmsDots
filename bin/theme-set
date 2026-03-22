@@ -5,59 +5,27 @@ if [[ -z $1 ]]; then
   exit 1
 fi
 
-CURRENT_THEME_PATH="$HOME/.config/themes/current/theme"
-NEXT_THEME_PATH="$HOME/.config/themes/current/next-theme"
-USER_THEMES_PATH="$HOME/.config/themes/themeLists/"
-BG_DIR="$HOME/.config/themes/current/theme/backgrounds/"
-LINKED_BG="$HOME/.config/themes/current/background"
+export THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
-THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+restart_apps() {
+  systemctl --user restart waybar
 
-if [[ -d "$USER_THEMES_PATH/$THEME_NAME" ]]; then
-  THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
-  notify-send 'theme changed to: ' $THEME_NAME
-else
-  echo "Theme '$THEME_NAME' does not exist"
-  notify-send check doesnt-exists
-  exit 1
-fi
+  if pgrep -x kitty; then
+    killall -SIGUSR1 kitty
+  fi
 
-# Setup clean next theme directory (for atomic theme config swapping)
-rm -rf "$NEXT_THEME_PATH"
-mkdir -p "$NEXT_THEME_PATH"
+  if pgrep -x ghostty; then
+    killall -SIGUSR2 ghostty
+  fi
 
-# Copy static configs
-cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null
+  hyprctl reload
+  pkill -SIGUSR2 btop
+  makoctl reload
 
-# Generate dynamic configs
+  pkill swayosd-server
+  systemctl --user restart swayosd-server.service
+}
+
 theme-template
-
-# Swap next theme in as current
-rm -rf "$CURRENT_THEME_PATH"
-mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH"
-
-# Store theme name for reference
-echo "$THEME_NAME" >"$HOME/.config/themes/current/theme.name"
-
-# Change background with theme
-ln -sf "$(find "$BG_DIR" -type f | sort | head -n 1)" "$LINKED_BG"
-awww img "$LINKED_BG" --transition-type 'random' --transition-fps 60 --transition-duration 1
-
 theme-gnome
-
-systemctl --user restart waybar
-
-if pgrep -x kitty; then
-  killall -SIGUSR1 kitty
-fi
-
-if pgrep -x ghostty; then
-  killall -SIGUSR2 ghostty
-fi
-
-hyprctl reload
-pkill -SIGUSR2 btop
-makoctl reload
-
-pkill swayosd-server
-systemctl --user restart swayosd-server.service
+restart_apps
