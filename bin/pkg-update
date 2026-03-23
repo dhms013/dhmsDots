@@ -4,16 +4,4 @@ show-logo
 sudo-keep
 echo "Updating..."
 
-# pkill -x hypridle
-# pkill -RTMIN+9 waybar
-
 yay -Syyu --noconfirm --cleanafter
-
-pkg-check-orphan
-
-sudo updatedb
-
-# uwsm-app -- hypridle >/dev/null 2>&1 &
-# pkill -RTMIN+9 waybar
-
-show-done

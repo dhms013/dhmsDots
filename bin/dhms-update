@@ -19,15 +19,20 @@ sudo-keep
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
-yay -Syyu --noconfirm --cleanafter
-sudo updatedb
+pkg-update
 
 git_act
 
 frmwr-updt
 migrate-run
 pkg-check-orphan
+sudo updatedb
 
-show-done
-notify-send "Update finished"
+if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux'; then
+  gum confirm "Linux kernel updated. Reboot now?" && reboot
+else
+  notify-send "Update finished"
+  show-done
+fi
+
 hyprctl dispatch tagwindow -- -noidle &>/dev/null || true

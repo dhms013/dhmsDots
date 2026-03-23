@@ -141,7 +141,6 @@ go_to_menu() {
   case "${1,,}" in
   *aur*) install_menu AUR ;;
   *background*) setup_menu Background ;;
-  *dhms*) present_terminal dhms-update ;;
   *dns*) present_terminal setup-dns ;;
   *fido2*) security_menu Fido2 ;;
   *fingerprint*) security_menu Fingerprint ;;
@@ -159,7 +158,7 @@ go_to_menu() {
   *suspend*) system_menu Suspend ;;
   *system*) system_menu ;;
   *themes*) setup_menu Theme ;;
-  *update*) present_terminal pkg-update ;;
+  *update*) present_terminal dhms-update ;;
   esac
 }
 if [[ -n "$1" ]]; then
