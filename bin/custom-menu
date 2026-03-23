@@ -127,7 +127,7 @@ system_menu() {
   *Suspend*) systemctl suspend ;;
   *Lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) uwsm stop ;;
-  *Reboot*) systemctl reboot ;;
+  *Reboot*) systemctl reboot --no-wall ;;
   *Shutdown*) systemctl poweroff ;;
   *) back_to main_menu ;;
   esac

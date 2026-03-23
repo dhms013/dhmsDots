@@ -120,7 +120,15 @@ This repo manages configs for:
 
 > ⚠️ **Heads up** — existing configs will be **replaced** by stow. Back them up before running the installer.
 
-### 1. Manual
+### 1. One-line command
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
+```
+
+---
+
+### 2. Manual
 
 1. Install Arch + Hyprland
 2. Clone the repo
@@ -131,14 +139,6 @@ git clone --depth=1 https://github.com/dhms013/dhmsDots.git $HOME/.dhmsDots
 ```bash
 cd .dhmsDots
 sh install.sh
-```
-
----
-
-### 2. One-line command
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
 ```
 
 This will:
