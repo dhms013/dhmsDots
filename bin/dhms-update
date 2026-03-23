@@ -28,7 +28,7 @@ migrate-run
 pkg-check-orphan
 sudo updatedb
 
-if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux'; then
+if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux-zen'; then
   gum confirm "Linux kernel updated. Reboot now?" && reboot
 else
   notify-send "Update finished"
