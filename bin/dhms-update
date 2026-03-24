@@ -4,12 +4,30 @@ set -e
 
 CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
 MAIN_BRANCH="main"
+RESTORE_BRANCH=false
 
-git_act() {
-  echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
+git_check_branch() {
+  if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
+    CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH" \
+      --header "Currently on branch: $CURRENT_BRANCH")
+    [ "$CHOICE" = "Go back to $CURRENT_BRANCH" ] && RESTORE_BRANCH=true
+  fi
   git -C $HOME/.dhmsDots/ checkout "$MAIN_BRANCH"
+}
+
+git_pull() {
+  echo -e "\033[38;2;0;204;119mGit Pull\033[0m"
   git -C $HOME/.dhmsDots pull --autostash
   git -C $HOME/.dhmsDots --no-pager diff --check || git -C $HOME/.dhmsDots reset --merge
+}
+
+git_restore() {
+  if [ "$RESTORE_BRANCH" = true ]; then
+    echo -e "\033[38;2;0;204;119mRestore $CURRENT_BRANCH\033[0m"
+    git -C $HOME/.dhmsDots checkout "$CURRENT_BRANCH"
+    REMOTE=$(git -C $HOME/.dhmsDots config --get "branch.$CURRENT_BRANCH.remote")
+    git -C $HOME/.dhmsDots pull --rebase --autostash "$REMOTE" main
+  fi
 }
 
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
@@ -17,16 +35,20 @@ hyprctl dispatch tagwindow +noidle &>/dev/null || true
 show-logo
 sudo-keep
 
+git_check_branch
+
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
 pkg-update
 
-git_act
+git_pull
 
 frmwr-updt
 migrate-run
 pkg-check-orphan
 sudo updatedb
+
+git_restore
 
 if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux-zen'; then
   gum confirm "Linux kernel updated. Reboot now?" && reboot

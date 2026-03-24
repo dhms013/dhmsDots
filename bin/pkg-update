@@ -1,7 +1,5 @@
 #!/bin/bash
 
-show-logo
-sudo-keep
-echo "Updating..."
+echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
 yay -Syyu --noconfirm --cleanafter
