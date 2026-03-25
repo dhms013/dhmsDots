@@ -50,5 +50,16 @@ copy_extra_configs() {
   mkdir -p ~/.config/themes/current/
 }
 
+restart_terminal() {
+  if pgrep -x kitty; then
+    killall -SIGUSR1 kitty
+  fi
+
+  if pgrep -x ghostty; then
+    killall -SIGUSR2 ghostty
+  fi
+}
+
 stow_dotfiles
 copy_extra_configs
+restart_terminal
