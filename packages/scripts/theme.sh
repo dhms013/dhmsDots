@@ -22,7 +22,6 @@ set_initial_theme() {
 
 set_wallpaper() {
   echo "==> Setting wallpaper"
-  awww-daemon &
   awww img ~/.config/themes/current/background
 }
 
@@ -30,7 +29,6 @@ link_theme_consumers() {
   echo "==> Linking theme consumers"
   rm -rf ~/.config/btop/themes/current.theme
   rm -rf ~/.config/mako/config
-  rm -rf ~/.config/nvim/lua/plugins/theme.lua
 
   ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
   ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
