@@ -51,7 +51,7 @@ sudo updatedb
 git_restore
 
 if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux-zen'; then
-  gum confirm "Linux kernel updated. Reboot now?" && reboot
+  gum confirm "Linux kernel updated. Reboot now?" && reboot --no-wall
 else
   notify-send "Update finished"
   show-done

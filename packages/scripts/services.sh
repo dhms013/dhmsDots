@@ -24,8 +24,8 @@ enable_services() {
   # EOF
   #
   echo "==> Enabling services"
-  uwsm-app swayosd-server
-  uwsm-app waybar
+  # uwsm-app swayosd-server
+  # uwsm-app waybar
   systemctl --user enable --now pipewire.service pipewire-pulse wireplumber
   sudo updatedb
 }
