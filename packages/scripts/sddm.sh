@@ -27,5 +27,9 @@ Current=${THEME_NAME}
 EOF
 }
 
-install_sddm_theme
-configure_sddm
+if command -v sddm &>/dev/null; then
+  install_sddm_theme
+  configure_sddm
+else
+  echo "==> sddm not installed, skipping setup"
+fi
