@@ -5,6 +5,7 @@ set -e
 CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
 MAIN_BRANCH="main"
 RESTORE_BRANCH=false
+NVIDIA_MODULE=$(find /usr/lib/modules/$(uname -r) -name "nvidia.ko*" 2>/dev/null | head -1)
 
 git_check_branch() {
   if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
@@ -50,8 +51,9 @@ sudo updatedb
 
 git_restore
 
-if expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20 | grep -q 'linux-zen'; then
-  gum confirm "Linux kernel updated. Reboot now?" && reboot --no-wall
+if [ /boot/vmlinuz-linux-zen -nt /proc/1 ] ||
+  { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
+  gum confirm "Kernel/GPU driver updated. Reboot now?" && reboot --no-wall
 else
   notify-send "Update finished"
   show-done
