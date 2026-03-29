@@ -38,25 +38,6 @@ install_yay() {
   rm -rf /tmp/yay
 }
 
-setup_cachyos_repo() {
-  echo "==> Adding CachyOS repository"
-
-  local tmp_dir="/tmp/cachyos-repo"
-  [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
-  mkdir -p "$tmp_dir"
-
-  curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o "$tmp_dir/cachyos-repo.tar.xz"
-  tar xvf "$tmp_dir/cachyos-repo.tar.xz" -C "$tmp_dir" --strip-components=1
-
-  # Pipe 'y' to auto-confirm all prompts
-  yes | sudo bash "$tmp_dir/cachyos-repo.sh"
-
-  rm -rf "$tmp_dir"
-
-  echo "==> Syncing package databases"
-  sudo pacman -Sy
-}
-
 install_packages() {
   local pkgs
   pkgs=$(cat "$DOTFILES_DIR/packages/pkgList")
@@ -71,5 +52,4 @@ install_packages() {
 setup_pacman
 install_bootstrap
 install_yay
-setup_cachyos_repo
 install_packages
