@@ -29,8 +29,32 @@ install_yay() {
   echo "==> Installing yay"
   [ -d /tmp/yay ] && rm -rf /tmp/yay
   git clone https://aur.archlinux.org/yay.git /tmp/yay
-  cd /tmp/yay && makepkg -si --noconfirm && cd -
+  cd /tmp/yay
+
+  makepkg -s --noconfirm
+  sudo pacman -U --noconfirm yay-*.pkg.tar.zst
+
+  cd -
   rm -rf /tmp/yay
+}
+
+setup_cachyos_repo() {
+  echo "==> Adding CachyOS repository"
+
+  local tmp_dir="/tmp/cachyos-repo"
+  [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
+  mkdir -p "$tmp_dir"
+
+  curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o "$tmp_dir/cachyos-repo.tar.xz"
+  tar xvf "$tmp_dir/cachyos-repo.tar.xz" -C "$tmp_dir" --strip-components=1
+
+  # Pipe 'y' to auto-confirm all prompts
+  yes | sudo bash "$tmp_dir/cachyos-repo.sh"
+
+  rm -rf "$tmp_dir"
+
+  echo "==> Syncing package databases"
+  sudo pacman -Sy
 }
 
 install_packages() {
@@ -47,4 +71,5 @@ install_packages() {
 setup_pacman
 install_bootstrap
 install_yay
+setup_cachyos_repo
 install_packages
