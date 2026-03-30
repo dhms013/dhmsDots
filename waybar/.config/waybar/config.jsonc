@@ -35,6 +35,7 @@
       "temperature",
       "cpu",
       "memory",
+      "power-profiles-daemon",
       "custom/idle-indicator"
     ]
   },

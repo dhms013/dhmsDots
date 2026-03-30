@@ -40,6 +40,47 @@ tooltip {
 tooltip label {
     color: @foreground;
 }
+
+#tray {
+  min-width: 7px;
+  margin: 2.5px 4px;
+  padding: 0 4px;
+}
+
+#tray > widget:hover {
+  color: @accent;
+  background-color: alpha(@accent, 0.15);
+  border-radius: 6px;
+}
+
+menu {
+  background-color: @background;
+  color: @foreground;
+  border: 1px solid alpha(@foreground, 0.8);
+  border-radius: 8px;
+  padding: 4px 2px;
+  box-shadow: 0 3px 10px alpha(black, 0.4);
+}
+
+menuitem {
+  padding: 8px 16px;
+  min-height: 0;
+  font-family: 'Symbols Nerd Font';
+  font-size: 10px;
+  font-weight: 500;
+}
+
+menuitem:hover,
+menuitem:selected {
+  background-color: @hover;
+  color: @foreground;
+  border-radius: 6px;
+}
+
+menuitem:insensitive {
+  color: alpha(@foreground, 0.5);
+}
+
 * {
   background-color: transparent;
   color: @foreground;
