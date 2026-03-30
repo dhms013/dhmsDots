@@ -35,7 +35,7 @@ menu() {
 
   echo -e "$options" | rofi -dmenu \
     -theme ~/.config/rofi/themes/theme.rasi \
-    -theme-str 'window { width: 230px; height: 300px;} listview { lines: 5;}' \
+    -theme-str 'window { width: 230px; height: 280px;} listview { lines: 5;}' \
     -p "$prompt…" "${args[@]}" 2>/dev/null
 }
 

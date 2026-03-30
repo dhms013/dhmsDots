@@ -3,7 +3,7 @@
 set -e
 echo -e "\033[38;2;0;204;119mFirmware Update\033[0m"
 
-if pkg-missing fwupdmgr; then
+if pkg-missing fwupd; then
   pkgadd fwupd
 fi
 

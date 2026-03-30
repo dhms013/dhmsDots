@@ -16,7 +16,7 @@ window {
   margin:                      0px;
   padding:                     0px;
   border:                      2px solid;
-  border-radius:               16px 16px 0 0;
+  // border-radius:               16px 16px 0 0;
   border-color:                @border;
   background-color:            @background;
 }
@@ -34,7 +34,7 @@ inputbar {
   background-color:            @background;
   border:                      1px solid;
   border-color:                @border;
-  border-radius:               8px;
+  // border-radius:               8px;
   padding:                     10px 12px;
   children:                    [entry];
 }
@@ -50,7 +50,7 @@ listview {
   background-color: @base;
   border:           1px solid;
   border-color:     @border;
-  border-radius:    8px 8px 0 0;
+  // border-radius:    8px 8px 0 0;
   columns:          5;
   lines:            1;
 }
