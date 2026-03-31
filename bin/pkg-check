@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for pkg in "$@"; do
+  if ! pacman -Q "$pkg" &>/dev/null; then
+    echo "$pkg is missing..."
+    exit 0
+  else
+    echo "$pkg is present..."
+    exit 0
+  fi
+done
+
+exit 1

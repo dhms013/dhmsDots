@@ -7,7 +7,7 @@ fi
 
 export THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
-restart_terminal() {
+restart_apps() {
   if pgrep -x kitty; then
     killall -SIGUSR1 kitty
   fi
@@ -15,13 +15,14 @@ restart_terminal() {
   if pgrep -x ghostty; then
     killall -SIGUSR2 ghostty
   fi
+
+  restart-services waybar
+  restart-services swayosd-server
+  makoctl reload
+  pkill -SIGUSR2 btop
 }
 
 theme-template
-theme-gnome
-restart_terminal
-restart-services waybar
-restart-services swayosd-server
-makoctl reload
+restart_apps
 hyprctl reload
-pkill -SIGUSR2 btop
+theme-gnome

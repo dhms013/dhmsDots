@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# ── Input ─────────────────────────────────────────────────────
+input() {
+  read -p "Name  : " name
+  read -p "Email : " email
+}
+
+# ── Git global config ─────────────────────────────────────────
+config() {
+  git config --global user.name "$name"
+  git config --global user.email "$email"
+}
+
+# ── Generate SSH key ──────────────────────────────────────────
+generate_key() {
+  ssh-keygen -t ed25519 -C "$email" -f ~/.ssh/id_ed25519
+}
+
+# ── Add to ssh-agent ──────────────────────────────────────────
+add_agent() {
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+}
+
+# ── Print public key ──────────────────────────────────────────
+print_key() {
+  echo ""
+  echo "Add this public key to GitHub/GitLab:"
+  echo "──────────────────────────────────────"
+  cat ~/.ssh/id_ed25519.pub
+}
+
+# ── Test Connection ───────────────────────────────────────────
+test_connection() {
+  echo ""
+  gum spin --spinner "globe" --title "Press any key after public key added to GitHub/GitLab..." -- bash -c 'read -n 1 -s'
+  ssh -T git@github.com
+}
+
+# ── Main ──────────────────────────────────────────────────────
+main() {
+  input
+  config
+  generate_key
+  add_agent
+  print_key
+  test_connection
+}
+
+main
