@@ -159,6 +159,7 @@ go_to_menu() {
   *system*) system_menu ;;
   *themes*) setup_menu Theme ;;
   *update*) present_terminal dhms-update ;;
+  *waybar*) restart-services waybar ;;
   esac
 }
 if [[ -n "$1" ]]; then
