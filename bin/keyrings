@@ -16,3 +16,5 @@
 # Ensure we have the latest archlinux-keyring, maintainer keys might have changed
 echo -e "\033[38;2;0;204;119mUpdate Arch signing keys\e[0m"
 sudo pacman -Sy --noconfirm archlinux-keyring >/dev/null
+sudo pacman-key --init
+sudo pacman-key --populate archlinux

@@ -6,7 +6,7 @@ if [[ -f ~/.config/themes/current/theme/light.mode ]]; then
   gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
 else
   gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+  gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
 fi
 
 # Change gnome icon theme color

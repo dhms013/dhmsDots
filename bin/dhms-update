@@ -48,7 +48,6 @@ frmwr-updt
 migrate-run
 pkg-check-orphan
 sudo updatedb
-sudo mkinitcpio -P
 
 git_restore
 
