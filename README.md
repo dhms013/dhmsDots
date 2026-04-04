@@ -79,6 +79,7 @@ My Hyprland config uses the following defaults:
 | Editor       | nvim         |
 | File manager | yazi         |
 | Browser      | Zen Browser  |
+| AUR Helper   | [Paru](https://github.com/morganamilo/paru)         |
 
 These apps are referenced directly in Hyprland keybinds.
 

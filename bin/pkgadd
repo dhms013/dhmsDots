@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if pkg-missing "$@"; then
-  yay -S --noconfirm --needed "$@" || exit 1
+  paru -S --noconfirm --needed "$@" || exit 1
 fi
 
 for pkg in "$@"; do

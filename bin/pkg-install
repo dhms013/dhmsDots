@@ -22,5 +22,10 @@ if [[ -n "$pkg_names" ]]; then
   echo "Installing $pkg_names..."
   echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
   sudo updatedb
+  echo ""
+  echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
+  echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
+    echo -e "\033[38;2;0;204;119m$pkg\033[0m"
+  done
   show-done
 fi

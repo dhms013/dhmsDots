@@ -2,4 +2,4 @@
 
 echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
-yay -Syyu --noconfirm --cleanafter
+paru -Syyu --noconfirm --cleanafter

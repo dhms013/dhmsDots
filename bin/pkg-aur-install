@@ -4,25 +4,39 @@
 
 fzf_args=(
   --multi
-  --preview 'yay -Siia {1}'
+  --preview 'paru -Si {1}'
   --preview-label='alt-p: toggle description, alt-b/B: toggle PKGBUILD, ctrl-j/k: scroll, tab: multi-select'
   --preview-label-pos='bottom'
   --preview-window 'down:65%:wrap'
   --bind 'alt-p:toggle-preview'
   --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
   --bind 'alt-k:preview-up,alt-j:preview-down'
-  --bind 'alt-b:change-preview:yay -Gpa {1} | tail -n +5'
-  --bind 'alt-B:change-preview:yay -Siia {1}'
+  --bind 'alt-b:change-preview:paru -Gp {1}'
+  --bind 'alt-B:change-preview:paru -Si {1}'
   --color 'pointer:green,marker:green'
 )
 
-pkg_names=$(yay -Slqa | fzf "${fzf_args[@]}")
+aur_pkg_list() {
+  local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/paru"
+  local cache_file="$cache_dir/packages"
+
+  mkdir -p "$cache_dir"
+  curl -sf 'https://aur.archlinux.org/packages.gz' | gzip -d >"$cache_file"
+  bat "$cache_file"
+}
+
+pkg_names=$(aur_pkg_list | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
   show-logo
   sudo-keep
   echo "Installing $pkg_names..."
-  echo "$pkg_names" | tr '\n' ' ' | xargs yay -S --noconfirm
+  echo "$pkg_names" | tr '\n' ' ' | xargs paru -S --noconfirm
   sudo updatedb
+  echo ""
+  echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
+  echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
+    echo -e "\033[38;2;0;204;119m$pkg\033[0m"
+  done
   show-done
 fi

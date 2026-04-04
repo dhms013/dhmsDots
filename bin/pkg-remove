@@ -4,7 +4,7 @@
 
 fzf_args=(
   --multi
-  --preview 'yay -Qi {1}'
+  --preview 'paru -Qi {1}'
   --preview-label='alt-p: toggle description, ctrl-j/k: scroll, tab: multi-select'
   --preview-label-pos='bottom'
   --preview-window 'down:65%:wrap'
@@ -14,13 +14,18 @@ fzf_args=(
   --color 'pointer:red,marker:red'
 )
 
-pkg_names=$(yay -Qqe | fzf "${fzf_args[@]}")
+pkg_names=$(paru -Qqe | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
   show-logo
   sudo-keep
   echo "Removing $pkg_names..."
-  echo "$pkg_names" | tr '\n' ' ' | xargs yay -Rns --noconfirm
+  echo "$pkg_names" | tr '\n' ' ' | xargs paru -Rns --noconfirm
   sudo updatedb
+  echo ""
+  echo -e "\033[38;2;0;204;119mRemoved :\033[0m"
+  echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
+    echo -e "\033[38;2;0;204;119m$pkg\033[0m"
+  done
   show-done
 fi
