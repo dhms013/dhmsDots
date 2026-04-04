@@ -40,12 +40,12 @@ git_check_branch
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
+migrate-run
 pkg-update
 
 git_pull
 
 frmwr-updt
-migrate-run
 pkg-check-orphan
 sudo updatedb
 
