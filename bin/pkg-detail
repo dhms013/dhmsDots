@@ -6,7 +6,7 @@ for pkg in "$@"; do
     exit 0
   else
     echo "$pkg is present..."
-    exit 0
+    yay -Qi $pkg | bat
   fi
 done
 
