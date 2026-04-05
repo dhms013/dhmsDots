@@ -33,18 +33,17 @@ git_restore() {
 
 show_update_log() {
   echo -e "\033[38;2;0;204;119mPackages Updated\033[0m"
-  local log_file="/var/log/pacman.log"
-  local since_marker="[PACMAN] starting full system upgrade"
 
-  # Grab everything from the last full upgrade session onward
-  local log_section
-  log_section=$(tac "$log_file" |
-    sed -n "/starting full system upgrade/,\$p" |
-    tac |
-    tail -n +$(grep -n "starting full system upgrade" "$log_file" | tail -1 | cut -d: -f1))
+  local start_line
+  start_line=$(grep -n "starting full system upgrade" /var/log/pacman.log | tail -1 | cut -d: -f1)
+
+  if [ -z "$start_line" ]; then
+    echo "  No upgrade session found."
+    return
+  fi
 
   local upgraded
-  upgraded=$(echo "$log_section" | grep "\[ALPM\] upgraded" |
+  upgraded=$(tail -n +"$start_line" /var/log/pacman.log | grep "\[ALPM\] upgraded" |
     sed 's/.*upgraded \(.*\) (\(.*\) -> \(.*\))/  \1: \2 → \3/')
 
   if [ -n "$upgraded" ]; then
