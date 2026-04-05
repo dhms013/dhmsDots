@@ -116,6 +116,16 @@ security_menu() {
   esac
 }
 
+suspend_service() {
+  if pgrep -x "hypridle" >/dev/null 2>&1; then
+    systemctl suspend
+  else
+    uwsm-app hypridle &
+    sleep 1
+    systemctl suspend
+  fi
+}
+
 system_menu() {
   local action="$1"
 
@@ -124,7 +134,7 @@ system_menu() {
   fi
 
   case "$action" in
-  *Suspend*) systemctl suspend ;;
+  *Suspend*) suspend_service ;;
   *Lock*) pkill hyprlock && pidof hyprlock || hyprlock & ;;
   *Logout*) uwsm stop ;;
   *Reboot*) systemctl reboot --no-wall ;;
