@@ -31,6 +31,41 @@ git_restore() {
   fi
 }
 
+show_update_log() {
+  echo -e "\033[38;2;0;204;119mPackages Updated\033[0m"
+  local log_file="/var/log/pacman.log"
+  local since_marker="[PACMAN] starting full system upgrade"
+
+  # Grab everything from the last full upgrade session onward
+  local log_section
+  log_section=$(tac "$log_file" |
+    sed -n "/starting full system upgrade/,\$p" |
+    tac |
+    tail -n +$(grep -n "starting full system upgrade" "$log_file" | tail -1 | cut -d: -f1))
+
+  local upgraded
+  upgraded=$(echo "$log_section" | grep "\[ALPM\] upgraded" |
+    sed 's/.*upgraded \(.*\) (\(.*\) -> \(.*\))/  \1: \2 → \3/')
+
+  if [ -n "$upgraded" ]; then
+    echo "$upgraded"
+  else
+    echo "  No packages were upgraded."
+  fi
+}
+
+post_update() {
+  show_update_log
+
+  if [ /boot/vmlinuz-linux-zen -nt /proc/1 ] ||
+    { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
+    gum confirm "Kernel/GPU driver updated. Reboot now?" && reboot --no-wall
+  else
+    notify-send "Update finished"
+    show-done
+  fi
+}
+
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
 show-logo
@@ -51,12 +86,6 @@ sudo updatedb
 
 git_restore
 
-if [ /boot/vmlinuz-linux-zen -nt /proc/1 ] ||
-  { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
-  gum confirm "Kernel/GPU driver updated. Reboot now?" && reboot --no-wall
-else
-  notify-send "Update finished"
-  show-done
-fi
+post_update
 
 hyprctl dispatch tagwindow -- -noidle &>/dev/null || true
