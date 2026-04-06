@@ -14,7 +14,7 @@ It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back 
 ## Notes
 
 - This repo is my personal backup, and it's aiming to be a keyboard-driven Hyprland setup.
-- `$mainMod` is usually the Windows key, but I swap it with `ALT`. Read the note inside [keybindings.conf](./hypr/.config/hypr/keybindings.conf) for other swapped buttons, or simply edit [input.conf](./hypr/.config/hypr/input.conf)
+- `$mainMod` is usually the Windows key, but I swap it with `ALT`. Check the config in [input.conf](./hypr/.config/hypr/input.conf)
 - Contains a few themes from the [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes) — easily install or update themes using [theme-install](./bin/theme-install)
 
 > ⚠️ **IMPORTANT KEYBINDS**
@@ -123,6 +123,8 @@ This repo manages configs for:
 
 ### 1. One-line command
 
+1. Install Arch + Hyprland
+2. Run this command
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dhms013/dhmsDots/main/install.sh | bash
 ```
