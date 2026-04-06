@@ -19,13 +19,37 @@ pkg_names=$(pacman -Slq | fzf "${fzf_args[@]}")
 if [[ -n "$pkg_names" ]]; then
   show-logo
   sudo-keep
-  echo "Installing $pkg_names..."
-  echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
-  sudo updatedb
-  echo ""
-  echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
+  echo -e "\033[38;2;0;204;119mInstalling...\033[0m"
   echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
     echo -e "\033[38;2;0;204;119m$pkg\033[0m"
   done
+  installed=()
+  failed=()
+
+  while read -r pkg; do
+    if sudo pacman -S --noconfirm "$pkg"; then
+      installed+=("$pkg")
+    else
+      failed+=("$pkg")
+    fi
+  done <<<"$pkg_names"
+
+  sudo updatedb
+
+  if [ ${#installed[@]} -gt 0 ]; then
+    echo ""
+    echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
+    for pkg in "${installed[@]}"; do
+      echo -e "\033[38;2;0;204;119m  $pkg\033[0m"
+    done
+  fi
+
+  if [ ${#failed[@]} -gt 0 ]; then
+    echo ""
+    echo -e "\033[0;31mFailed to install :\033[0m"
+    for pkg in "${failed[@]}"; do
+      echo -e "\033[0;31m  $pkg\033[0m"
+    done
+  fi
   show-done
 fi

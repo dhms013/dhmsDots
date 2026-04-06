@@ -19,7 +19,10 @@ pkg_names=$(paru -Qqe | fzf "${fzf_args[@]}")
 if [[ -n "$pkg_names" ]]; then
   show-logo
   sudo-keep
-  echo "Removing $pkg_names..."
+  echo -e "\033[38;2;0;204;119mRemoving...\033[0m"
+  echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
+    echo -e "\033[38;2;0;204;119m$pkg\033[0m"
+  done
   echo "$pkg_names" | tr '\n' ' ' | xargs paru -Rns --noconfirm
   sudo updatedb
   echo ""
