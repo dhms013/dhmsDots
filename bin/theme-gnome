@@ -2,8 +2,8 @@
 
 # Change gnome modes
 if [[ -f ~/.config/themes/current/theme/light.mode ]]; then
-  gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
-  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
+  gsettings set org.gnome.desktop.interface color-scheme "defailt"
+  gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3"
 else
   gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
   gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
