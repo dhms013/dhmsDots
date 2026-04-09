@@ -34,7 +34,7 @@
     "modules": [
       "temperature",
       "cpu",
-      "memory",
+      "custom/memory",
       "power-profiles-daemon",
       "custom/idle-indicator"
     ]

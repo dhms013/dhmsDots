@@ -95,6 +95,12 @@
     "on-click": "floating-terminal btop",
     "interval": 3
   },
+  "custom/memory": {
+    "format": " {}",
+    "exec": "awk '/MemTotal:/ {mt=$2/1048576} /MemAvailable:/ {ma=$2/1048576} /SwapTotal:/ {st=$2/1048576} /SwapFree:/ {sf=$2/1048576} END {used=mt-ma; sused=st-sf; printf \"%.1fG/%.1fG\", used+sused, mt+st}' /proc/meminfo",
+    "on-click": "floating-terminal btop",
+    "interval": 3
+  },
   "clock": {
     "format": " {:L%a %d, %H:%M} ",
     "format-alt": " {:L%A %d/%m/%Y} ",
