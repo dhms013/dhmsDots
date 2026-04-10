@@ -158,6 +158,7 @@ go_to_menu() {
   *lock*) system_menu Lock ;;
   *logout*) system_menu Logout ;;
   *pacman*) install_menu Pacman ;;
+  *pkg*) present_terminal pkg-install-all ;;
   *power*) setup_power_menu ;;
   *reboot*) system_menu Reboot ;;
   *remove*) setup_menu Remove ;;

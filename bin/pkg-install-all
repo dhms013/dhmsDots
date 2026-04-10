@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Show a fuzzy-finder TUI for picking new Arch repo OR AUR packages to install.
+# Fixed version: preview now works correctly (quoting issue resolved).
+
+aur_pkg_list() {
+  local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/paru"
+  local cache_file="$cache_dir/packages"
+
+  mkdir -p "$cache_dir"
+  curl -sf 'https://aur.archlinux.org/packages.gz' | gzip -d >"$cache_file"
+  bat "$cache_file"
+}
+
+# FIXED: No extra double quotes around {1} and {2}
+# fzf automatically adds safe shell quoting, so we let it handle it cleanly.
+info_preview='if [[ {2} == "(AUR)" ]]; then paru -Si {1}; else pacman -Sii {1}; fi'
+pkgbuild_preview='if [[ {2} == "(AUR)" ]]; then paru -Gp {1}; else echo "PKGBUILD only available for AUR packages"; fi'
+
+fzf_args=(
+  --multi
+  --preview "$info_preview"
+  --preview-label='alt-p: toggle description, alt-b: PKGBUILD (AUR only), alt-B: back to info, ctrl-j/k: scroll, tab: multi-select'
+  --preview-label-pos='bottom'
+  --preview-window 'down:65%:wrap'
+  --bind 'alt-p:toggle-preview'
+  --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
+  --bind 'alt-k:preview-up,alt-j:preview-down'
+  --bind "alt-b:change-preview:$pkgbuild_preview"
+  --bind "alt-B:change-preview:$info_preview"
+  --color 'pointer:green,marker:green'
+)
+
+# Combine official repos + AUR into one list
+pkg_names=$(
+  {
+    pacman -Slq
+    aur_pkg_list | sed 's/$/ (AUR)/'
+  } | sort -u | fzf "${fzf_args[@]}"
+)
+
+if [[ -n "$pkg_names" ]]; then
+  show-logo
+  sudo-keep
+  echo -e "\033[38;2;0;204;119mInstalling...\033[0m"
+
+  # Display selected packages
+  while IFS= read -r pkg_line; do
+    echo -e "\033[38;2;0;204;119m$pkg_line\033[0m"
+  done <<< "$pkg_names"
+
+  installed=()
+  failed=()
+
+  # Install with correct tool based on tag
+  while read -r pkg_line; do
+    if [[ $pkg_line == *\ \(AUR\) ]]; then
+      pkg="${pkg_line% (AUR)}"
+      if paru -S --noconfirm "$pkg"; then
+        installed+=("$pkg (AUR)")
+      else
+        failed+=("$pkg (AUR)")
+      fi
+    else
+      pkg="$pkg_line"
+      if sudo pacman -S --noconfirm "$pkg"; then
+        installed+=("$pkg")
+      else
+        failed+=("$pkg")
+      fi
+    fi
+  done <<< "$pkg_names"
+
+  sudo updatedb
+
+  if [ ${#installed[@]} -gt 0 ]; then
+    echo ""
+    echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
+    for item in "${installed[@]}"; do
+      echo -e "\033[38;2;0;204;119m  $item\033[0m"
+    done
+  fi
+
+  if [ ${#failed[@]} -gt 0 ]; then
+    echo ""
+    echo -e "\033[0;31mFailed to install :\033[0m"
+    for item in "${failed[@]}"; do
+      echo -e "\033[0;31m  $item\033[0m"
+    done
+  fi
+  show-done
+fi
