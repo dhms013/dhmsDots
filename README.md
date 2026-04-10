@@ -22,6 +22,25 @@ It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back 
 
 ---
 
+## About
+
+Based on [OMARCHY](omarchy.org), my first linux setup, although it has been customized to suit my needs
+
+- **Post-install** helper for Hyprland configs
+- Installs my base packages from pacman & AUR
+- Stows my dotfiles safely
+- Restores my preferred defaults for Hyprland usage
+- This repo is aiming to be a keyboard-driven Hyprland setup.
+- `$mainMod` is usually the Windows key, but I swap it with `ALT`. Check the config in [input.conf](./hypr/.config/hypr/input.conf)
+- Contains a few themes from the [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes) — easily install or update themes using [theme-install](./bin/theme-install)
+
+> ⚠️ **IMPORTANT KEYBINDS**
+> `SUPER + SHIFT + /` — Open keybinds info
+
+This repo assumes **Arch Linux with Hyprland** is already installed.
+
+---
+
 ## Preview
 
 <details>
@@ -41,25 +60,6 @@ https://github.com/user-attachments/assets/14dc00f8-093f-47c0-896d-b9022f809797
 
 
 </details>
-
----
-
-## About
-
-Based on [OMARCHY](omarchy.org), my first linux setup, although it has been customized to suit my needs
-
-- **Post-install** helper for Hyprland configs
-- Installs my base packages from pacman & AUR
-- Stows my dotfiles safely
-- Restores my preferred defaults for Hyprland usage
-- This repo is aiming to be a keyboard-driven Hyprland setup.
-- `$mainMod` is usually the Windows key, but I swap it with `ALT`. Check the config in [input.conf](./hypr/.config/hypr/input.conf)
-- Contains a few themes from the [Omarchy community](https://learn.omacom.io/2/the-omarchy-manual/90/extra-themes) — easily install or update themes using [theme-install](./bin/theme-install)
-
-> ⚠️ **IMPORTANT KEYBINDS**
-> `SUPER + SHIFT + /` — Open keybinds info
-
-This repo assumes **Arch Linux with Hyprland** is already installed.
 
 ---
 
