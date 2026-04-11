@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Show a fuzzy-finder TUI for picking new Arch repo OR AUR packages to install.
-# Fixed version: preview now works correctly (quoting issue resolved).
 
 aur_pkg_list() {
   local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/paru"
@@ -12,7 +11,6 @@ aur_pkg_list() {
   bat "$cache_file"
 }
 
-# FIXED: No extra double quotes around {1} and {2}
 # fzf automatically adds safe shell quoting, so we let it handle it cleanly.
 info_preview='if [[ {2} == "(AUR)" ]]; then paru -Si {1}; else pacman -Sii {1}; fi'
 pkgbuild_preview='if [[ {2} == "(AUR)" ]]; then paru -Gp {1}; else echo "PKGBUILD only available for AUR packages"; fi'
@@ -20,7 +18,7 @@ pkgbuild_preview='if [[ {2} == "(AUR)" ]]; then paru -Gp {1}; else echo "PKGBUIL
 fzf_args=(
   --multi
   --preview "$info_preview"
-  --preview-label='alt-p: toggle description, alt-b: PKGBUILD (AUR only), alt-B: back to info, ctrl-j/k: scroll, tab: multi-select'
+  --preview-label='alt-p: toggle description, alt-b/B: toggle PKGBUILD, ctrl-j/k: scroll, tab: multi-select'
   --preview-label-pos='bottom'
   --preview-window 'down:65%:wrap'
   --bind 'alt-p:toggle-preview'
@@ -47,7 +45,7 @@ if [[ -n "$pkg_names" ]]; then
   # Display selected packages
   while IFS= read -r pkg_line; do
     echo -e "\033[38;2;0;204;119m$pkg_line\033[0m"
-  done <<< "$pkg_names"
+  done <<<"$pkg_names"
 
   installed=()
   failed=()
@@ -69,7 +67,7 @@ if [[ -n "$pkg_names" ]]; then
         failed+=("$pkg")
       fi
     fi
-  done <<< "$pkg_names"
+  done <<<"$pkg_names"
 
   sudo updatedb
 
