@@ -1,0 +1,10 @@
+#!/bin/bash
+
+restart_hyprlock() {
+  hyprctl --instance 0 'keyword misc:allow_session_lock_restore 1'
+  sleep 1
+  hyprctl --instance 0 'dispatch exec hyprlock'
+}
+
+killall -9 hyprlock
+restart_hyprlock
