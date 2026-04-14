@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ "$profile" == "CNCLD" || -z "$profile" ]]; then
+  exit 1
+else
+  powerprofilesctl set "$profile"
+fi

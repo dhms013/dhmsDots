@@ -16,9 +16,9 @@ restart_apps() {
     killall -SIGUSR2 ghostty
   fi
 
-  restart-services waybar
-  restart-services swayosd-server
-  makoctl reload
+  # restart-services waybar
+  # restart-services swayosd-server
+  # makoctl reload
   pkill -SIGUSR2 btop
 }
 
