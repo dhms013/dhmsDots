@@ -77,7 +77,7 @@ Item {
             id: dateText
 
             anchors.verticalCenter: parent.verticalCenter
-            color: theme.muted || "#585b70"
+            color: theme.fg || "#585b70"
             font.pixelSize: 11
             font.family: "JetBrainsMono Nerd Font"
         }

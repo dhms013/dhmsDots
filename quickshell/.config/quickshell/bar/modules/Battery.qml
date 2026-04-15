@@ -37,7 +37,8 @@ Item {
     readonly property var dischargeIcons: ["󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"]
 
     readonly property string icon: {
-        if (!hasBattery || isFull) return ""
+        if (!hasBattery) return ""
+        if (isFull) return "󰂅"
         const idx = Math.min(9, Math.floor(pct / 10))
         return isCharging ? chargingIcons[idx] : dischargeIcons[idx]
     }
@@ -45,7 +46,7 @@ Item {
     Text {
         id: label
         anchors.centerIn: parent
-        text: isFull ? "" : (root.icon + " " + root.pct + "%")
+        text: root.icon + " " + root.pct + "%"
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 11
         color: root.pct <= 10 ? (root.theme.color1 || "#f38ba8") :
