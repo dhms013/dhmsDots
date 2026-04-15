@@ -96,9 +96,9 @@ Item {
 
         interval: 300
         onTriggered: {
-            if (!calHover.containsMouse) {
+            if (!calHover.containsMouse)
                 calWindow.showing = false;
-            }
+
         }
     }
 
@@ -344,4 +344,3 @@ Item {
     }
 
 }
-
