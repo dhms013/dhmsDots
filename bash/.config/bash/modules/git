@@ -1,3 +1,9 @@
+gp() {
+  local branch=$(git rev-parse --abbrev-ref HEAD)
+  local remote=$(git config --get "branch.$branch.remote" 2>/dev/null || echo "origin")
+  git push "$remote" "$branch"
+}
+
 gpr() {
     local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     local REMOTE_BRANCH=$(git config --get "branch.$CURRENT_BRANCH.remote")
