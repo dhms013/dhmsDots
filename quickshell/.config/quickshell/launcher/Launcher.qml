@@ -129,30 +129,22 @@ property bool showing: false
         Keys.onPressed: (e) => {
             const ctrl = e.modifiers & Qt.ControlModifier;
 
-            if (ctrl) {
+if (ctrl) {
                 const key = e.key;
                 if (mode === "menu") {
-                    if (key === Qt.Key_H) {
-                        e.accepted = true;
-                    } else if (key === Qt.Key_J) {
+                    if (key === Qt.Key_J) {
                         menuView.handleKey({key: Qt.Key_Down, accepted: false});
                         e.accepted = true;
                     } else if (key === Qt.Key_K) {
                         menuView.handleKey({key: Qt.Key_Up, accepted: false});
                         e.accepted = true;
-                    } else if (key === Qt.Key_L) {
-                        e.accepted = true;
                     }
                 } else {
-                    if (key === Qt.Key_H) {
-                        e.accepted = true;
-                    } else if (key === Qt.Key_J) {
+                    if (key === Qt.Key_J) {
                         appList.moveDown();
                         e.accepted = true;
                     } else if (key === Qt.Key_K) {
                         appList.moveUp();
-                        e.accepted = true;
-                    } else if (key === Qt.Key_L) {
                         e.accepted = true;
                     }
                 }
@@ -160,11 +152,7 @@ property bool showing: false
             }
 
             if (mode === "menu") {
-                if (e.key === Qt.Key_Left) {
-                    e.accepted = true;
-} else if (e.key === Qt.Key_Right) {
-                    e.accepted = true;
-                } else if (e.key === Qt.Key_Escape) {
+                if (e.key === Qt.Key_Escape) {
                     if (menuView.navStack.length === 0 || keybindMode) {
                         showing = false;
                         keybindMode = false;
@@ -179,8 +167,6 @@ property bool showing: false
                 if (e.key === Qt.Key_Escape) {
                     showing = false;
                     keybindMode = false;
-                    e.accepted = true;
-                } else if (e.key === Qt.Key_Left || e.key === Qt.Key_Right) {
                     e.accepted = true;
                 } else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
                     appList.launchSelected();
