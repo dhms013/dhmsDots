@@ -109,6 +109,10 @@ Item {
                 popPage()
             }
             e.accepted = true
+        } else if (e.key === Qt.Key_Left) {
+            e.accepted = true
+        } else if (e.key === Qt.Key_Right) {
+            e.accepted = true
         } else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
             if (globalSearch)
                 globalPage.activateSelected()

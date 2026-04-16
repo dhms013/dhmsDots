@@ -161,11 +161,36 @@ done | sort
         anchors.fill: parent
         focus: true
         Keys.onPressed: (e) => {
+            const ctrl = e.modifiers & Qt.ControlModifier;
+            if (ctrl) {
+                const key = e.key;
+                if (key === Qt.Key_H) {
+                    e.accepted = true;
+                } else if (key === Qt.Key_J) {
+                    if (root.selectedIdx < root.filteredThemes.length - 1) {
+                        root.selectedIdx++;
+                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    }
+                    e.accepted = true;
+                } else if (key === Qt.Key_K) {
+                    if (root.selectedIdx > 0) {
+                        root.selectedIdx--;
+                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    }
+                    e.accepted = true;
+                } else if (key === Qt.Key_L) {
+                    e.accepted = true;
+                }
+                return;
+            }
+
             if (e.key === Qt.Key_Escape) {
                 if (root.searchText.length > 0)
                     root.searchText = "";
                 else
                     root.showing = false;
+                e.accepted = true;
+            } else if (e.key === Qt.Key_Left || e.key === Qt.Key_Right) {
                 e.accepted = true;
             } else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
                 if (root.filteredThemes.length > 0)
