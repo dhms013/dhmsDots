@@ -3,6 +3,8 @@ import QtQuick
 Item {
     property string label:      ""
     property real   value:      0
+    property string suffix:  ""
+    property string extraText: ""
     property color  accent:     "#89b4fa"
     property color  trackColor: "#45475a"
     property color  textColor:  "#cdd6f4"
@@ -125,7 +127,7 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text:           Math.round(value) + "%"
+            text:           Math.round(value) + suffix + extraText
             color:          accent
             font.pixelSize: 10
             font.family:    "JetBrains Mono"

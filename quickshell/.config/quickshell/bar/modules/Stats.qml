@@ -5,12 +5,11 @@ Row {
     property var theme: ({
     })
     property real cpuVal: 0
+    property real cpuSmooth: 0
+    property real numCores: 12
     property real ramVal: 0
-
-    function refreshStats() {
-        statsProc.running = false;
-        statsProc.running = true;
-    }
+    property real ramSwap: 0
+    property real ramTotal: 0
 
     spacing: 10
     anchors.verticalCenter: parent ? parent.verticalCenter : undefined
@@ -18,6 +17,7 @@ Row {
     StatPill {
         label: "CPU"
         value: cpuVal
+        suffix: "%"
         accent: cpuVal > 85 ? (theme.red || "#f38ba8") : (theme.accent || "#89b4fa")
         trackColor: theme.dim || "#45475a"
         textColor: theme.fg || "#cdd6f4"
@@ -26,54 +26,63 @@ Row {
     StatPill {
         label: "RAM"
         value: ramVal
-        accent: ramVal > 85 ? (theme.red || "#f38ba8") : (theme.highlight || "#cba6f7")
+        suffix: "G"
+        extraText: "/" + (ramTotal + ramSwap) + "G"
+        accent: ramVal > (ramTotal * 0.85) ? (theme.red || "#f38ba8") : (theme.highlight || "#cba6f7")
         trackColor: theme.dim || "#45475a"
         textColor: theme.fg || "#cdd6f4"
     }
 
     Process {
-        id: statsProc
+        id: cpuProc
 
-        property var last: null
-
-        command: ["bash", "-c", "printf '%s\n' \"$(cat /proc/stat | head -1)\"; free | awk '/^Mem/{printf \"%d\\n\",$3/$2*100}'"]
+        command: ["bash", "-c", "ps -eo pcpu --no-headers | awk '{sum+=$1} END {print sum}'"]
         running: true
-        onExited: statsProc.stdout.lineNo = 0
 
         stdout: SplitParser {
-            property int lineNo: 0
-
             onRead: (data) => {
                 const text = data.trim();
-                if (!text)
-                    return ;
-
-                if (lineNo === 0) {
-                    const p = text.split(/\s+/).slice(1).map(Number);
-                    if (statsProc.last) {
-                        const idle = p[3] - statsProc.last[3];
-                        const total = p.reduce((a, b) => {
-                            return a + b;
-                        }, 0) - statsProc.last.reduce((a, b) => {
-                            return a + b;
-                        }, 0);
-                        cpuVal = total > 0 ? Math.round((1 - idle / total) * 100) : cpuVal;
-                    }
-                    statsProc.last = p;
-                } else {
-                    ramVal = parseInt(text) || 0;
+                const raw = parseFloat(text);
+                if (!isNaN(raw) && raw >= 0) {
+                    const val = Math.min(100, Math.round(raw / numCores));
+                    cpuSmooth = cpuSmooth * 0.7 + val * 0.3;
+                    cpuVal = Math.round(cpuSmooth);
                 }
-                lineNo++;
+            }
+        }
+
+    }
+
+    Process {
+        id: ramProc
+
+        command: ["bash", "-c", "awk '/MemTotal:/ {mt=$2/1048576} /MemAvailable:/ {ma=$2/1048576} /SwapTotal:/ {st=$2/1048576} /SwapFree:/ {sf=$2/1048576} END {used=mt-ma; sused=st-sf; printf \"%.1fG/%.1fG\", used+sused, mt+st}' /proc/meminfo"]
+        running: true
+
+        stdout: SplitParser {
+            onRead: (data) => {
+                const text = data.trim();
+                const match = text.match(/^([\d.]+)G\/([\d.]+)G$/);
+                if (match) {
+                    ramVal = parseFloat(match[1]);
+                    ramTotal = parseFloat(match[2]);
+                }
             }
         }
 
     }
 
     Timer {
-        interval: 3000
+        interval: 1000
         running: true
         repeat: true
-        onTriggered: refreshStats()
+        onTriggered: {
+            cpuProc.running = false;
+            cpuProc.running = true;
+            ramProc.running = false;
+            ramProc.running = true;
+        }
     }
 
 }
+
