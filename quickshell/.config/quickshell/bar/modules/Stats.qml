@@ -56,7 +56,7 @@ Row {
     Process {
         id: ramProc
 
-        command: ["bash", "-c", "awk '/MemTotal:/ {mt=$2/1048576} /MemAvailable:/ {ma=$2/1048576} /SwapTotal:/ {st=$2/1048576} /SwapFree:/ {sf=$2/1048576} END {used=mt-ma; sused=st-sf; printf \"%.1fG/%.1fG\", used+sused, mt+st}' /proc/meminfo"]
+        command: ["bash", "-c", "awk '/MemTotal:/ {mt=$2} /MemAvailable:/ {ma=$2} /SwapTotal:/ {st=$2} /SwapFree:/ {sf=$2} END {printf \"%.1fG/%.1fG\\n\", (mt-ma+st-sf)/1048576, (mt+st)/1048576}' /proc/meminfo"]
         running: true
 
         stdout: SplitParser {

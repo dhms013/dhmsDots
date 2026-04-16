@@ -127,7 +127,7 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text:           Math.round(value) + suffix + extraText
+            text:           value.toFixed(1) + suffix + extraText
             color:          accent
             font.pixelSize: 10
             font.family:    "JetBrains Mono"
