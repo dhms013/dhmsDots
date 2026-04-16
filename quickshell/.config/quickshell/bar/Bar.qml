@@ -139,7 +139,7 @@ PanelWindow {
                         ? root.red
                         : root.notifServer && root.notifServer.panelOpen
                             ? root.accent
-                            : root.accent
+                            : root.fg
 
                     Behavior on color { ColorAnimation { duration: 150 } }
 
