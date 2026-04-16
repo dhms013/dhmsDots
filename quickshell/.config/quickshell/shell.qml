@@ -181,8 +181,10 @@ ShellRoot {
     }
 
     NotificationPanel {
+        id: notifPanel
         theme: shell.palette
         settings: settingsState
+        focus: true
     }
 
     OsdService {
@@ -199,12 +201,28 @@ ShellRoot {
         id: notifServer
     }
 
-    IpcHandler {
+IpcHandler {
         function handle() {
             settingsWindow.showing = true;
         }
 
         target: "openSettings"
+    }
+
+    IpcHandler {
+        function handle() {
+            notifServer.togglePanel();
+        }
+
+        target: "openNotificationPanel"
+    }
+
+    IpcHandler {
+        function handle() {
+            notifServer.clearAll();
+        }
+
+        target: "clearNotifications"
     }
 
     PanelWindow {
