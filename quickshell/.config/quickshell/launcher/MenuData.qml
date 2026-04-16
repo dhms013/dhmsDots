@@ -80,7 +80,7 @@ QtObject {
             "children": [{
                 "icon": "󰒲",
                 "label": "Suspend",
-                "cmd": "sh -c 'if pgrep -x \"hypridle\" >/dev/null 2>&1; then systemctl suspend; else uwsm-app hypridle & sleep 1; systemctl suspend; fi'"
+                "cmd": "dhms-suspend"
             }, {
                 "icon": "",
                 "label": "Lock",
