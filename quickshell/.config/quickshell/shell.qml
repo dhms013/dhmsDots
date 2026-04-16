@@ -180,6 +180,12 @@ ShellRoot {
         theme: shell.palette
     }
 
+    Screenrecord {
+        id: screenrecord
+
+        theme: shell.palette
+    }
+
     NotificationPanel {
         id: notifPanel
         theme: shell.palette
@@ -480,7 +486,20 @@ IpcHandler {
 
     IpcHandler {
         function handle() {
-            appLauncher.openScreenrecord();
+            const sr = screenrecord;
+            const proc = Qt.createQmlObject(
+                'import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }',
+                shell, "srCheck"
+            );
+            proc.command = ["bash", "-c", "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; if pgrep -f '^gpu-screen-recorder' > /dev/null 2>&1; then screenrecord --stop-recording; echo STOPPED; else echo OPEN; fi"];
+            proc.onExited.connect(function() {
+                const out = proc.stdout ? proc.stdout.buf.trim() : "";
+                if (out !== "STOPPED") {
+                    sr.showing = true;
+                }
+                proc.destroy();
+            });
+            proc.running = true;
         }
 
         target: "openScreenrecord"

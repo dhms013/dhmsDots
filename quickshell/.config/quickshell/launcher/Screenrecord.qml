@@ -12,12 +12,7 @@ PanelWindow {
     property var theme: ({
     })
     property int selectedIdx: 0
-    // Exactly the 4 options from your original `screenrecord_menu`
     property var options: [{
-        "icon": "⏹",
-        "label": "Stop recording",
-        "cmd": "screenrecord --stop-recording"
-    }, {
         "icon": "",
         "label": "Without audio",
         "cmd": "screenrecord"
@@ -32,12 +27,7 @@ PanelWindow {
     }]
 
     function runCommand(cmd) {
-        const proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', root, "screenrecordProc");
-        proc.onExited.connect(() => {
-            return proc.destroy();
-        });
-        proc.command = ["bash", "-c", cmd];
-        proc.running = true;
+        Quickshell.execDetached(["bash", "-c", "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; " + cmd]);
         root.showing = false;
     }
 
@@ -197,12 +187,16 @@ PanelWindow {
 
                         MouseArea {
                             anchors.fill: parent
+                            z: 1
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onEntered: root.selectedIdx = index
-                            onClicked: root.runCommand(modelData.cmd)
+                            onEntered: {
+                                root.selectedIdx = index;
+                            }
+                            onClicked: {
+                                root.runCommand(modelData.cmd);
+                            }
                         }
-
                     }
 
                 }
