@@ -620,12 +620,13 @@ ShellRoot {
 
     // Click Catcher Here
     ClickCatcher {
-        active: appLauncher.showing || themePicker.showing || bgPicker.showing || notifServer.panelOpen
+        active: appLauncher.showing || themePicker.showing || bgPicker.showing || notifServer.panelOpen || keybindViewer.showing
         onClicked: {
             appLauncher.showing = false;
             themePicker.showing = false;
             bgPicker.showing = false;
             notifServer.panelOpen = false;
+            keybindViewer.showing = false;
         }
     }
 

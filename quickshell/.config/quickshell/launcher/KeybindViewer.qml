@@ -31,8 +31,8 @@ PanelWindow {
         listView.positionViewAtIndex(0, ListView.Beginning);
     }
 
-    implicitWidth: 700
-    implicitHeight: 420
+    implicitWidth: 800
+    implicitHeight: 500
     color: "transparent"
     exclusiveZone: 0
     visible: showing
@@ -53,7 +53,8 @@ PanelWindow {
     }
 
     margins {
-        bottom: 5
+        top: 100
+        bottom: 100
     }
 
 Process {
