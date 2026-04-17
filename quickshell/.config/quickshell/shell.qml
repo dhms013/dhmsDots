@@ -8,7 +8,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import "bar"
 import "bar/modules"
-import "dock"
 import "launcher"
 
 ShellRoot {
@@ -205,12 +204,10 @@ ShellRoot {
         id: notifServer
     }
 
-    IpcHandler {
-        function handle() {
-            settingsWindow.showing = true;
-        }
+    KeybindViewer {
+        id: keybindViewer
 
-        target: "openSettings"
+        theme: shell.palette
     }
 
     IpcHandler {
@@ -484,11 +481,7 @@ ShellRoot {
 
     IpcHandler {
         function handle() {
-            Quickshell.execDetached(["bash", "-c",
-                "if pgrep -f '^gpu-screen-recorder' > /dev/null 2>&1; then " +
-                "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; screenrecord --stop-recording; " +
-                "else touch /tmp/sr_show; fi"
-            ]);
+            Quickshell.execDetached(["bash", "-c", "if pgrep -f '^gpu-screen-recorder' > /dev/null 2>&1; then " + "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; screenrecord --stop-recording; " + "else touch /tmp/sr_show; fi"]);
             srCheckTimer.start();
         }
 
@@ -497,18 +490,16 @@ ShellRoot {
 
     Timer {
         id: srCheckTimer
+
         interval: 200
         onTriggered: {
             srCheckTimer.stop();
-            const proc = Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }',
-                shell, "srCheck"
-            );
+            const proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', shell, "srCheck");
             proc.command = ["bash", "-c", "test -f /tmp/sr_show && rm /tmp/sr_show"];
             proc.onExited.connect(function(exitCode) {
-                if (exitCode === 0) {
+                if (exitCode === 0)
                     screenrecord.showing = true;
-                }
+
                 proc.destroy();
             });
             proc.running = true;

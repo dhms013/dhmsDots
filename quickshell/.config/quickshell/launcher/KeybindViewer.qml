@@ -56,38 +56,57 @@ PanelWindow {
         bottom: 5
     }
 
-    Process {
-        id: keybindLoader
+Process {
+            id: keybindLoader
 
-        command: [root.homeDir + "/.local/bin/qs-keybinds-list"]
-        running: true
-        onExited: {
-            root.allBindings = root.allBindings.slice();
-            root.applyFilter();
-        }
+            command: ["bash", "-lc", "hyprctl -j binds"]
+            running: true
 
-        stdout: SplitParser {
-            onRead: (data) => {
-                var line = data.trim();
-                if (line === "")
-                    return ;
+            property string buffer: ""
 
-                var idx = line.indexOf("|");
-                if (idx === -1)
-                    return ;
+            onExited: {
+                try {
+                    var binds = JSON.parse(buffer);
+                    for (var i = 0; i < binds.length; i++) {
+                        var b = binds[i];
+                        if (b.keycode && b.keycode > 0) continue;
+                        if (!b.key) continue;
 
-                var combo = line.substring(0, idx).trim();
-                var action = line.substring(idx + 1).trim();
-                if (combo && action)
-                    root.allBindings.push({
-                    "combo": combo,
-                    "action": action
-                });
+                        var mod = "";
+                        var m = parseInt(b.modmask || 0);
 
+                        if (m >= 64) { mod += "SUPER "; m -= 64; }
+                        if (m >= 32) { m -= 32; }
+                        if (m >= 16) { m -= 16; }
+                        if (m >= 8) { mod += "ALT "; m -= 8; }
+                        if (m >= 4) { mod += "CTRL "; m -= 4; }
+                        if (m >= 2) { m -= 2; }
+                        if (m >= 1) { mod += "SHIFT "; m -= 1; }
+                        mod = mod.replace(/ $/, "");
+
+                        var key = b.key;
+                        var action = b.description || (b.dispatcher + (b.arg ? " " + b.arg : ""));
+                        action = action.replace(/^exec, /, "").replace(/~\/.config\/scripts\//, "").replace(/uwsm(app)? (app )?-- /, "");
+
+                        if (key && action) {
+                            root.allBindings.push({
+                                "combo": (mod ? mod + " + " : "") + key,
+                                "action": action
+                            });
+                        }
+                    }
+                } catch (e) {
+                }
+                root.allBindings = root.allBindings.slice();
+                root.applyFilter();
+            }
+
+            stdout: SplitParser {
+                onRead: (data) => {
+                    keybindLoader.buffer += data;
+                }
             }
         }
-
-    }
 
     FocusScope {
         id: focusScope
@@ -330,29 +349,7 @@ PanelWindow {
 
                         width: listView.width
                         height: 30
-                        opacity: 0
-                        Component.onCompleted: {
-                            appearTimer.interval = Math.min(index * 8, 200);
-                            appearTimer.start();
-                        }
-
-                        Timer {
-                            id: appearTimer
-
-                            repeat: false
-                            onTriggered: appearAnim.start()
-                        }
-
-                        NumberAnimation {
-                            id: appearAnim
-
-                            target: delegateItem
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                            duration: 150
-                            easing.type: Easing.OutCubic
-                        }
+                        opacity: 1
 
                         Rectangle {
                             anchors.fill: parent
