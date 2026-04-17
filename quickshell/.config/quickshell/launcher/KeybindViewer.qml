@@ -31,8 +31,8 @@ PanelWindow {
         listView.positionViewAtIndex(0, ListView.Beginning);
     }
 
-    implicitWidth: 800
-    implicitHeight: 500
+    implicitWidth: 600
+    implicitHeight: 400
     color: "transparent"
     exclusiveZone: 0
     visible: showing
@@ -53,61 +53,78 @@ PanelWindow {
     }
 
     margins {
-        top: 100
-        bottom: 100
+        bottom: 290
     }
 
-Process {
-            id: keybindLoader
+    Process {
+        id: keybindLoader
 
-            command: ["bash", "-lc", "hyprctl -j binds"]
-            running: true
+        property string buffer: ""
 
-            property string buffer: ""
+        command: ["bash", "-lc", "hyprctl -j binds"]
+        running: true
+        onExited: {
+            try {
+                var binds = JSON.parse(buffer);
+                for (var i = 0; i < binds.length; i++) {
+                    var b = binds[i];
+                    if (b.keycode && b.keycode > 0)
+                        continue;
 
-            onExited: {
-                try {
-                    var binds = JSON.parse(buffer);
-                    for (var i = 0; i < binds.length; i++) {
-                        var b = binds[i];
-                        if (b.keycode && b.keycode > 0) continue;
-                        if (!b.key) continue;
+                    if (!b.key)
+                        continue;
 
-                        var mod = "";
-                        var m = parseInt(b.modmask || 0);
-
-                        if (m >= 64) { mod += "SUPER "; m -= 64; }
-                        if (m >= 32) { m -= 32; }
-                        if (m >= 16) { m -= 16; }
-                        if (m >= 8) { mod += "ALT "; m -= 8; }
-                        if (m >= 4) { mod += "CTRL "; m -= 4; }
-                        if (m >= 2) { m -= 2; }
-                        if (m >= 1) { mod += "SHIFT "; m -= 1; }
-                        mod = mod.replace(/ $/, "");
-
-                        var key = b.key;
-                        var action = b.description || (b.dispatcher + (b.arg ? " " + b.arg : ""));
-                        action = action.replace(/^exec, /, "").replace(/~\/.config\/scripts\//, "").replace(/uwsm(app)? (app )?-- /, "");
-
-                        if (key && action) {
-                            root.allBindings.push({
-                                "combo": (mod ? mod + " + " : "") + key,
-                                "action": action
-                            });
-                        }
+                    var mod = "";
+                    var m = parseInt(b.modmask || 0);
+                    if (m >= 64) {
+                        mod += "SUPER ";
+                        m -= 64;
                     }
-                } catch (e) {
-                }
-                root.allBindings = root.allBindings.slice();
-                root.applyFilter();
-            }
+                    if (m >= 32)
+                        m -= 32;
 
-            stdout: SplitParser {
-                onRead: (data) => {
-                    keybindLoader.buffer += data;
+                    if (m >= 16)
+                        m -= 16;
+
+                    if (m >= 8) {
+                        mod += "ALT ";
+                        m -= 8;
+                    }
+                    if (m >= 4) {
+                        mod += "CTRL ";
+                        m -= 4;
+                    }
+                    if (m >= 2)
+                        m -= 2;
+
+                    if (m >= 1) {
+                        mod += "SHIFT ";
+                        m -= 1;
+                    }
+                    mod = mod.replace(/ $/, "");
+                    var key = b.key;
+                    var action = b.description || (b.dispatcher + (b.arg ? " " + b.arg : ""));
+                    action = action.replace(/^exec, /, "").replace(/~\/.config\/scripts\//, "").replace(/uwsm(app)? (app )?-- /, "");
+                    if (key && action)
+                        root.allBindings.push({
+                        "combo": (mod ? mod + " + " : "") + key,
+                        "action": action
+                    });
+
                 }
+            } catch (e) {
+            }
+            root.allBindings = root.allBindings.slice();
+            root.applyFilter();
+        }
+
+        stdout: SplitParser {
+            onRead: (data) => {
+                keybindLoader.buffer += data;
             }
         }
+
+    }
 
     FocusScope {
         id: focusScope
@@ -379,69 +396,49 @@ Process {
 
                             Row {
                                 anchors.fill: parent
-                                anchors.leftMargin: 12
-                                anchors.rightMargin: 8
-                                spacing: 0
+                                anchors.leftMargin: 16
+                                anchors.rightMargin: 16
 
                                 Rectangle {
                                     anchors.verticalCenter: parent.verticalCenter
                                     height: 20
-                                    width: comboText.implicitWidth + 16
+                                    width: 180
                                     radius: 4
                                     color: isSelected ? Qt.alpha(theme.accent || "#89b4fa", 0.2) : Qt.alpha(theme.dim || "#45475a", 0.5)
 
                                     Text {
                                         id: comboText
 
-                                        anchors.centerIn: parent
+                                        anchors.fill: parent
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
                                         text: bdata.combo || ""
                                         color: isSelected ? (theme.accent || "#89b4fa") : Qt.alpha(theme.fg || "#cdd6f4", 0.8)
-                                        font.pixelSize: 9
+                                        font.pixelSize: 10
                                         font.family: "JetBrainsMono Nerd Font"
                                         font.weight: Font.Medium
-
-                                        Behavior on color {
-                                            ColorAnimation {
-                                                duration: 100
-                                            }
-
-                                        }
-
-                                    }
-
-                                    Behavior on color {
-                                        ColorAnimation {
-                                            duration: 100
-                                        }
-
                                     }
 
                                 }
 
                                 Text {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    text: "  →  "
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: "→"
                                     color: Qt.alpha(theme.muted || "#585b70", 0.4)
-                                    font.pixelSize: 9
+                                    font.pixelSize: 10
                                     font.family: "JetBrainsMono Nerd Font"
                                 }
 
                                 Text {
                                     anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.horizontalCenter
+                                    anchors.leftMargin: 16
                                     text: bdata.action || ""
                                     color: isSelected ? (theme.fg || "#cdd6f4") : Qt.alpha(theme.fg || "#cdd6f4", 0.65)
                                     font.pixelSize: 10
                                     font.family: "JetBrainsMono Nerd Font"
                                     elide: Text.ElideRight
-                                    width: listView.width - comboText.implicitWidth - 80
-
-                                    Behavior on color {
-                                        ColorAnimation {
-                                            duration: 100
-                                        }
-
-                                    }
-
                                 }
 
                             }
