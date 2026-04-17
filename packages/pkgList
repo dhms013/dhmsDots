@@ -51,6 +51,7 @@ qt5-wayland
 qt5ct
 qt6-wayland
 qt6ct
+quickshell
 satty
 slurp
 speedtest-cli
@@ -62,6 +63,7 @@ telegram-desktop
 tldr
 tree-sitter-cli
 ttf-jetbrains-mono-nerd
+unicode-emoji
 whatsapp-linux-desktop-bin
 wiremix
 wl-clipboard
