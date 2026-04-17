@@ -8,8 +8,9 @@ import Quickshell.Wayland
 PanelWindow {
     id: launcher
 
-property bool showing: false
-    property var theme: ({})
+    property bool showing: false
+    property var theme: ({
+    })
     property var powerActions: null
     property string mode: "menu"
     property string appSearchText: ""
@@ -128,15 +129,20 @@ property bool showing: false
         focus: true
         Keys.onPressed: (e) => {
             const ctrl = e.modifiers & Qt.ControlModifier;
-
-if (ctrl) {
+            if (ctrl) {
                 const key = e.key;
                 if (mode === "menu") {
                     if (key === Qt.Key_J) {
-                        menuView.handleKey({key: Qt.Key_Down, accepted: false});
+                        menuView.handleKey({
+                            "key": Qt.Key_Down,
+                            "accepted": false
+                        });
                         e.accepted = true;
                     } else if (key === Qt.Key_K) {
-                        menuView.handleKey({key: Qt.Key_Up, accepted: false});
+                        menuView.handleKey({
+                            "key": Qt.Key_Up,
+                            "accepted": false
+                        });
                         e.accepted = true;
                     }
                 } else {
@@ -148,9 +154,8 @@ if (ctrl) {
                         e.accepted = true;
                     }
                 }
-                return;
+                return ;
             }
-
             if (mode === "menu") {
                 if (e.key === Qt.Key_Escape) {
                     if (menuView.navStack.length === 0 || keybindMode) {
@@ -203,11 +208,10 @@ if (ctrl) {
         Rectangle {
             id: card
 
-            width: 420
-            height: 400
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 5
+            width: 250
+            height: 300
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             radius: 12
             color: theme.bg || "#1e1e2e"
             border.color: theme.dim || "#45475a"
