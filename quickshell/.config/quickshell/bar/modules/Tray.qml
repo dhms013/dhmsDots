@@ -46,37 +46,6 @@ Item {
     }
 
     function _customGlyph(item) {
-        const text = _traySearchText(item)
-        if (_hasAny(text, ["spotify"])) return ""
-        if (_hasAny(text, ["discord", "vesktop"])) return ""
-        if (_hasAny(text, ["telegram"])) return ""
-        if (_hasAny(text, ["steam"])) return ""
-        if (_hasAny(text, ["slack"])) return "󰒱"
-        if (_hasAny(text, ["obs", "obsidian"])) return text.includes("obsidian") ? "󰎚" : "󰐾"
-        if (_hasAny(text, ["dropbox"])) return "󰇣"
-        if (_hasAny(text, ["github", "gitkraken"])) return "󰊤"
-        if (_hasAny(text, ["signal"])) return "󰭹"
-        if (_hasAny(text, ["whatsapp"])) return "󰖣"
-        if (_hasAny(text, ["element", "matrix"])) return "󱘖"
-        if (_hasAny(text, ["teams"])) return "󰊻"
-        if (_hasAny(text, ["zoom"])) return "󰬡"
-        if (_hasAny(text, ["chromium", "chrome", "brave", "firefox", "browser"])) return "󰖟"
-        if (_hasAny(text, ["code", "vscode", "cursor", "zed"])) return "󰨞"
-        if (_hasAny(text, ["thunderbird", "mail"])) return "󰇮"
-        if (_hasAny(text, ["syncthing"])) return "󱂵"
-        if (_hasAny(text, ["nextcloud"])) return "󰅟"
-        if (_hasAny(text, ["tailscale"])) return "󰛳"
-        if (_hasAny(text, ["vpn", "proton"])) return "󰦝"
-        if (_hasAny(text, ["docker"])) return "󰡨"
-        if (_hasAny(text, ["qbittorrent", "torrent", "transmission"])) return "󰃘"
-        if (_hasAny(text, ["mpv", "vlc", "media player"])) return "󰐊"
-        if (_hasAny(text, ["bluetooth", "blueberry", "blueman"])) return "󰂯"
-        if (_hasAny(text, ["network", "wifi", "nm-applet"])) return "󰖩"
-        if (_hasAny(text, ["volume", "audio", "pipewire", "pavucontrol"])) return "󰕾"
-        if (_hasAny(text, ["battery", "power"])) return "󰁹"
-        if (_hasAny(text, ["clipboard"])) return "󰅌"
-        if (_hasAny(text, ["calendar"])) return "󰃭"
-        if (_hasAny(text, ["notes", "note"])) return "󱞎"
         return ""
     }
 

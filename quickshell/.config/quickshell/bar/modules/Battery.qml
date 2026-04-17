@@ -29,7 +29,7 @@ Item {
     readonly property bool isFull: state === UPowerDeviceState.FullyCharged
     readonly property real rate: bat ? Math.abs(bat.changeRate) : 0
 
-    visible: true
+    visible: root.hasBattery
     width: label.implicitWidth > 0 ? label.implicitWidth + 8 : 60
     height: 26
 
