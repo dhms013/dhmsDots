@@ -144,7 +144,6 @@ ShellRoot {
         launcher: appLauncher
         notifServer: notifServer
         powerActions: powerActions
-        settings: settingsState
         bg: shell.bg
         fg: shell.fg
         accent: shell.accent
@@ -188,8 +187,8 @@ ShellRoot {
 
     NotificationPanel {
         id: notifPanel
+
         theme: shell.palette
-        settings: settingsState
         focus: true
     }
 
@@ -199,7 +198,6 @@ ShellRoot {
 
     Osd {
         service: osdService
-        settings: settingsState
         theme: shell.palette
     }
 
@@ -207,7 +205,7 @@ ShellRoot {
         id: notifServer
     }
 
-IpcHandler {
+    IpcHandler {
         function handle() {
             settingsWindow.showing = true;
         }
@@ -486,23 +484,35 @@ IpcHandler {
 
     IpcHandler {
         function handle() {
-            const sr = screenrecord;
+            Quickshell.execDetached(["bash", "-c",
+                "if pgrep -f '^gpu-screen-recorder' > /dev/null 2>&1; then " +
+                "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; screenrecord --stop-recording; " +
+                "else touch /tmp/sr_show; fi"
+            ]);
+            srCheckTimer.start();
+        }
+
+        target: "openScreenrecord"
+    }
+
+    Timer {
+        id: srCheckTimer
+        interval: 200
+        onTriggered: {
+            srCheckTimer.stop();
             const proc = Qt.createQmlObject(
                 'import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }',
                 shell, "srCheck"
             );
-            proc.command = ["bash", "-c", "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; if pgrep -f '^gpu-screen-recorder' > /dev/null 2>&1; then screenrecord --stop-recording; echo STOPPED; else echo OPEN; fi"];
-            proc.onExited.connect(function() {
-                const out = proc.stdout ? proc.stdout.buf.trim() : "";
-                if (out !== "STOPPED") {
-                    sr.showing = true;
+            proc.command = ["bash", "-c", "test -f /tmp/sr_show && rm /tmp/sr_show"];
+            proc.onExited.connect(function(exitCode) {
+                if (exitCode === 0) {
+                    screenrecord.showing = true;
                 }
                 proc.destroy();
             });
             proc.running = true;
         }
-
-        target: "openScreenrecord"
     }
 
     IpcHandler {
