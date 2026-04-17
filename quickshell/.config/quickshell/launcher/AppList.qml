@@ -67,22 +67,54 @@ Item {
         id: parser
         command: ["bash", "-lc",
             "XDG_DATA_HOME=\"${XDG_DATA_HOME:-$HOME/.local/share}\"; " +
-            "XDG_DATA_DIRS=\"${XDG_DATA_DIRS:-/usr/local/share:/usr/share}\"; " +
-            "for f in " +
-            "/usr/share/applications/*.desktop " +
-            "/usr/local/share/applications/*.desktop " +
-            "\"$XDG_DATA_HOME\"/applications/*.desktop " +
-            "\"$XDG_DATA_HOME\"/flatpak/exports/share/applications/*.desktop " +
-            "/var/lib/flatpak/exports/share/applications/*.desktop " +
-            "~/Desktop/*.desktop; do " +
+            "declare -A hidden_apps; " +
+            "for f in \"$XDG_DATA_HOME\"/applications/*.desktop ~/Desktop/*.desktop; do " +
             "  [ -f \"$f\" ] || continue; " +
+            "  hidden=$(grep -m1 '^Hidden=' \"$f\" 2>/dev/null | cut -d= -f2-); " +
+            "  [ \"$hidden\" = \"true\" ] && hidden_apps[$(basename \"$f\")]=1; " +
+            "done; " +
+            "for f in /usr/share/applications/*.desktop /usr/local/share/applications/*.desktop \"$XDG_DATA_HOME\"/applications/*.desktop ~/Desktop/*.desktop; do " +
+            "  [ -f \"$f\" ] || continue; " +
+            "  fname=$(basename \"$f\"); " +
+            "  [ \"${hidden_apps[$fname]}\" = \"1\" ] && continue; " +
             "  name=$(grep -m1 '^Name=' \"$f\" | cut -d= -f2-); " +
             "  exec=$(grep -m1 '^Exec=' \"$f\" | cut -d= -f2-); " +
+            "  icon=$(grep -m1 '^Icon=' \"$f\" | cut -d= -f2-); " +
             "  nodisplay=$(grep -m1 '^NoDisplay=' \"$f\" | cut -d= -f2-); " +
             "  [ \"$nodisplay\" = \"true\" ] && continue; " +
             "  [ -z \"$name\" ] && continue; " +
             "  [ -z \"$exec\" ] && continue; " +
-            "  printf '%s|%s\\n' \"$name\" \"$exec\"; " +
+            "  iconpath=\"\"; " +
+            "  if [ -n \"$icon\" ]; then " +
+            "    if [ -f \"$icon\" ]; then " +
+            "      iconpath=\"$icon\"; " +
+            "    else " +
+            "      for dir in /usr/share/icons/hicolor \"$XDG_DATA_HOME\"/icons /usr/share/pixmaps /usr/local/share/icons; do " +
+            "        for size in 256 128 64 48 32 24 22 16; do " +
+            "          if [ -f \"$dir/${size}x${size}/apps/$icon.png\" ]; then " +
+            "            iconpath=\"$dir/${size}x${size}/apps/$icon.png\"; break; " +
+            "          elif [ -f \"$dir/${size}x${size}/$icon.png\" ]; then " +
+            "            iconpath=\"$dir/${size}x${size}/$icon.png\"; break; " +
+            "          elif [ -f \"$dir/$size/apps/$icon.png\" ]; then " +
+            "            iconpath=\"$dir/$size/apps/$icon.png\"; break; " +
+            "          elif [ -f \"$dir/$size/$icon.png\" ]; then " +
+            "            iconpath=\"$dir/$size/$icon.png\"; break; " +
+            "          elif [ -f \"$dir/$icon.png\" ]; then " +
+            "            iconpath=\"$dir/$icon.png\"; break; " +
+            "          fi; " +
+            "        done; " +
+            "        [ -n \"$iconpath\" ] && break; " +
+            "      done; " +
+            "      if [ -z \"$iconpath\" ]; then " +
+            "        for ext in svg png xpm; do " +
+            "          if [ -f \"/usr/share/icons/hicolor/apps/$icon.$ext\" ]; then " +
+            "            iconpath=\"/usr/share/icons/hicolor/apps/$icon.$ext\"; break; " +
+            "          fi; " +
+            "        done; " +
+            "      fi; " +
+            "    fi; " +
+            "  fi; " +
+            "  printf '%s|%s|%s\\n' \"$name\" \"$exec\" \"$iconpath\"; " +
             "done | sort -u"
         ]
         running: true
@@ -98,13 +130,14 @@ Item {
                     const trimmed = (line || "").trim()
                     if (!trimmed)
                         continue
-                    const splitIdx = trimmed.indexOf("|")
-                    if (splitIdx === -1)
+                    const parts = trimmed.split("|")
+                    if (parts.length < 2)
                         continue
-                    const name = trimmed.slice(0, splitIdx).trim()
-                    const exec = trimmed.slice(splitIdx + 1).trim()
+                    const name = parts[0].trim()
+                    const exec = parts[1].trim()
+                    const icon = parts[2] ? parts[2].trim() : ""
                     if (name && exec)
-                        apps.push({ name: name, exec: exec })
+                        apps.push({ name: name, exec: exec, icon: icon })
                 }
             }
         }
@@ -203,10 +236,29 @@ Item {
                     }
                 }
 
+                // icon
+                Image {
+                    id: appIcon
+                    anchors.left:           parent.left
+                    anchors.leftMargin:     12
+                    anchors.verticalCenter: parent.verticalCenter
+                    width:                  20
+                    height:                 20
+                    source:                 modelData.icon ? "file://" + modelData.icon : ""
+                    sourceSize.width:       20
+                    sourceSize.height:      20
+                    smooth:                 true
+                    visible:                status === Image.Ready && modelData.icon
+                    onStatusChanged: {
+                        if (status === Image.Error)
+                            visible = false
+                    }
+                }
+
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left:           parent.left
-                    anchors.leftMargin:     14
+                    anchors.leftMargin:     40
                     text:           modelData.name
                     color:          isSelected
                         ? (theme.fg || "#cdd6f4")

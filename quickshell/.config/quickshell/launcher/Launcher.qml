@@ -209,7 +209,7 @@ PanelWindow {
             id: card
 
             width: 250
-            height: 300
+            height: 280
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             radius: 12

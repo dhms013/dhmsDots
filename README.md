@@ -98,15 +98,12 @@ This repo manages configs for:
 - hypr
 - hyprland-preview-share-picker
 - kitty
-- mako
 - nvim
-- rofi
+- quickshell (based on [anomshell](https://github.com/atif-1402/anomshell/tree/main))
 - sddm theme
 - starship
-- swayosd
 - themes
 - uwsm (yes, I use uwsm because it's just easier 🤣)
-- waybar
 - yazi
 
 ---
@@ -150,6 +147,7 @@ This will:
 
 1. [Omarchy](https://omarchy.org/) — my first Linux setup, provided so much inspiration for this repo
 2. [Typecraft Dev](https://github.com/typecraft-dev) — [install.sh](./install.sh) is adapted from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)
+3. [anomshell](https://github.com/atif-1402/anomshell/tree/main) — for the beautifull yet simple quickshell
 
 ---
 

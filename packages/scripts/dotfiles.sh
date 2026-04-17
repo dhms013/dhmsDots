@@ -8,8 +8,7 @@ DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 STOW_PKGS=(
   bash btop fastfetch ghostty
   hypr hyprland-preview-share-picker
-  kitty mako nvim rofi
-  swayosd themes tmux waybar
+  kitty nvim quickshell themes tmux
 )
 
 backup_if_exists() {

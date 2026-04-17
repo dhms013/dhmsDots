@@ -8,7 +8,7 @@ INITIAL_THEME="dhms"
 
 apply_gtk_theme() {
   echo "==> Applying GTK and icon theme"
-  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+  gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
   gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
   gsettings set org.gnome.desktop.interface icon-theme "Yaru-olive-dark"
   sudo gtk-update-icon-cache /usr/share/icons/Yaru
@@ -28,10 +28,8 @@ set_wallpaper() {
 link_theme_consumers() {
   echo "==> Linking theme consumers"
   rm -rf ~/.config/btop/themes/current.theme
-  rm -rf ~/.config/mako/config
 
   ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
-  ln -snf ~/.config/themes/current/theme/mako.ini ~/.config/mako/config
   ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
   ln -sf ~/.config/themes/current/theme/starship.toml ~/.config/starship.toml
 }
