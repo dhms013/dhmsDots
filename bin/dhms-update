@@ -11,7 +11,12 @@ git_check_branch() {
   if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
     CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH" \
       --header "Currently on branch: $CURRENT_BRANCH")
-    [ "$CHOICE" = "Go back to $CURRENT_BRANCH" ] && RESTORE_BRANCH=true
+    if [ "$CHOICE" = "Go back to $CURRENT_BRANCH" ]; then
+      RESTORE_BRANCH=true
+      REMOTE=$(git -C $HOME/.dhmsDots config --get "branch.$CURRENT_BRANCH.remote")
+      git -C $HOME/.dhmsDots pull --rebase --autostash "$REMOTE" "$MAIN_BRANCH"
+      git -C $HOME/.dhmsDots stash pop || true
+    fi
   fi
   git -C $HOME/.dhmsDots/ checkout "$MAIN_BRANCH"
 }
