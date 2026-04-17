@@ -3,7 +3,7 @@
 if pgrep -x "hypridle" >/dev/null 2>&1; then
   systemctl suspend
 else
-  uwsm-app hypridle &
+  toggle-idle
   sleep 1
   systemctl suspend
 fi
