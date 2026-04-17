@@ -10,10 +10,7 @@ SCREENSHOTS_DIR="$HOME/Pictures/Screenshots/"
 SCREENRECORDS_DIR="$HOME/Videos/Screenrecords/"
 
 create_dirs() {
-  echo "==> Creating XDG user directories"
-  xdg-user-dirs-update
-
-  echo "==> Creating custom directories"
+  echo "==> Creating user directories"
   mkdir -p "$DOWNLOADS_DIR"
   mkdir -p "$DOCUMENTS_DIR"
   mkdir -p "$WORK_DIR"

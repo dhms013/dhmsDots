@@ -1,8 +1,0 @@
-* {
-  selected-text: #C3FCB8;
-  text: #00a86b;
-  base: #00110b;
-  border: #00a86b;
-  foreground: #00ff99;
-  background: #090a08;
-}

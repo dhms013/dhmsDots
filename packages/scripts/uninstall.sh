@@ -7,6 +7,7 @@ UNUSED_PKGS=(
   htop    # replaced by btop
   vim     # replaced by nvim
   dolphin # replaced by yazi and nautilus
+  dunst   # replaced with quickshell
 )
 
 uninstall_unused() {
