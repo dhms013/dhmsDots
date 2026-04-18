@@ -83,7 +83,7 @@ keyrings
 { frmwr-updt; } || echo -e "\033[0;31mFirmware update failed, continuing...\033[0m"
 
 git_pull
-{ migrate-run } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
+{ migrate-run; } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
 pkg-check-orphan
 sudo updatedb
 

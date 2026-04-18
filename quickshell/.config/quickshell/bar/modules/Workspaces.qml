@@ -140,7 +140,7 @@ Item {
                 }
 
                 Rectangle {
-                    id: ogUnderline
+                    id: wsUnderline
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 4
