@@ -5,7 +5,7 @@
 
 enable_services() {
   echo "==> Enabling services"
-  awww-daemon &
+  uwsm-app awww-daemon &
   systemctl --user enable --now pipewire.service pipewire-pulse wireplumber
   sudo updatedb
 }
