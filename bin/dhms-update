@@ -79,12 +79,11 @@ git_check_branch
 
 echo -e "\033[38;2;0;204;119mUpdating dhmsDots\033[0m"
 keyrings
-pkg-update
-
-frmwr-updt
+{ pkg-update; } || echo -e "\033[0;31mPackage update failed, continuing...\033[0m"
+{ frmwr-updt; } || echo -e "\033[0;31mFirmware update failed, continuing...\033[0m"
 
 git_pull
-migrate-run
+{ migrate-run } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
 pkg-check-orphan
 sudo updatedb
 
