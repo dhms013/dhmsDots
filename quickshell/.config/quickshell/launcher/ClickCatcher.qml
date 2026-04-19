@@ -7,16 +7,24 @@ PanelWindow {
 
     property bool active: false
 
-    signal clicked
+    signal clicked()
 
-    anchors { left: true; right: true; top: true; bottom: true }
-    color:         "transparent"
+    color: "transparent"
     exclusiveZone: -1
-    visible:       active
+    visible: active
     WlrLayershell.layer: WlrLayer.Top
+
+    anchors {
+        left: true
+        right: true
+        top: true
+        bottom: true
+    }
 
     MouseArea {
         anchors.fill: parent
-        onClicked:    root.clicked()
+        onClicked: root.clicked()
     }
+
 }
+

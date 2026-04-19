@@ -197,6 +197,7 @@ PanelWindow {
                                 root.runCommand(modelData.cmd);
                             }
                         }
+
                     }
 
                 }

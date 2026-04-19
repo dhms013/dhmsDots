@@ -181,9 +181,8 @@ done | sort
                 } else if (key === Qt.Key_L) {
                     e.accepted = true;
                 }
-                return;
+                return ;
             }
-
             if (e.key === Qt.Key_Escape) {
                 if (root.searchText.length > 0)
                     root.searchText = "";
