@@ -1,1 +1,0 @@
-echo "Initial migration file..."
