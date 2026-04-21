@@ -204,13 +204,14 @@ PanelWindow {
             onClicked: launcher.showing = false
         }
 
-        // card — positioned at bottom center
+        // card — menu mode (anchored at top)
         Rectangle {
-            id: card
+            id: menuCard
 
             width: 250
             height: 280
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
             radius: 12
             topLeftRadius: 0
             topRightRadius: 0
@@ -218,16 +219,14 @@ PanelWindow {
             border.color: theme.dim || "#45475a"
             border.width: 1
             clip: true
-            opacity: launcher.showing ? 1 : 0
+            opacity: launcher.showing && launcher.mode === "menu" ? 1 : 0
 
-            // block clicks from reaching background MouseArea
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
                 }
             }
 
-            // ── menu mode ─────────────────────────────────────────
             MenuView {
                 id: menuView
 
@@ -250,7 +249,51 @@ PanelWindow {
                 }
             }
 
-            // ── apps mode ─────────────────────────────────────────
+            transform: Translate {
+                y: launcher.showing && launcher.mode === "menu" ? 0 : 20
+
+                Behavior on y {
+                    NumberAnimation {
+                        duration: 220
+                        easing.type: Easing.OutCubic
+                    }
+
+                }
+
+            }
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
+                }
+
+            }
+
+        }
+
+        // card — apps mode (vertically centered)
+        Rectangle {
+            id: appsCard
+
+            width: 250
+            height: 280
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            radius: 12
+            color: theme.bg || "#1e1e2e"
+            border.color: theme.dim || "#45475a"
+            border.width: 1
+            clip: true
+            opacity: launcher.showing && launcher.mode === "apps" ? 1 : 0
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                }
+            }
+
+            // apps mode content
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 10
@@ -406,7 +449,7 @@ PanelWindow {
             }
 
             transform: Translate {
-                y: launcher.showing ? 0 : 20
+                y: launcher.showing && launcher.mode === "apps" ? 0 : 20
 
                 Behavior on y {
                     NumberAnimation {
