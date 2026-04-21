@@ -357,49 +357,6 @@ ShellRoot {
 
                         }
 
-                        Rectangle {
-                            id: confirmButton
-
-                            Layout.fillWidth: true
-                            height: 32
-                            radius: 9
-                            color: powerActions.selectedIndex === 1 ? Qt.alpha(shell.red, 0.28) : Qt.alpha(shell.red, 0.2)
-                            border.color: powerActions.selectedIndex === 1 ? Qt.alpha(shell.red, 0.72) : Qt.alpha(shell.red, 0.45)
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "Confirm"
-                                color: powerActions.selectedIndex === 1 ? shell.fg : shell.red
-                                font.pixelSize: 10
-                                font.family: "JetBrainsMono Nerd Font Propo"
-                                font.weight: Font.DemiBold
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                hoverEnabled: true
-                                onEntered: powerActions.selectedIndex = 1
-                                onClicked: powerActions.confirm()
-                            }
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 120
-                                }
-
-                            }
-
-                            Behavior on border.color {
-                                ColorAnimation {
-                                    duration: 120
-                                }
-
-                            }
-
-                        }
-
                     }
 
                 }

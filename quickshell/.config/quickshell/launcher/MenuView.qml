@@ -164,14 +164,6 @@ Item {
     }
 
     function activateItem(item) {
-        const confirmInfo = confirmationFor(item);
-        if (confirmInfo) {
-            if (powerActions)
-                powerActions.requestAction(confirmInfo.title, confirmInfo.message, confirmInfo.command);
-
-            root.closeRequested();
-            return ;
-        }
         if (item.children !== undefined && item.children.length > 0) {
             pushPage(item.label, item.children);
             return ;
@@ -190,18 +182,8 @@ Item {
             root.closeRequested();
             return ;
         }
-        if (item.action === "openSettings") {
-            runCmd("quickshell ipc call openSettings handle");
-            root.closeRequested();
-            return ;
-        }
         if (item.action === "apps") {
             root.appsRequested();
-            return ;
-        }
-        if (item.action === "about") {
-            runCmd("omarchy-launch-about");
-            root.closeRequested();
             return ;
         }
         if (item.cmd) {
@@ -216,61 +198,12 @@ Item {
         }
     }
 
-    function confirmationFor(item) {
-        const cmd = item.cmd || "";
-        if (cmd === "systemctl suspend")
-            return {
-            "title": "Suspend",
-            "message": "Suspend the system?",
-            "command": cmd
-        };
-
-        if (cmd === "systemctl hibernate")
-            return {
-            "title": "Hibernate",
-            "message": "Hibernate the system?",
-            "command": cmd
-        };
-
-        if (cmd === "omarchy-system-logout")
-            return {
-            "title": "Logout",
-            "message": "Log out of the current session?",
-            "command": cmd
-        };
-
-        if (cmd === "omarchy-system-reboot")
-            return {
-            "title": "Restart",
-            "message": "Restart the system?",
-            "command": cmd
-        };
-
-        if (cmd === "omarchy-system-shutdown")
-            return {
-            "title": "Shutdown",
-            "message": "Power off the system?",
-            "command": cmd
-        };
-
-        return null;
-    }
-
     function runCmd(cmd) {
         var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', root, "dynProc" + (++_cmdSeq));
         proc.onExited.connect(function() {
             proc.destroy();
         });
-        proc.command = ["bash", "-c", "export PATH=\"$HOME/.local/share/omarchy/bin:$PATH\"; " + cmd];
-        proc.running = true;
-    }
-
-    function runTerminal(cmd) {
-        var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', root, "dynProc" + (++_cmdSeq));
-        proc.onExited.connect(function() {
-            proc.destroy();
-        });
-        proc.command = ["bash", "-c", "export PATH=\"$HOME/.local/share/omarchy/bin:$PATH\"; " + "setsid uwsm-app -- xdg-terminal-exec --app-id=org.omarchy.terminal --title=Omarchy -e bash -c " + "'omarchy-show-logo; " + cmd.replace(/'/g, "'\\''") + "; if (( $? != 130 )); then omarchy-show-done; fi'"];
+        proc.command = ["bash", "-c", "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; " + cmd];
         proc.running = true;
     }
 
@@ -280,7 +213,6 @@ Item {
         anchors.fill: parent
         spacing: 6
 
-        // breadcrumb
         Row {
             Layout.fillWidth: true
             spacing: 4

@@ -6,6 +6,12 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 PanelWindow {
+    // margins {
+    //     left: 5
+    //     top: 5
+    //     bottom: 5
+    // }
+
     id: root
 
     property bool showing: false
@@ -83,7 +89,7 @@ done
         applyProc.running = true;
     }
 
-    implicitWidth: 380
+    implicitHeight: 380
     color: "transparent"
     exclusiveZone: 0
     visible: showing
@@ -102,14 +108,8 @@ done
 
     anchors {
         left: true
+        right: true
         top: true
-        bottom: true
-    }
-
-    margins {
-        left: 5
-        top: 5
-        bottom: 5
     }
 
     Process {
@@ -161,6 +161,10 @@ done
             if (ctrl) {
                 const key = e.key;
                 if (key === Qt.Key_H) {
+                    if (root.selectedIdx > 0) {
+                        root.selectedIdx--;
+                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    }
                     e.accepted = true;
                 } else if (key === Qt.Key_J) {
                     if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
@@ -175,6 +179,10 @@ done
                     }
                     e.accepted = true;
                 } else if (key === Qt.Key_L) {
+                    if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
+                        root.selectedIdx++;
+                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    }
                     e.accepted = true;
                 }
                 return ;
@@ -185,7 +193,17 @@ done
                 else
                     root.showing = false;
                 e.accepted = true;
-            } else if (e.key === Qt.Key_Left || e.key === Qt.Key_Right) {
+            } else if (e.key === Qt.Key_Left) {
+                if (root.selectedIdx > 0) {
+                    root.selectedIdx--;
+                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                }
+                e.accepted = true;
+            } else if (e.key === Qt.Key_Right) {
+                if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
+                    root.selectedIdx++;
+                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                }
                 e.accepted = true;
             } else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
                 root.applySelected();
@@ -218,7 +236,10 @@ done
             id: card
 
             anchors.fill: parent
+            anchors.horizontalCenter: parent.horizontalCenter
             radius: 12
+            topLeftRadius: 0
+            topRightRadius: 0
             color: theme.bg || "#1e1e2e"
             border.color: theme.dim || "#45475a"
             border.width: 1
@@ -386,8 +407,8 @@ done
                     Layout.fillHeight: true
                     visible: root.backgrounds.length > 0
                     clip: true
-                    cellWidth: root.implicitWidth - 20
-                    cellHeight: Math.floor(cellWidth * 0.5) + 28
+                    cellHeight: root.implicitHeight - 95
+                    cellWidth: Math.floor(cellHeight * 0.5) + 28
                     model: root.filteredBackgrounds
 
                     ScrollBar.vertical: ScrollBar {

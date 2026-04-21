@@ -211,8 +211,9 @@ PanelWindow {
             width: 250
             height: 280
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
             radius: 12
+            topLeftRadius: 0
+            topRightRadius: 0
             color: theme.bg || "#1e1e2e"
             border.color: theme.dim || "#45475a"
             border.width: 1
