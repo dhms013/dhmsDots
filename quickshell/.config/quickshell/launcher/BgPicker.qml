@@ -6,12 +6,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 PanelWindow {
-    // margins {
-    //     left: 5
-    //     top: 5
-    //     bottom: 5
-    // }
-
     id: root
 
     property bool showing: false
@@ -104,6 +98,11 @@ done
             focusTimer.start();
             root.reload();
         }
+    }
+
+    margins {
+        left: 25
+        right: 25
     }
 
     anchors {
@@ -403,6 +402,9 @@ done
                 ListView {
                     id: grid
 
+                    property real itemWidth: Math.floor((root.implicitHeight - 95 - 28) * 0.5) + 28
+                    property real itemHeight: root.implicitHeight - 95
+
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     visible: root.backgrounds.length > 0
@@ -412,8 +414,6 @@ done
                     model: root.filteredBackgrounds
                     preferredHighlightBegin: 0
                     preferredHighlightEnd: width
-                    property real itemWidth: Math.floor((root.implicitHeight - 95 - 28) * 0.5) + 28
-                    property real itemHeight: root.implicitHeight - 95
 
                     ScrollBar.horizontal: ScrollBar {
                         policy: ScrollBar.AsNeeded
