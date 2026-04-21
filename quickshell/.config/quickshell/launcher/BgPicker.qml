@@ -55,7 +55,7 @@ done
         filteredBackgrounds = out;
         selectedIdx = 0;
         if (grid.count > 0)
-            grid.positionViewAtIndex(0, GridView.Beginning);
+            grid.positionViewAtIndex(0, ListView.Beginning);
 
     }
 
@@ -163,25 +163,25 @@ done
                 if (key === Qt.Key_H) {
                     if (root.selectedIdx > 0) {
                         root.selectedIdx--;
-                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                        grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                     }
                     e.accepted = true;
                 } else if (key === Qt.Key_J) {
                     if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
                         root.selectedIdx++;
-                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                        grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                     }
                     e.accepted = true;
                 } else if (key === Qt.Key_K) {
                     if (root.selectedIdx > 0) {
                         root.selectedIdx--;
-                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                        grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                     }
                     e.accepted = true;
                 } else if (key === Qt.Key_L) {
                     if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
                         root.selectedIdx++;
-                        grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                        grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                     }
                     e.accepted = true;
                 }
@@ -196,13 +196,13 @@ done
             } else if (e.key === Qt.Key_Left) {
                 if (root.selectedIdx > 0) {
                     root.selectedIdx--;
-                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                 }
                 e.accepted = true;
             } else if (e.key === Qt.Key_Right) {
                 if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
                     root.selectedIdx++;
-                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                 }
                 e.accepted = true;
             } else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
@@ -211,13 +211,13 @@ done
             } else if (e.key === Qt.Key_Down) {
                 if (root.selectedIdx < root.filteredBackgrounds.length - 1) {
                     root.selectedIdx++;
-                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                 }
                 e.accepted = true;
             } else if (e.key === Qt.Key_Up) {
                 if (root.selectedIdx > 0) {
                     root.selectedIdx--;
-                    grid.positionViewAtIndex(root.selectedIdx, GridView.Contain);
+                    grid.positionViewAtIndex(root.selectedIdx, ListView.Contain);
                 }
                 e.accepted = true;
             } else if (e.key === Qt.Key_Backspace) {
@@ -400,20 +400,24 @@ done
 
                 }
 
-                GridView {
+                ListView {
                     id: grid
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     visible: root.backgrounds.length > 0
                     clip: true
-                    cellHeight: root.implicitHeight - 95
-                    cellWidth: Math.floor(cellHeight * 0.5) + 28
+                    orientation: ListView.Horizontal
+                    spacing: 0
                     model: root.filteredBackgrounds
+                    preferredHighlightBegin: 0
+                    preferredHighlightEnd: width
+                    property real itemWidth: Math.floor((root.implicitHeight - 95 - 28) * 0.5) + 28
+                    property real itemHeight: root.implicitHeight - 95
 
-                    ScrollBar.vertical: ScrollBar {
+                    ScrollBar.horizontal: ScrollBar {
                         policy: ScrollBar.AsNeeded
-                        width: 2
+                        height: 2
                     }
 
                     delegate: Item {
@@ -425,8 +429,8 @@ done
                         property bool isSelected: index === root.selectedIdx
                         property bool isHovered: false
 
-                        width: grid.cellWidth
-                        height: grid.cellHeight
+                        width: grid.itemWidth
+                        height: grid.itemHeight
                         opacity: 0
                         Component.onCompleted: {
                             appearTimer.interval = Math.min(index * 20, 400);
