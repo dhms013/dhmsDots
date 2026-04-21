@@ -51,17 +51,9 @@ This repo assumes **Arch Linux with Hyprland** is already installed.
 
 <br><br>
 
-
-
-
 https://github.com/user-attachments/assets/7210c511-f99a-42ee-83b0-89442642568a
 
-
-
-
-https://github.com/user-attachments/assets/0ed84780-df95-4aaf-87bc-5de30ef15d8c
-
-
+https://github.com/user-attachments/assets/2ee8aac8-847f-4e4d-8561-1a992c2de104
 
 </details>
 
