@@ -132,6 +132,35 @@ PanelWindow {
         anchors.fill: parent
         focus: true
         Keys.onPressed: (e) => {
+            const ctrl = e.modifiers & Qt.ControlModifier;
+            if (ctrl) {
+                const key = e.key;
+                if (key === Qt.Key_H) {
+                    if (root.selectedIdx > 0) {
+                        root.selectedIdx--;
+                        listView.positionViewAtIndex(root.selectedIdx, ListView.Contain);
+                    }
+                } else if (key === Qt.Key_J) {
+                    if (root.selectedIdx < root.filteredBindings.length - 1) {
+                        root.selectedIdx++;
+                        listView.positionViewAtIndex(root.selectedIdx, ListView.Contain);
+                    }
+                    e.accepted = true;
+                } else if (key === Qt.Key_K) {
+                    if (root.selectedIdx > 0) {
+                        root.selectedIdx--;
+                        listView.positionViewAtIndex(root.selectedIdx, ListView.Contain);
+                    }
+                    e.accepted = true;
+                } else if (key === Qt.Key_L) {
+                    if (root.selectedIdx < root.filteredBindings.length - 1) {
+                        root.selectedIdx++;
+                        listView.positionViewAtIndex(root.selectedIdx, ListView.Contain);
+                    }
+                    e.accepted = true;
+                }
+                return ;
+            }
             if (e.key === Qt.Key_Escape) {
                 if (root.searchText.length > 0)
                     root.searchText = "";
