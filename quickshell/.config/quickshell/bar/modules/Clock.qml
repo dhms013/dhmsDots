@@ -117,7 +117,7 @@ Item {
 
         function firstDayOfMonth(y, m) {
             const d = new Date(y, m, 1).getDay();
-            return (d + 6) % 7;
+            return d;
         }
 
         function prevMonth() {
@@ -249,7 +249,7 @@ Item {
                     spacing: 0
 
                     Repeater {
-                        model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+                        model: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 
                         Text {
                             width: calCol.width / 7
