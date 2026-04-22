@@ -13,6 +13,7 @@ Item {
     property string artUrl: ""
     property bool mediaMode: false
     property int value: 0
+    property int savedBrightness: 50
     property string tone: "accent"
     property int waveBars: 22
     property var wave: _emptyWave()
@@ -248,10 +249,14 @@ Item {
             _showUnavailable("Brightness unavailable");
             return ;
         }
-        _runShell("brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%'", function(out) {
-            const v = parseInt((out || "").trim());
-            const pct = isNaN(v) ? 0 : _clamp(v, 0, 100);
-            _show("󰃠", "Brightness", pct, "highlight");
+        _show("󰃠", "Brightness", _clamp(savedBrightness, 0, 100), "highlight");
+        _runShell("bash -lc '/home/dhms/.dhmsDots/bin/brightness get'", function(out) {
+            const m = out.match(/"percentage":\s*(\d+)/);
+            const v = m ? parseInt(m[1]) : -1;
+            if (v >= 0) {
+                savedBrightness = v;
+                _show("󰃠", "Brightness", _clamp(v, 0, 100), "highlight");
+            }
         });
     }
 
@@ -319,13 +324,13 @@ Item {
             _showUnavailable("Brightness unavailable");
             return ;
         }
-        const sign = delta >= 0 ? "+" : "-";
-        const pct = Math.abs(Math.round(delta));
-        _runShell("brightnessctl set " + pct + "%" + sign + " 2>/dev/null; " + "brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%'", function(out) {
-            const v = parseInt((out || "").trim());
-            const valuePct = isNaN(v) ? 0 : _clamp(v, 0, 100);
-            _show("󰃠", "Brightness", valuePct, "highlight");
-        });
+        const dir = delta >= 0 ? "up" : "down";
+        savedBrightness = _clamp(savedBrightness + delta, 0, 100);
+        // Apply brightness FIRST, before showing toast
+        var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash","-lc","/home/dhms/.dhmsDots/bin/brightness ' + dir + '"]; running: false }', root, "brightProc" + Date.now());
+        proc.running = true;
+        // Then show toast
+        _show("󰃠", "Brightness", savedBrightness, "highlight");
     }
 
     function mediaPlayPause() {
@@ -378,7 +383,7 @@ Item {
     Process {
         id: depsProbe
 
-        command: ["bash", "-lc", "printf 'wpctl=%s\\n' \"$(command -v wpctl >/dev/null 2>&1 && echo 1 || echo 0)\"; " + "printf 'brightnessctl=%s\\n' \"$(command -v brightnessctl >/dev/null 2>&1 && echo 1 || echo 0)\"; " + "printf 'playerctl=%s\\n' \"$(command -v playerctl >/dev/null 2>&1 && echo 1 || echo 0)\"; " + "printf 'cava=%s\\n' \"$(command -v cava >/dev/null 2>&1 && echo 1 || echo 0)\""]
+        command: ["bash", "-lc", "printf 'wpctl=%s\\n' \"$(command -v wpctl >/dev/null 2>&1 && echo 1 || echo 0)\"; " + "printf 'brightnessctl=%s\\n' \"$( [ -x \"$HOME/.dhmsDots/bin/brightness\" ] && echo 1 || echo 0)\"; " + "printf 'playerctl=%s\\n' \"$(command -v playerctl >/dev/null 2>&1 && echo 1 || echo 0)\"; " + "printf 'cava=%s\\n' \"$(command -v cava >/dev/null 2>&1 && echo 1 || echo 0)\""]
         running: true
         onExited: {
             if (root.hasCava)
