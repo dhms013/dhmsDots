@@ -542,38 +542,6 @@ ShellRoot {
         target: "osdMic"
     }
 
-    IpcHandler {
-        function handle() {
-            osdService.showMediaStatus();
-        }
-
-        target: "osdMedia"
-    }
-
-    IpcHandler {
-        function handle() {
-            osdService.mediaPlayPause();
-        }
-
-        target: "osdMediaPlayPause"
-    }
-
-    IpcHandler {
-        function handle() {
-            osdService.mediaNext();
-        }
-
-        target: "osdMediaNext"
-    }
-
-    IpcHandler {
-        function handle() {
-            osdService.mediaPrev();
-        }
-
-        target: "osdMediaPrev"
-    }
-
     // Click Catcher Here
     ClickCatcher {
         active: appLauncher.showing || themePicker.showing || bgPicker.showing || notifServer.panelOpen || keybindViewer.showing
