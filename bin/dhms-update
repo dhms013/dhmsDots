@@ -7,6 +7,13 @@ MAIN_BRANCH="main"
 RESTORE_BRANCH=false
 NVIDIA_MODULE=$(find /usr/lib/modules/$(uname -r) -name "nvidia.ko*" 2>/dev/null | head -1)
 
+input_password() {
+  if ! sudo-keep; then
+    gum spin --spinner "globe" --title "Password validation has been canceled..." -- bash -c 'read -n 1 -s'
+    exit 1
+  fi
+}
+
 git_check_branch() {
   if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
     CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH" \
@@ -73,7 +80,7 @@ post_update() {
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
 show-logo
-sudo-keep
+input_password
 
 git_check_branch
 
