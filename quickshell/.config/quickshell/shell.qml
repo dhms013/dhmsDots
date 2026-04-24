@@ -125,7 +125,7 @@ ShellRoot {
     Process {
         id: themeWatcher
 
-        command: ["bash", "-lc", "if command -v inotifywait >/dev/null 2>&1; then " + "  exec inotifywait -m -e close_write " + shell.themeNamePath + "; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(stat -c %Y " + shell.themeNamePath + " 2>/dev/null || echo missing); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 3; " + "  done; " + "fi"]
+        command: ["bash", "-lc", "if command -v inotifywait >/dev/null 2>&1; then " + "  exec inotifywait -m -e close_write " + shell.themeNamePath + "; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(stat -c %Y " + shell.themeNamePath + " 2>/dev/null || echo missing); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 1; " + "  done; " + "fi"]
         running: true
 
         stdout: SplitParser {
