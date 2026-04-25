@@ -20,9 +20,30 @@ Item {
         liveStatusProc.running = true
     }
 
+    function refreshPowerProfile() {
+        powerProfileProc.running = false
+        powerProfileProc.running = true
+    }
+
     property bool idleDisabled: false
     property bool notifSilenced: notifServer?.dndEnabled ?? false
     property bool isRecording: false
+    property string powerProfile: "balanced"
+
+    function _getPowerProfileIcon(profile) {
+        if (profile === "power-saver") return ""
+        if (profile === "performance") return ""
+        return ""
+    }
+
+    function _togglePowerProfile() {
+        const current = root.powerProfile
+        const profiles = ["power-saver", "balanced", "performance"]
+        const idx = profiles.indexOf(current)
+        const next = profiles[(idx + 1) % profiles.length]
+        root.runCmd("powerprofilesctl set " + next)
+        Qt.callLater(refreshPowerProfile)
+    }
 
     Process {
         id: liveStatusProc
@@ -45,7 +66,21 @@ Item {
         interval: 1000
         running:  true
         repeat:   true
-        onTriggered: refreshLiveStatus()
+        onTriggered: {
+            refreshLiveStatus()
+            refreshPowerProfile()
+        }
+    }
+
+    Process {
+        id: powerProfileProc
+        command: ["bash", "-lc", "powerprofilesctl get 2>/dev/null || echo balanced"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                root.powerProfile = (data.trim() || "balanced");
+            }
+        }
     }
 
     // ── shell helpers ─────────────────────────────────────────────
@@ -66,6 +101,21 @@ Item {
         id:                     indicatorRow
         anchors.verticalCenter: parent.verticalCenter
         spacing:                8
+
+        // power profile indicator
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: root._getPowerProfileIcon(root.powerProfile)
+            color: root.green
+            font.pixelSize: 13
+            font.family: "JetBrainsMono Nerd Font"
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root._togglePowerProfile()
+            }
+        }
 
         // idle disabled indicator
         Text {

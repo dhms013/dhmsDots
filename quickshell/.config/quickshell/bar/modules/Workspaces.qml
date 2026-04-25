@@ -9,6 +9,9 @@ Item {
     property var theme: ({})
     property var settings: null
 
+    readonly property int persistentCount: settings?.persistentWorkspaces || 5
+    readonly property int activeWsId: Hyprland.focusedWorkspace?.id || 1
+
     readonly property string workspaceStyle: settings?.workspaceStyle || "kanji"
     readonly property var kanji: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
 
@@ -23,9 +26,13 @@ Item {
         Repeater {
             model: 10
 
-            delegate: Item {
+delegate: Item {
                 id: ws
-
+                 visible: {
+                    const idx = index + 1;
+                    // Show if: within persistent range OR (occupied OR active)
+                    return idx <= root.persistentCount || (ws.occupied || ws.active);
+                  }
                 property int wsId: index + 1
                 property bool occupied: Hyprland.workspaces.values.some(w => w.id === wsId)
                 property bool active: Hyprland.focusedWorkspace?.id === wsId
