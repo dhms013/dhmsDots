@@ -11,3 +11,5 @@ fi
 
 # Ensure command hashing is off for mise
 set +h
+
+eval "$(thefuck --alias)"

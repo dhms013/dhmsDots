@@ -1,5 +1,6 @@
 7zip
 adw-gtk-theme
+asciiquarium
 awww-bin
 base
 bash-completion
@@ -11,6 +12,7 @@ brightnessctl
 btop
 cava
 cmatrix
+cowsay
 discord
 downgrade
 eza
@@ -41,7 +43,9 @@ noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 npm
+nyancat
 opencode
+pipes-rs
 plocate
 power-profiles-daemon
 python-gobject
@@ -60,6 +64,7 @@ stow
 tmux
 trash-cli
 telegram-desktop
+thefuck
 tldr
 tree-sitter-cli
 ttf-jetbrains-mono-nerd
