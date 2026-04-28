@@ -66,6 +66,21 @@ delegate: Item {
                 }
 
                 Rectangle {
+                    id: kanjiGlow
+                    visible: ws.kanji && ws.active
+                    anchors.centerIn: pulseDot
+                    width: pulseDot.width + 5
+                    height: pulseDot.height + 8
+                    radius: 99
+                    color: Qt.alpha(root.theme.accent || "#89b4fa", 0.12)
+                    opacity: ws.active ? 1 : 0
+                    z: -1
+
+                    Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+                    Behavior on opacity { NumberAnimation { duration: 110 } }
+                }
+
+                Rectangle {
                     id: stripActiveBlock
                     visible: ws.styleStrip
                     anchors.centerIn: parent
@@ -125,7 +140,7 @@ delegate: Item {
                     text: ws.label
                     color: ws.wsKanji
                         ? (ws.active
-                            ? (root.theme.accent || "#798186")
+                            ? (root.theme.fg || "#798186")
                             : ws.hovered
                                 ? (root.theme.fg || "#cacccc")
                                 : ws.occupied
@@ -146,22 +161,22 @@ delegate: Item {
                     Behavior on font.pixelSize { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                 }
 
-                Rectangle {
-                    id: wsUnderline
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 4
-                    visible: ws.wsKanji
-                    width: (ws.active || ws.hovered) ? labelText.implicitWidth + 4 : 0
-                    height: 1.5
-                    radius: 99
-                    opacity: ws.active ? 1.0 : 0.4
-                    color: root.theme.accent || "#798186"
-
-                    Behavior on width { SmoothedAnimation { velocity: 180; easing.type: Easing.OutCubic } }
-                    Behavior on opacity { NumberAnimation { duration: 100 } }
-                    Behavior on color { ColorAnimation { duration: 100 } }
-                }
+                // Rectangle {
+                //     id: wsUnderline
+                //     anchors.horizontalCenter: parent.horizontalCenter
+                //     anchors.bottom: parent.bottom
+                //     anchors.bottomMargin: 4
+                //     visible: ws.wsKanji
+                //     width: (ws.active || ws.hovered) ? labelText.implicitWidth + 4 : 0
+                //     height: 1.5
+                //     radius: 99
+                //     opacity: ws.active ? 1.0 : 0.4
+                //     color: root.theme.accent || "#798186"
+                //
+                //     Behavior on width { SmoothedAnimation { velocity: 180; easing.type: Easing.OutCubic } }
+                //     Behavior on opacity { NumberAnimation { duration: 100 } }
+                //     Behavior on color { ColorAnimation { duration: 100 } }
+                // }
 
                 MouseArea {
                     id: mouseArea
