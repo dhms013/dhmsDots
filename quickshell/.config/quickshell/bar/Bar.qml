@@ -48,18 +48,23 @@ PanelWindow {
     color: "transparent"
     exclusiveZone: root.reservedSpace
 
-    Rectangle {
+Item {
         anchors.fill: parent
-        radius: root.barRadius
-        color: root.bg
-        opacity: 1
-        border.width: root.styleFlat ? 0 : 1
-        border.color: Qt.rgba(1, 1, 1, 0.03)
 
-        Behavior on color {
-            ColorAnimation { duration: 400; easing.type: Easing.OutCubic }
+        Rectangle {
+            id: leftBg
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: leftSection.width + 24
+            color: root.bg
+            topLeftRadius: 0
+            topRightRadius: 0
+            bottomLeftRadius: 0
+            bottomRightRadius: 20
+            border.width: 1
+            border.color: root.accent
         }
-
 
         Item {
             id: leftSection
@@ -100,15 +105,55 @@ PanelWindow {
             }
         }
 
-        Workspaces {
+        
+
+        Item {
+            id: centerSection
             anchors.centerIn: parent
-            theme: ({
-                fg: root.fg,
-                muted: root.muted,
-                accent: root.accent,
-                dim: root.dim,
-                bg: root.bg
-            })
+            anchors.verticalCenter: parent.verticalCenter
+            height: root.barHeight
+
+            Binding on width {
+                value: Math.max(workspaceItem.implicitWidth + 20, 80)
+                when: workspaceItem.width > 0
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: root.bg
+                topLeftRadius: 0
+                topRightRadius: 0
+                bottomLeftRadius: 20
+                bottomRightRadius: 20
+                border.color: root.accent
+            }
+
+            Workspaces {
+                id: workspaceItem
+                anchors.centerIn: parent
+                theme: ({
+                    fg: root.fg,
+                    muted: root.muted,
+                    accent: root.accent,
+                    dim: root.dim,
+                    bg: root.bg
+                })
+            }
+        }
+
+        Rectangle {
+            id: rightBg
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: rightSection.width + 24
+            color: root.bg
+            topLeftRadius: 0
+            topRightRadius: 0
+            bottomLeftRadius: 20
+            bottomRightRadius: 0
+            border.width: 1
+            border.color: root.accent
         }
 
         Item {
