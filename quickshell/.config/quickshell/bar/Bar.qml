@@ -146,7 +146,7 @@ Item {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: rightSection.width + 24
+            width: rightSection.width + (networkSpeedItem.highTraffic ? 48 : 24)
             color: root.bg
             topLeftRadius: 0
             topRightRadius: 0
@@ -154,6 +154,8 @@ Item {
             bottomRightRadius: 0
             border.width: 1
             border.color: root.accent
+
+            Behavior on width { NumberAnimation { duration: 200 } }
         }
 
         Item {
@@ -235,6 +237,7 @@ Item {
                 }
 
                 NetworkSpeed {
+                    id: networkSpeedItem
                     anchors.verticalCenter: parent.verticalCenter
                     theme: ({
                         fg: root.fg,

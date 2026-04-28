@@ -8,6 +8,7 @@ Item {
     })
     property string netDown: "0K"
     property string netUp: "0K"
+    property bool highTraffic: false
     property int lastRx: 0
     property int lastTx: 0
 
@@ -21,13 +22,14 @@ Item {
         return "0K";
     }
 
-    function _calcSpeed(newRx, newTx) {
+function _calcSpeed(newRx, newTx) {
         const down = newRx - lastRx;
         const up = newTx - lastTx;
         lastRx = newRx;
         lastTx = newTx;
         netDown = _formatNetSpeed(down);
         netUp = _formatNetSpeed(up);
+        highTraffic = down > 1048576 || up > 1048576;
     }
 
     implicitWidth: 60
