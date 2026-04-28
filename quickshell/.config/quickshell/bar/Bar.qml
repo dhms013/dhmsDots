@@ -166,6 +166,18 @@ PanelWindow {
                     })
                 }
 
+                Tray {
+                    anchors.verticalCenter: parent.verticalCenter
+                    trayWindow: root
+                    theme: ({
+                        fg: root.fg,
+                        accent: root.accent,
+                        dim: root.dim,
+                        muted: root.muted,
+                        bg: root.bg
+                    })
+                }
+
                 Clock {
                     anchors.verticalCenter: parent.verticalCenter
                     theme: ({
@@ -177,9 +189,8 @@ PanelWindow {
                     })
                 }
 
-                Tray {
+                NetworkSpeed {
                     anchors.verticalCenter: parent.verticalCenter
-                    trayWindow: root
                     theme: ({
                         fg: root.fg,
                         accent: root.accent,
