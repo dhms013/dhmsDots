@@ -46,14 +46,25 @@ This repo assumes **Arch Linux with Hyprland** is already installed.
 <details>
 <summary>Click to view screenshots</summary>
 <br>
+<img width="1920" height="1080" alt="preview" src="https://github.com/user-attachments/assets/db4835d8-ef14-4376-9fdb-4b38d3afe2e2" />
+<br>
+<img width="1920" height="1080" alt="preview-catppuccin" src="https://github.com/user-attachments/assets/24397d4f-d804-482f-9c02-459718a1f714" />
+<br>
+<img width="1920" height="1080" alt="preview-osaka-jade" src="https://github.com/user-attachments/assets/bb8ba3ca-5d9c-4d4a-8b1b-407c7450b44d" />
+<br>
+<img width="1920" height="1080" alt="preview-tokyo-night" src="https://github.com/user-attachments/assets/4567c7db-7167-44c8-99d2-21f49d3a345b" />
+</details>
 
-<img width="1920" height="1080" alt="preview" src="https://github.com/user-attachments/assets/158a3b77-8733-4df3-9eb5-98300f4b5401" />
+<details>
+<summary>Backgrounds selector</summary>
+  
+https://github.com/user-attachments/assets/122c3001-4fe8-466e-85e9-27548a7927d3
+</details>
 
-<br><br>
-
-https://github.com/user-attachments/assets/7210c511-f99a-42ee-83b0-89442642568a
-
-https://github.com/user-attachments/assets/2ee8aac8-847f-4e4d-8561-1a992c2de104
+<details>
+<summary>Themes selector</summary>
+  
+https://github.com/user-attachments/assets/bbe62cdf-5e51-4d6b-bb2d-cb333bb11e09
 
 </details>
 
