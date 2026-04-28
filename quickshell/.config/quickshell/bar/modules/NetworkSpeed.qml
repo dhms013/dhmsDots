@@ -6,8 +6,6 @@ Item {
 
     property var theme: ({
     })
-    property string fg: "#cdd6f4"
-    property string muted: "#585b70"
     property string netDown: "0K"
     property string netUp: "0K"
     property bool highTraffic: false
@@ -33,6 +31,9 @@ Item {
         netUp = _formatNetSpeed(up);
         highTraffic = down > 1.04858e+06 || up > 1.04858e+06;
     }
+
+    implicitWidth: 60
+    implicitHeight: 20
 
     Timer {
         interval: 500
@@ -67,12 +68,13 @@ Item {
     }
 
     Text {
-        anchors.centerIn: parent
-        text: "⇣" + root.netDown + " ⇡" + root.netUp
-        color: root.fg
-        font.pixelSize: 10
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: "⇣ " + root.netDown + " ⇡ " + root.netUp
+        color: theme.fg
+        font.pixelSize: 11
         font.family: "JetBrainsMono Nerd Font"
-        opacity: 0.7
+        opacity: 1
     }
 
 }
