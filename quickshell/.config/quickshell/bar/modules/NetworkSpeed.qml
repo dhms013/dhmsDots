@@ -6,6 +6,8 @@ Item {
 
     property var theme: ({
     })
+    property string fg: "#cdd6f4"
+    property string muted: "#585b70"
     property string netDown: "0K"
     property string netUp: "0K"
     property bool highTraffic: false
@@ -22,18 +24,15 @@ Item {
         return "0K";
     }
 
-function _calcSpeed(newRx, newTx) {
+    function _calcSpeed(newRx, newTx) {
         const down = newRx - lastRx;
         const up = newTx - lastTx;
         lastRx = newRx;
         lastTx = newTx;
         netDown = _formatNetSpeed(down);
         netUp = _formatNetSpeed(up);
-        highTraffic = down > 1048576 || up > 1048576;
+        highTraffic = down > 1.04858e+06 || up > 1.04858e+06;
     }
-
-    implicitWidth: 60
-    implicitHeight: 20
 
     Timer {
         interval: 500
@@ -68,13 +67,12 @@ function _calcSpeed(newRx, newTx) {
     }
 
     Text {
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        text: "⇣ " + root.netDown + " ⇡ " + root.netUp
-        color: theme.fg
-        font.pixelSize: 11
+        anchors.centerIn: parent
+        text: "⇣" + root.netDown + " ⇡" + root.netUp
+        color: root.fg
+        font.pixelSize: 10
         font.family: "JetBrainsMono Nerd Font"
-        opacity: 1
+        opacity: 0.7
     }
 
 }
