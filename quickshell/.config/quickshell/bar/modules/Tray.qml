@@ -8,7 +8,6 @@ Item {
     id: root
     property var theme:      ({})
     property var trayWindow: null
-    property bool trayExpanded: false
 
     function _isDirectIconSource(icon) {
         const value = icon || ""
@@ -58,34 +57,6 @@ Item {
         spacing: 6
         anchors.verticalCenter: parent.verticalCenter
 
-        // expand/collapse toggle icon
-        Text {
-            id: expandIcon
-            anchors.verticalCenter: parent.verticalCenter
-            text: ""
-            color: root.trayExpanded ? (root.theme.accent || "#89b4fa") : (root.theme.fg || "#cdd6f4")
-            opacity: root.trayExpanded ? 1 : 0.6
-            font.pixelSize: 12
-            font.family: "JetBrainsMono Nerd Font"
-
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Behavior on opacity { NumberAnimation { duration: 150 } }
-
-            MouseArea {
-                anchors.fill: parent
-                anchors.margins: -4
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.trayExpanded = !root.trayExpanded
-            }
-        }
-
-        // spacer
-        Item {
-            visible: root.trayExpanded
-            width: 6
-            height: 1
-        }
-
         Repeater {
             model: SystemTray.items
 
@@ -94,7 +65,6 @@ Item {
                 width:  18
                 height: 18
                 anchors.verticalCenter: parent.verticalCenter
-                visible: root.trayExpanded
 
                 property bool hovered:     false
                 property bool menuShowing: false
@@ -110,7 +80,7 @@ Item {
                     visible: trayItem.menuShowing
 
                     anchors { top: true; right: true }
-                    margins { top: 38; right: 100 }
+                    margins { top: 38; right: 40 }
 
                     implicitWidth:  menuCol.implicitWidth + 16
                     implicitHeight: menuCol.implicitHeight + 16
