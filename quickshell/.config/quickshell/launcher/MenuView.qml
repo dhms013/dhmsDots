@@ -31,6 +31,17 @@ Item {
             if (item.children) {
                 var sub = flattenTree(item.children, itemPath);
                 for (var j = 0; j < sub.length; j++) result.push(sub[j])
+                if (item.children.length > 0) {
+                    result.push({
+                        "icon": item.icon || "",
+                        "label": item.label,
+                        "path": path,
+                        "children": item.children,
+                        "cmd": item.cmd || null,
+                        "terminal": item.terminal || null,
+                        "action": item.action || null
+                    });
+                }
             } else if (item.cmd || item.terminal || item.action) {
                 result.push({
                     "icon": item.icon || "",
@@ -64,6 +75,8 @@ Item {
         navStack = [];
         searchText = "";
         globalSearch = false;
+        menuRoot = MenuData.buildTree();
+        flatItems = flattenTree(menuRoot, []);
         currentPage.searchText = "";
         currentPage.applyFilter();
         currentPage.selectedIdx = 0;
@@ -79,6 +92,7 @@ Item {
         slideDir = 1;
         navStack = newStack;
         searchText = "";
+        globalSearch = false;
         Qt.callLater(function() {
             currentPage.searchText = "";
             currentPage.applyFilter();
