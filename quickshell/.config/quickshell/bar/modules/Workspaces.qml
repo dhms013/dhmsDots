@@ -72,7 +72,7 @@ delegate: Item {
                     width: pulseDot.width + 5
                     height: pulseDot.height + 8
                     radius: 99
-                    color: Qt.alpha(root.theme.accent || "#89b4fa", 0.12)
+                    color: Qt.alpha(root.theme.accent || "#89b4fa", 0.5)
                     opacity: ws.active ? 1 : 0
                     z: -1
 
@@ -144,7 +144,7 @@ delegate: Item {
                             : ws.hovered
                                 ? (root.theme.fg || "#cacccc")
                                 : ws.occupied
-                                    ? (root.theme.fg || "#cacccc")
+                                    ? (root.theme.accent || "#cacccc")
                                     : (root.theme.muted || "#2a2e30"))
                         : (ws.hovered
                             ? Qt.alpha(root.theme.fg || "#cdd6f4", 0.82)
