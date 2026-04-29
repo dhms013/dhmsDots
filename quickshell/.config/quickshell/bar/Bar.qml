@@ -146,7 +146,7 @@ Item {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: rightSection.width + (networkSpeedItem.highTraffic ? 48 : 24)
+            width: rightSection.width + 24
             color: root.bg
             topLeftRadius: 0
             topRightRadius: 0
@@ -154,8 +154,6 @@ Item {
             bottomRightRadius: 0
             border.width: 1
             border.color: root.accent
-
-            Behavior on width { NumberAnimation { duration: 200 } }
         }
 
         Item {
@@ -213,18 +211,6 @@ Item {
                     })
                 }
 
-                Tray {
-                    anchors.verticalCenter: parent.verticalCenter
-                    trayWindow: root
-                    theme: ({
-                        fg: root.fg,
-                        accent: root.accent,
-                        dim: root.dim,
-                        muted: root.muted,
-                        bg: root.bg
-                    })
-                }
-
                 Clock {
                     anchors.verticalCenter: parent.verticalCenter
                     theme: ({
@@ -236,9 +222,9 @@ Item {
                     })
                 }
 
-                NetworkSpeed {
-                    id: networkSpeedItem
+                Tray {
                     anchors.verticalCenter: parent.verticalCenter
+                    trayWindow: root
                     theme: ({
                         fg: root.fg,
                         accent: root.accent,

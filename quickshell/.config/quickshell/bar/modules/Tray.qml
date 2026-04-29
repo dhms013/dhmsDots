@@ -110,7 +110,7 @@ Item {
                     visible: trayItem.menuShowing
 
                     anchors { top: true; right: true }
-                    margins { top: 38; right: 40 }
+                    margins { top: 38; right: 100 }
 
                     implicitWidth:  menuCol.implicitWidth + 16
                     implicitHeight: menuCol.implicitHeight + 16
