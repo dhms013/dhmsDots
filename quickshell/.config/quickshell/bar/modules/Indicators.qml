@@ -87,13 +87,11 @@ Item {
     property int _cmdSeq: 0
 
     function runCmd(cmd) {
-        var proc = Qt.createQmlObject(
-            'import Quickshell.Io; Process { command: ["bash","-c",""]; running: false }',
+        var escapedCmd = cmd.replace(/"/g, '\\"');
+        Qt.createQmlObject(
+            'import Quickshell.Io; Process { command: ["bash", "-c", "setsid --fork bash -c \\"export PATH=\\$HOME/.dhmsDots:\\$PATH; ' + escapedCmd + '\\" &"]; running: true }',
             root, "proc" + (++_cmdSeq)
         )
-        proc.onExited.connect(function() { proc.destroy() })
-        proc.command = ["bash", "-c", "export PATH=\"$HOME/.dhmsDots:$PATH\"; " + cmd]
-        proc.running = true
     }
 
     // ── UI ────────────────────────────────────────────────────────

@@ -213,12 +213,8 @@ Item {
     }
 
     function runCmd(cmd) {
-        var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', root, "dynProc" + (++_cmdSeq));
-        proc.onExited.connect(function() {
-            proc.destroy();
-        });
-        proc.command = ["bash", "-c", "export PATH=\"$HOME/.dhmsDots/bin:$PATH\"; " + cmd];
-        proc.running = true;
+        var escapedCmd = cmd.replace(/"/g, '\\"');
+        Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "setsid --fork bash -c \\"export PATH=\\$HOME/.dhmsDots/bin:\\$PATH; ' + escapedCmd + '\\" &"]; running: true }', root, "dynProc" + (++_cmdSeq));
     }
 
     Component.onCompleted: flatItems = flattenTree(menuRoot, [])
