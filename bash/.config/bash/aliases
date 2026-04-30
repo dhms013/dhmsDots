@@ -21,8 +21,6 @@ alias gs="git switch -c"
 alias gpull="git pull"
 alias gm="git merge"
 alias gstat="git status"
-alias mainasrock="gco main ; gm origin/asrock ; gp ; gco asrock"
-alias mainthinkpad="gco main ; gm origin/thinkpad ; gp ; gco thinkpad"
 alias boo="ghostty +boo"
 alias t='tmux attach || tmux new -s dhms'
 n() { if [ "$#" -eq 0 ]; then command nvim . ; else command nvim "$@"; fi; }

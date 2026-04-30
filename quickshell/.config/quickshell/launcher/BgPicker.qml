@@ -100,11 +100,6 @@ done
         }
     }
 
-    margins {
-        left: 25
-        right: 25
-    }
-
     anchors {
         left: true
         right: true

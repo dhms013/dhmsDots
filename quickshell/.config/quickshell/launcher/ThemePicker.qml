@@ -101,12 +101,6 @@ done | sort
         bottom: true
     }
 
-    margins {
-        left: 5
-        top: 5
-        bottom: 5
-    }
-
     Process {
         id: themeScanner
 
@@ -225,6 +219,8 @@ done | sort
 
             anchors.fill: parent
             radius: 12
+            topLeftRadius: 0
+            bottomLeftRadius: 0
             color: theme.bg || "#1e1e2e"
             border.color: theme.dim || "#45475a"
             border.width: 1

@@ -68,9 +68,9 @@ delegate: Item {
                 Rectangle {
                     id: kanjiGlow
                     visible: ws.kanji && ws.active
-                    anchors.centerIn: pulseDot
-                    width: pulseDot.width + 5
-                    height: pulseDot.height + 8
+                    anchors.centerIn: labelText
+                    width: labelText.width + 10
+                    height: labelText.height
                     radius: 99
                     color: Qt.alpha(root.theme.accent || "#89b4fa", 0.5)
                     opacity: ws.active ? 1 : 0
