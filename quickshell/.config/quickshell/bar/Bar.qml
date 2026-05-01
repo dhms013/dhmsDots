@@ -183,8 +183,8 @@ Item {
                     color: root.notifServer && root.notifServer.dndEnabled
                         ? root.red
                         : root.notifServer && root.notifServer.panelOpen
-                            ? root.accent
-                            : root.fg
+                            ? root.fg
+                            : root.accent
 
                     Behavior on color { ColorAnimation { duration: 150 } }
 

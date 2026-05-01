@@ -46,7 +46,7 @@ Item {
                 id: timeText
 
                 anchors.verticalCenter: parent.verticalCenter
-                color: theme.fg || "#cdd6f4"
+                color: theme.accent || "#cdd6f4"
                 font.pixelSize: 13
                 font.family: "JetBrainsMono Nerd Font"
                 font.weight: Font.Medium
@@ -56,7 +56,7 @@ Item {
                 id: ampmText
 
                 anchors.verticalCenter: parent.verticalCenter
-                color: theme.accent || "#89b4fa"
+                color: theme.fg || "#89b4fa"
                 font.pixelSize: 9
                 font.family: "JetBrainsMono Nerd Font"
                 font.weight: Font.Medium
@@ -77,7 +77,7 @@ Item {
             id: dateText
 
             anchors.verticalCenter: parent.verticalCenter
-            color: theme.fg || "#585b70"
+            color: theme.accent || "#585b70"
             font.pixelSize: 11
             font.family: "JetBrainsMono Nerd Font"
         }

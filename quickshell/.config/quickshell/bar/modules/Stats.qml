@@ -28,7 +28,7 @@ Row {
         value: ramVal
         suffix: "G"
         extraText: "/" + (ramTotal + ramSwap) + "G"
-        accent: ramVal > (ramTotal * 0.85) ? (theme.red || "#f38ba8") : (theme.highlight || "#cba6f7")
+        accent: ramVal > (ramTotal * 0.85) ? (theme.red || "#f38ba8") : (theme.accent || "#cba6f7")
         trackColor: theme.dim || "#45475a"
         textColor: theme.fg || "#cdd6f4"
     }
