@@ -30,5 +30,4 @@ if [[ -n "$pkg_names" ]]; then
   echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
     echo -e "\033[38;2;0;204;119m$pkg\033[0m"
   done
-  show-done
 fi
