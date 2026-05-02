@@ -8,7 +8,6 @@ import Quickshell.Services.Notifications
 Item {
     id: root
     property var theme: ({})
-    property var settings: null
     property string appFilter: ""
     property bool groupedView: true
     property var flatNotifications: notifServer ? notifServer.notificationsForApp(appFilter) : []

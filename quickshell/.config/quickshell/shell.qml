@@ -1,5 +1,3 @@
-// import "settings"
-
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -77,25 +75,6 @@ ShellRoot {
 
         function moveSelection(delta) {
             selectedIndex = (selectedIndex + delta + 2) % 2;
-        }
-
-        function activateSelected() {
-            if (selectedIndex === 0)
-                close();
-            else
-                confirm();
-        }
-
-        function confirm() {
-            if (!command) {
-                close();
-                return ;
-            }
-            if (Array.isArray(command))
-                Quickshell.execDetached(command);
-            else
-                Quickshell.execDetached(["bash", "-lc", command]);
-            close();
         }
 
     }

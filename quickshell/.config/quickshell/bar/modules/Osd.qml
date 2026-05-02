@@ -7,7 +7,6 @@ Item {
     id: root
 
     property var service: null
-    property var settings: null
     property var theme: ({})
 
     function t(key, fallback) { return theme[key] || fallback }

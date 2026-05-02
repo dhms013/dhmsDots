@@ -138,7 +138,7 @@ done | sort
     Process {
         id: themesDirWatcher
 
-        command: ["bash", "-lc", "USER_DIR=\"$HOME/.config/omarchy/themes\"; " + "SYS_DIR=\"$HOME/.local/share/omarchy/themes\"; " + "if command -v inotifywait >/dev/null 2>&1 && ([ -d \"$USER_DIR\" ] || [ -d \"$SYS_DIR\" ]); then " + "  exec inotifywait -m -e create,delete \"$USER_DIR\" \"$SYS_DIR\" 2>/dev/null; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(find \"$USER_DIR\" \"$SYS_DIR\" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort | tr '\\n' '|'); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 4; " + "  done; " + "fi"]
+        command: ["bash", "-lc", "if command -v inotifywait >/dev/null 2>&1 && ([ -d \"$USER_DIR\" ] || [ -d \"$SYS_DIR\" ]); then " + "  exec inotifywait -m -e create,delete \"$USER_DIR\" \"$SYS_DIR\" 2>/dev/null; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(find \"$USER_DIR\" \"$SYS_DIR\" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort | tr '\\n' '|'); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 4; " + "  done; " + "fi"]
         running: true
 
         stdout: SplitParser {

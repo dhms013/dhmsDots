@@ -7,7 +7,6 @@ Item {
 
     anchors.verticalCenter: parent ? parent.verticalCenter : undefined
     property var theme: ({})
-    property var settings: null
 
     readonly property int persistentCount: settings?.persistentWorkspaces || 5
     readonly property int activeWsId: Hyprland.focusedWorkspace?.id || 1

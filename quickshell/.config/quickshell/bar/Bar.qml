@@ -12,7 +12,6 @@ PanelWindow {
     property var calendarPopup: null
     property var notifServer: null
     property var powerActions: null
-    property var settings: null
 
     property string bg:        "#1e1e2e"
     property string fg:        "#cdd6f4"

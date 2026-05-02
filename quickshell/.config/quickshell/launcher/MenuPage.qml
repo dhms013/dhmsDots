@@ -150,7 +150,7 @@ Item {
                         text: mitem.icon || ""
                         color: isSelected ? (theme.accent || "#89b4fa") : Qt.alpha(theme.fg || "#cdd6f4", 0.55)
                         font.pixelSize: 13
-                        font.family: "JetBrainsMono Nerd Font", "Omarchy"
+                        font.family: "JetBrainsMono Nerd Font"
                         width: 20
 
                         Behavior on color {
@@ -272,4 +272,3 @@ Item {
     }
 
 }
-
