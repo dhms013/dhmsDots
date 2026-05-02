@@ -9,7 +9,6 @@ NVIDIA_MODULE=$(find /usr/lib/modules/$(uname -r) -name "nvidia.ko*" 2>/dev/null
 
 input_password() {
   if ! sudo-keep; then
-    gum spin --spinner "globe" --title "Password validation has been canceled..." -- bash -c 'read -n 1 -s'
     exit 1
   fi
 }
