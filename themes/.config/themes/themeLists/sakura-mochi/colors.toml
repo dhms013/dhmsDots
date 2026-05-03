@@ -18,7 +18,7 @@
 #  .-^~^-. \/ .-^~^-. \\ `-._.-` // .-^~^-. \/ .-^~^-.
 
 # Accent and UI colors
-accent = "#f23888"
+accent = "#f0b7ca"
 active_border_color = "#f23888"
 active_tab_background = "#f23888"
 
@@ -26,7 +26,7 @@ active_tab_background = "#f23888"
 cursor = "#f23888"
 
 # Primary colors
-foreground = "#f0b7ca"
+foreground = "#f23888"
 background = "#0b0d11"
 
 # Selection colors

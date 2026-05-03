@@ -118,7 +118,7 @@ Item {
                     width: 2
                     height: isSelected ? 16 : 0
                     radius: 1
-                    color: theme.accent || "#89b4fa"
+                    color: theme.fg || "#89b4fa"
                     anchors.left: parent.left
                     anchors.leftMargin: 3
                     anchors.verticalCenter: parent.verticalCenter

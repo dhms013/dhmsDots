@@ -120,7 +120,7 @@ Item {
             visible:                root.idleDisabled
             anchors.verticalCenter: parent.verticalCenter
             text:                   "󱫖"
-            color:                  root.accent
+            color:                  root.fg
             font.pixelSize:         13
             font.family:            "JetBrainsMono Nerd Font"
 

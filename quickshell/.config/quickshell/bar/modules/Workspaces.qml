@@ -143,7 +143,7 @@ delegate: Item {
                             : ws.hovered
                                 ? (root.theme.fg || "#cacccc")
                                 : ws.occupied
-                                    ? (root.theme.accent || "#cacccc")
+                                    ? (root.theme.fg || "#cacccc")
                                     : (root.theme.muted || "#2a2e30"))
                         : (ws.hovered
                             ? Qt.alpha(root.theme.fg || "#cdd6f4", 0.82)

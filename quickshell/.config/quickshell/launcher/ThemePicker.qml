@@ -289,7 +289,7 @@ done | sort
                     height: 30
                     radius: 7
                     color: Qt.alpha(theme.dim || "#45475a", 0.4)
-                    border.color: theme.accent || "#89b4fa"
+                    border.color: theme.fg || "#89b4fa"
                     border.width: 1
 
                     Row {
@@ -512,7 +512,7 @@ done | sort
                                 width: 14
                                 height: 14
                                 radius: 7
-                                color: theme.accent || "#89b4fa"
+                                color: theme.fg || "#89b4fa"
 
                                 Text {
                                     anchors.centerIn: parent

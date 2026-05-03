@@ -29,6 +29,9 @@ Item {
         if (isFull)
             return "󰂅";
 
+        if (isFull + isCharging)
+            return "";
+
         const idx = Math.min(9, Math.floor(pct / 10));
         return isCharging ? chargingIcons[idx] : dischargeIcons[idx];
     }
@@ -73,4 +76,3 @@ Item {
     }
 
 }
-

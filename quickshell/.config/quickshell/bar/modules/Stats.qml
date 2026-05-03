@@ -18,9 +18,9 @@ Row {
         label: "CPU"
         value: cpuVal
         suffix: "%"
-        accent: cpuVal > 85 ? (theme.red || "#f38ba8") : (theme.accent || "#89b4fa")
+        accent: cpuVal > 85 ? (theme.red || "#f38ba8") : (theme.fg || "#89b4fa")
         trackColor: theme.dim || "#45475a"
-        textColor: theme.fg || "#cdd6f4"
+        textColor: theme.accent || "#cdd6f4"
     }
 
     StatPill {
@@ -28,9 +28,9 @@ Row {
         value: ramVal
         suffix: "G"
         extraText: "/" + (ramTotal + ramSwap) + "G"
-        accent: ramVal > (ramTotal * 0.85) ? (theme.red || "#f38ba8") : (theme.accent || "#cba6f7")
+        accent: ramVal > (ramTotal * 0.85) ? (theme.red || "#f38ba8") : (theme.fg || "#cba6f7")
         trackColor: theme.dim || "#45475a"
-        textColor: theme.fg || "#cdd6f4"
+        textColor: theme.accent || "#cdd6f4"
     }
 
     Process {

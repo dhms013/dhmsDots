@@ -31,17 +31,17 @@ Item {
             if (item.children) {
                 var sub = flattenTree(item.children, itemPath);
                 for (var j = 0; j < sub.length; j++) result.push(sub[j])
-                if (item.children.length > 0) {
+                if (item.children.length > 0)
                     result.push({
-                        "icon": item.icon || "",
-                        "label": item.label,
-                        "path": path,
-                        "children": item.children,
-                        "cmd": item.cmd || null,
-                        "terminal": item.terminal || null,
-                        "action": item.action || null
-                    });
-                }
+                    "icon": item.icon || "",
+                    "label": item.label,
+                    "path": path,
+                    "children": item.children,
+                    "cmd": item.cmd || null,
+                    "terminal": item.terminal || null,
+                    "action": item.action || null
+                });
+
             } else if (item.cmd || item.terminal || item.action) {
                 result.push({
                     "icon": item.icon || "",
@@ -336,7 +336,7 @@ Item {
             height: 34
             radius: 8
             color: Qt.alpha(theme.dim || "#45475a", 0.4)
-            border.color: globalSearch ? (theme.accent || "#89b4fa") : active ? Qt.alpha(theme.accent || "#89b4fa", 0.6) : Qt.alpha(theme.accent || "#89b4fa", 0.3)
+            border.color: globalSearch ? (theme.fg || "#89b4fa") : active ? Qt.alpha(theme.fg || "#89b4fa", 0.6) : Qt.alpha(theme.fg || "#89b4fa", 0.3)
             border.width: globalSearch ? 2 : 1
 
             // subtle glow behind search bar when active
@@ -666,7 +666,7 @@ Item {
                                 width: 2
                                 height: isSelected ? 20 : 0
                                 radius: 1
-                                color: theme.accent || "#89b4fa"
+                                color: theme.fg || "#89b4fa"
                                 anchors.left: parent.left
                                 anchors.leftMargin: 3
                                 anchors.verticalCenter: parent.verticalCenter

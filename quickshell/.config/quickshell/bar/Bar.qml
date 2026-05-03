@@ -62,7 +62,7 @@ Item {
             bottomLeftRadius: 0
             bottomRightRadius: 20
             border.width: 1
-            border.color: root.accent
+            border.color: root.fg
         }
 
         Item {
@@ -124,7 +124,7 @@ Item {
                 topRightRadius: 0
                 bottomLeftRadius: 20
                 bottomRightRadius: 20
-                border.color: root.accent
+                border.color: root.fg
             }
 
             Workspaces {
@@ -152,7 +152,7 @@ Item {
             bottomLeftRadius: 20
             bottomRightRadius: 0
             border.width: 1
-            border.color: root.accent
+            border.color: root.fg
         }
 
         Item {
@@ -182,8 +182,8 @@ Item {
                     color: root.notifServer && root.notifServer.dndEnabled
                         ? root.red
                         : root.notifServer && root.notifServer.panelOpen
-                            ? root.fg
-                            : root.accent
+                            ? root.accent
+                            : root.fg
 
                     Behavior on color { ColorAnimation { duration: 150 } }
 

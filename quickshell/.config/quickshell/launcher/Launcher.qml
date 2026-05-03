@@ -337,7 +337,7 @@ PanelWindow {
                     height: 34
                     radius: 8
                     color: Qt.alpha(theme.dim || "#45475a", 0.4)
-                    border.color: theme.accent || "#89b4fa"
+                    border.color: theme.fg || "#89b4fa"
                     border.width: 1
 
                     Row {

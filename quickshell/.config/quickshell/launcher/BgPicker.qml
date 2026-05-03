@@ -300,7 +300,7 @@ done
                     height: 30
                     radius: 7
                     color: Qt.alpha(theme.dim || "#45475a", 0.4)
-                    border.color: theme.accent || "#89b4fa"
+                    border.color: theme.fg || "#89b4fa"
                     border.width: 1
 
                     Row {
@@ -523,7 +523,7 @@ done
                                 width: 14
                                 height: 14
                                 radius: 7
-                                color: theme.accent || "#89b4fa"
+                                color: theme.fg || "#89b4fa"
 
                                 Text {
                                     anchors.centerIn: parent
@@ -549,7 +549,7 @@ done
                                     anchors.right: parent.right
                                     anchors.rightMargin: 8
                                     text: bdata.name || ""
-                                    color: isSelected ? (theme.accent || "#89b4fa") : (theme.fg || "#cdd6f4")
+                                    color: isSelected ? (theme.fg || "#89b4fa") : (theme.accent || "#cdd6f4")
                                     font.pixelSize: 9
                                     font.family: "JetBrainsMono Nerd Font"
                                     font.weight: isSelected ? Font.Medium : Font.Normal
