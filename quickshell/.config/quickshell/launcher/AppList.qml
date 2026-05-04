@@ -79,10 +79,11 @@ Item {
         if (!app || !app.exec)
             return ;
 
-        if (app.isCalc) {
-            Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "echo -n \\"' + app.name + '\\" | wl-copy"]; running: true }', list);
+        if (app.isCalc === true) {
+            var result = app.name;
+            Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "wl-copy \\"' + result + '\\""]; running: true }', list);
             list.launched();
-            return ;
+            return;
         }
         const cmd = app.exec.replace(/%[uUfFdDnNickvm]/g, "").trim();
         if (!cmd)
