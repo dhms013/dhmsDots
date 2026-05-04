@@ -30,7 +30,7 @@ Item {
         if (isFull)
             return "󰂅";
 
-        if (isFull + isCharging)
+        if (isFull && isCharging)
             return "";
 
         const idx = Math.min(9, Math.floor(pct / 10));

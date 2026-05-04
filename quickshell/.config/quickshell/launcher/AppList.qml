@@ -22,6 +22,25 @@ Item {
             filteredApps = allApps.slice(0, 50);
             return ;
         }
+        if (query.startsWith("=")) {
+            var expr = query.slice(1).trim();
+            if (expr) {
+                try {
+                    var result = list.evalMath(expr);
+                    if (result !== null && result !== undefined && !isNaN(result)) {
+                        result = Number(result).toString();
+                        filteredApps = [{
+                            "name": result,
+                            "exec": "echo " + result + " | wl-copy",
+                            "icon": "",
+                            "isCalc": true
+                        }];
+                    }
+                } catch (e) {
+                }
+                return ;
+            }
+        }
         const q = query.toLowerCase();
         const sw = allApps.filter((a) => {
             return a.name.toLowerCase().startsWith(q);
@@ -60,6 +79,11 @@ Item {
         if (!app || !app.exec)
             return ;
 
+        if (app.isCalc) {
+            Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "echo -n \\"' + app.name + '\\" | wl-copy"]; running: true }', list);
+            list.launched();
+            return ;
+        }
         const cmd = app.exec.replace(/%[uUfFdDnNickvm]/g, "").trim();
         if (!cmd)
             return ;
@@ -73,6 +97,16 @@ Item {
         parser.stdout.buf = "";
         parser.running = false;
         parser.running = true;
+    }
+
+    function evalMath(expr) {
+        var safe = expr.replace(/[^0-9+\-*/.()%]/g, "");
+        try {
+            var fn = new Function("return " + safe);
+            return fn();
+        } catch (err) {
+            return null;
+        }
     }
 
     Process {
