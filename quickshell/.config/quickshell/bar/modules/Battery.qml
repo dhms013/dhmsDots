@@ -7,6 +7,7 @@ Item {
 
     property var theme: ({
     })
+    property bool _lowBatteryNotified: false
     readonly property var bat: getBattery()
     readonly property bool hasBattery: !!bat
     readonly property int pct: {
@@ -39,9 +40,18 @@ Item {
     function getBattery() {
         var devs = UPower.devices.values;
         for (var i = 0; i < devs.length; i++) {
-            if (devs[i].type === UPowerDeviceType.Battery && devs[i].isLaptopBattery)
-                return devs[i];
-
+            if (devs[i].type === UPowerDeviceType.Battery && devs[i].isLaptopBattery) {
+                var bat = devs[i];
+                var pct = Math.round(bat.percentage <= 1 ? bat.percentage * 100 : bat.percentage);
+                var isCharging = bat.state === UPowerDeviceState.Charging || bat.state === UPowerDeviceState.FullyCharged;
+                if (pct <= 15 && !isCharging && !_lowBatteryNotified) {
+                    _lowBatteryNotified = true;
+                    Qt.createQmlObject('import Quickshell.Io; Process { command: ["notify-send", "-u", "critical", "Low Battery", "Battery is at ' + pct + '%"]; running: true }', root);
+                } else if (pct > 15 && _lowBatteryNotified) {
+                    _lowBatteryNotified = false;
+                }
+                return bat;
+            }
         }
         return null;
     }
