@@ -55,7 +55,6 @@ set_template() {
 set_theme() {
   if [[ -d "$USER_THEMES_PATH/$THEME_NAME" ]]; then
     THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
-    notify-send 'theme changed to: ' $THEME_NAME
   else
     echo "Theme '$THEME_NAME' does not exist"
     notify-send check doesnt-exists
