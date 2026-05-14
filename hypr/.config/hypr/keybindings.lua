@@ -92,6 +92,27 @@ hl.bind("SUPER + CTRL + SHIFT + J", hl.dsp.window.move({ direction = "d" }), { d
 -- move/resize window with SUPER + LMB/RMN and dragging
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Move window" })
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window" })
+-- resize window
+hl.bind(
+	"SUPER + code:20",
+	hl.dsp.window.resize({ x = -100, y = 0, relative = true }),
+	{ description = "Expand window left" }
+)
+hl.bind(
+	"SUPER + code:21",
+	hl.dsp.window.resize({ x = 100, y = 0, relative = true }),
+	{ description = "Shrink window left" }
+)
+hl.bind(
+	"SUPER + SHIFT + code:20",
+	hl.dsp.window.resize({ x = 0, y = -100, relative = true }),
+	{ description = "Shrink window up" }
+)
+hl.bind(
+	"SUPER + SHIFT + code:21",
+	hl.dsp.window.resize({ x = 0, y = 100, relative = true }),
+	{ description = "Expand window down" }
+)
 
 -- toggle system
 hl.bind("SUPER + CTRL + I", hl.dsp.exec_cmd("toggle-idle"), { description = "toggle idle" })
