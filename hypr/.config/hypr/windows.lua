@@ -34,28 +34,28 @@ hl.window_rule({
 hl.window_rule({
 	name = "zen-browser",
 	match = { class = "^(zen)$" },
-	opacity = 1.0,
+	opacity = "1 override",
 })
 
 -- Chromium
 hl.window_rule({
 	name = "chromium",
 	match = { class = "^(chromium)$" },
-	opacity = 1.0,
+	opacity = "1 override",
 })
 
 -- Neovim
 hl.window_rule({
 	name = "nvim",
 	match = { title = "^(nvim)$" },
-	opacity = 1.0,
+	opacity = "1 override",
 })
 
 -- Where Winds Meet
 hl.window_rule({
 	name = "where-winds-meet",
 	match = { title = "^(Where Winds Meet)$" },
-	opacity = 1.0,
+	opacity = "1 override",
 	idle_inhibit = "focus",
 })
 
@@ -75,7 +75,7 @@ hl.window_rule({
 	float = true,
 	stay_focused = true,
 	center = true,
-	opacity = 1.0,
+	opacity = "1 override",
 })
 
 -- DHMS Terminal
