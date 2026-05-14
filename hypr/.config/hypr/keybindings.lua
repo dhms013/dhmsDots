@@ -13,12 +13,13 @@ local qs = "quickshell ipc call"
 local apps = qs .. " openApps handle"
 local keybinds = qs .. " openKeybindings handle"
 local menu = qs .. " openMenu handle"
+local powerMenu = qs .. " openSystem handle"
 local emoji = qs .. " openEmojiPicker handle"
 local notification = qs .. " openNotificationPanel handle"
 local notificationClear = qs .. " clearNotifications handle"
 local backgroundPicker = qs .. " openBackgroundPicker handle"
 local themePicker = qs .. " openThemes handle"
-local screenrecord = qs .. "openScreenrecord handle"
+local screenrecord = qs .. " openScreenrecord handle"
 local whatsapp = "uwsm-app -- /opt/WhatsApp Desktop/whatsapp-linux-desktop"
 local muteOutput = qs .. " osdVolumeMute handle"
 local muteInput = qs .. " osdMic handle"
@@ -29,12 +30,12 @@ local brightDown = qs .. " osdBrightnessDown handle"
 
 -- terminal
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal), { description = "terminal" })
-hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd("dhms-terminal tmux"), { description = "alt terminal" })
+hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd("dhms-terminal tmux"), { description = "sub-terminal" })
 
 -- menus
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
 hl.bind("SUPER + ALT + SPACE", hl.dsp.exec_cmd(menu), { description = "menu" })
-hl.bind("SUPER + ESCAPE", hl.dsp.exec_cmd(qs .. "openSystem handle"), { description = "power menu" })
+hl.bind("SUPER + ESCAPE", hl.dsp.exec_cmd(powerMenu), { description = "power menu" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd(emoji), { description = "emoji" })
 hl.bind("SUPER + N", hl.dsp.exec_cmd(notification), { description = "notification" })
 hl.bind("SHIFT + DELETE", hl.dsp.exec_cmd(notificationClear), { description = "clear notification" })
@@ -63,13 +64,13 @@ hl.bind(
 	hl.dsp.window.float({ action = "toggle" }),
 	{ description = "Toggle window floating/tiling" }
 )
-hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Full screen" })
+hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Full width" })
+hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Full screen" })
 hl.bind(
-	"SUPER + CTRL + F",
+	"SUPER + CTRL + ALT + F",
 	hl.dsp.window.fullscreen_state({ internal = 0, client = 2 }),
 	{ description = "Tiled full screen" }
 )
-hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Full width" })
 hl.bind("SUPER + CTRL + L", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
 hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { description = "Focus on next window" })
 hl.bind("ALT + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }), { description = "Focus on previous window" })
