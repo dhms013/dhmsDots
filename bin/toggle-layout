@@ -8,4 +8,4 @@ dwindle) NEW_LAYOUT=scrolling ;;
 esac
 
 hyprctl eval "hl.config({ general = { layout = \"$NEW_LAYOUT\" }})"
-notify-send -u low "󱂬    Workspace layout set to $NEW_LAYOUT"
+notify-send -u low "󱂬    Layout set to $NEW_LAYOUT"
