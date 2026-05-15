@@ -52,7 +52,7 @@ hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd(whatsapp), { description = "whatsap
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(fileManager), { description = "file manager" })
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd(editor), { description = "editor" })
 hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("dhms-terminal wiremix"), { description = "audio" })
-hl.bind("SUPER + CTRL + B", hl.dsp.exec_cmd("dhms-terminal blutui"), { description = "bluetooth" })
+hl.bind("SUPER + CTRL + B", hl.dsp.exec_cmd("dhms-terminal bluetui"), { description = "bluetooth" })
 hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd("dhms-terminal impala"), { description = "wifi" })
 
 -- window's management
