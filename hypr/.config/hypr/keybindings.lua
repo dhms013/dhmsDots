@@ -4,12 +4,12 @@
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 
-local terminal = "ghostty"
+local terminal = "uwsm-app -- ghostty"
 local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
-local browser = "zen-browser"
-local subBrowser = "zen-browser -P umbeldisco"
-local qs = "quickshell ipc call"
+local browser = "uwsm-app -- zen-browser"
+local subBrowser = "uwsm-app -- zen-browser -P umbeldisco"
+local qs = "uwsm-app -- quickshell ipc call"
 local apps = qs .. " openApps handle"
 local keybinds = qs .. " openKeybindings handle"
 local menu = qs .. " openMenu handle"
