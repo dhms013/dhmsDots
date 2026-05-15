@@ -1,18 +1,5 @@
 #!/bin/bash
 
-# ACTIVE_WORKSPACE=$(hyprctl activeworkspace -j | jq -r '.id')
-# CURRENT_LAYOUT=$(hyprctl activeworkspace -j | jq -r '.tiledLayout')
-#
-# case "$CURRENT_LAYOUT" in
-# dwindle) NEW_LAYOUT=scrolling ;;
-# *) NEW_LAYOUT=dwindle ;;
-# esac
-#
-# hyprctl eval "hl.workspace_rule({ workspace = \"$ACTIVE_WORKSPACE\", layout = \"$NEW_LAYOUT\" })" >/dev/null 2>&1 ||
-#   hyprctl keyword workspace $ACTIVE_WORKSPACE, layout:$NEW_LAYOUT
-# notify-send -u low "󱂬    Workspace layout set to $NEW_LAYOUT"
-#
-
 CURRENT=$(hyprctl getoption general:layout | awk '/str:/ {print $2}')
 
 case "$CURRENT" in
@@ -22,4 +9,3 @@ esac
 
 hyprctl eval "hl.config({ general = { layout = \"$NEW_LAYOUT\" }})"
 notify-send -u low "󱂬    Workspace layout set to $NEW_LAYOUT"
-
