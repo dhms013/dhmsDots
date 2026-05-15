@@ -15,8 +15,8 @@ input_password() {
 
 git_check_branch() {
   if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
-    CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH" \
-      --header "Currently on branch: $CURRENT_BRANCH")
+    gum style --border normal --padding "1 2" "Currently on branch: $CURRENT_BRANCH"
+    CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH")
     if [ "$CHOICE" = "Go back to $CURRENT_BRANCH" ]; then
       RESTORE_BRANCH=true
       REMOTE=$(git -C $HOME/.dhmsDots config --get "branch.$CURRENT_BRANCH.remote")
@@ -69,7 +69,8 @@ post_update() {
 
   if [ /boot/vmlinuz-linux-zen -nt /proc/1 ] ||
     { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
-    gum confirm "Kernel/GPU driver updated. Reboot now?" && reboot --no-wall
+    gum style --border normal --padding "1 2" "Kernel/GPU driver updated. Reboot now?"
+    gum confirm && reboot --no-wall
   else
     notify-send "Update finished"
   fi
