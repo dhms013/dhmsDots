@@ -1,5 +1,13 @@
 #!/bin/bash
 
+gum style --border normal --padding "1 2" "We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+For security reasons, the password you type will not be visible."
 echo "==> This feature requires sudo. Please enter your password:"
 if ! sudo -v; then
   exit 1
