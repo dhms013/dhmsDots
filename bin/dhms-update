@@ -43,24 +43,36 @@ git_restore() {
 }
 
 show_update_log() {
-  echo -e "\033[38;2;0;204;119mPackages Updated\033[0m"
-
   local start_line
   start_line=$(grep -n "starting full system upgrade" /var/log/pacman.log | tail -1 | cut -d: -f1)
 
   if [ -z "$start_line" ]; then
-    echo "  No upgrade session found."
+    gum log --level info "No upgrade session found."
     return
   fi
 
   local upgraded
   upgraded=$(tail -n +"$start_line" /var/log/pacman.log | grep "\[ALPM\] upgraded" |
-    sed 's/.*upgraded \(.*\) (\(.*\) -> \(.*\))/  \1: \2 → \3/')
+    sed 's/.*upgraded \(.*\) (\(.*\) -> \(.*\))/\1 \2 \3/')
+
+  local failed
+  failed=$(tail -n +"$start_line" /var/log/pacman.log | grep "\[ALPM\] warning" | grep -i "error\|failed" |
+    sed 's/.*warning \(.*\) /\1/')
 
   if [ -n "$upgraded" ]; then
-    echo "$upgraded"
-  else
-    echo "  No packages were upgraded."
+    while read -r pkg old new; do
+      gum log --level info "$pkg: $old → $new"
+    done <<<"$upgraded"
+  fi
+
+  if [ -n "$failed" ]; then
+    while read -r pkg; do
+      gum log --level error "$pkg: upgrade failed"
+    done <<<"$failed"
+  fi
+
+  if [ -z "$upgraded" ] && [ -z "$failed" ]; then
+    gum log --level info "No packages were upgraded."
   fi
 }
 

@@ -72,18 +72,14 @@ if [[ -n "$pkg_names" ]]; then
   sudo updatedb
 
   if [ ${#installed[@]} -gt 0 ]; then
-    echo ""
-    echo -e "\033[38;2;0;204;119mInstalled :\033[0m"
     for item in "${installed[@]}"; do
-      echo -e "\033[38;2;0;204;119m  $item\033[0m"
+      gum log --level info "Installed: $item"
     done
   fi
 
   if [ ${#failed[@]} -gt 0 ]; then
-    echo ""
-    echo -e "\033[0;31mFailed to install :\033[0m"
     for item in "${failed[@]}"; do
-      echo -e "\033[0;31m  $item\033[0m"
+      gum log --level error "Failed to install: $item"
     done
   fi
 fi

@@ -4,7 +4,7 @@
 
 for pkg in "$@"; do
   pacman -Q "$pkg" &>/dev/null || exit 1
-  echo "$pkg is present..."
+  gum log --level info "$pkg is present"
 done
 
 exit 0

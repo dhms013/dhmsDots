@@ -2,8 +2,7 @@
 
 for pkg in "$@"; do
   if ! pacman -Q "$pkg" &>/dev/null; then
-    echo "$pkg is missing..."
-    # exit 0
+    gum log --level error "$pkg is not installed"
   else
     echo "$pkg is present..."
     paru -Qi $pkg | bat

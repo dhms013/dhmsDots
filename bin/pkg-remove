@@ -25,9 +25,7 @@ if [[ -n "$pkg_names" ]]; then
   done
   echo "$pkg_names" | tr '\n' ' ' | xargs paru -Rns --noconfirm
   sudo updatedb
-  echo ""
-  echo -e "\033[38;2;0;204;119mRemoved :\033[0m"
   echo "$pkg_names" | tr ' ' '\n' | while read -r pkg; do
-    echo -e "\033[38;2;0;204;119m$pkg\033[0m"
+    gum log --level info "Removed: $pkg"
   done
 fi

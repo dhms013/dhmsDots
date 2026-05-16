@@ -3,5 +3,6 @@
 for pkg in "$@"; do
   if pacman -Q "$pkg" &>/dev/null; then
     paru -Rns --noconfirm "$pkg"
+    gum log --level info "Removed: $pkg"
   fi
 done
