@@ -1,7 +1,6 @@
 #!/bin/bash
 
 clear
-echo -e "\u001b[38;2;0;255;153m"
+echo
 cat <~/.dhmsDots/bin/dhms.txt
-echo -e "\u001b[38;2;0;255;0m"
 echo
