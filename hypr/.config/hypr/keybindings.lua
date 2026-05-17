@@ -64,13 +64,8 @@ hl.bind(
 	hl.dsp.window.float({ action = "toggle" }),
 	{ description = "Toggle window floating/tiling" }
 )
-hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Full width" })
-hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Full screen" })
-hl.bind(
-	"SUPER + CTRL + ALT + F",
-	hl.dsp.window.fullscreen_state({ internal = 0, client = 2 }),
-	{ description = "Tiled full screen" }
-)
+hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Toggle full width" })
+hl.bind("SUPER + CTRL + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Toggle full screen" })
 hl.bind("SUPER + CTRL + L", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
 hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { description = "Focus on next window" })
 hl.bind("ALT + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }), { description = "Focus on previous window" })
