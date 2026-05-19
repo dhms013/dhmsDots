@@ -34,3 +34,16 @@ hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("NVD_BACKEND", "direct")
 hl.env("WLR_NO_HARDWARE_CURSORS", "1")
+
+hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
+hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+
+hl.config({
+	xwayland = {
+		force_zero_scaling = true,
+	},
+
+	ecosystem = {
+		no_update_news = true,
+	},
+})
