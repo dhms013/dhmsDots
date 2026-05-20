@@ -44,6 +44,13 @@ hl.window_rule({
 	opacity = "1 override",
 })
 
+-- VS code
+hl.window_rule({
+	name = "vs code",
+	match = { class = "^(code)$" },
+	opacity = "1 override",
+})
+
 -- Neovim
 hl.window_rule({
 	name = "nvim",

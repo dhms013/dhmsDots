@@ -10,7 +10,7 @@ hl.config({
 		resize_on_border = true,
 		extend_border_grab_area = 15,
 		allow_tearing = false,
-		layout = "dwindle",
+		layout = "scrolling",
 	},
 
 	decoration = {
