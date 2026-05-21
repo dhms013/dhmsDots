@@ -170,34 +170,34 @@ Item {
                 spacing: 12
                 layoutDirection: Qt.RightToLeft
 
-                // Text {
-                //     anchors.verticalCenter: parent.verticalCenter
-                //     text: root.notifServer && root.notifServer.dndEnabled
-                //         ? "󰂛"
-                //         : root.notifServer && root.notifServer.notifications.length > 0
-                //             ? "󱅫"
-                //             : "󰂚"
-                //     font.pixelSize: 14
-                //     font.family: "JetBrainsMono Nerd Font Propo"
-                //     color: root.notifServer && root.notifServer.dndEnabled
-                //         ? root.red
-                //         : root.notifServer && root.notifServer.panelOpen
-                //             ? root.accent
-                //             : root.fg
-                //
-                //     Behavior on color { ColorAnimation { duration: 150 } }
-                //
-                //     MouseArea {
-                //         anchors.fill: parent
-                //         cursorShape: Qt.PointingHandCursor
-                //         acceptedButtons: Qt.LeftButton | Qt.RightButton
-                //         onClicked: mouse => {
-                //             if (!root.notifServer) return
-                //             if (mouse.button === Qt.RightButton) root.notifServer.toggleDnd()
-                //             else root.notifServer.togglePanel()
-                //         }
-                //     }
-                // }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.notifServer && root.notifServer.dndEnabled
+                        ? "󰂛"
+                        : root.notifServer && root.notifServer.notifications.length > 0
+                            ? "󱅫"
+                            : "󰂚"
+                    font.pixelSize: 14
+                    font.family: "JetBrainsMono Nerd Font Propo"
+                    color: root.notifServer && root.notifServer.dndEnabled
+                        ? root.red
+                        : root.notifServer && root.notifServer.panelOpen
+                            ? root.accent
+                            : root.fg
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        onClicked: mouse => {
+                            if (!root.notifServer) return
+                            if (mouse.button === Qt.RightButton) root.notifServer.toggleDnd()
+                            else root.notifServer.togglePanel()
+                        }
+                    }
+                }
 
                 Battery {
                     anchors.verticalCenter: parent.verticalCenter
