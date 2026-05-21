@@ -1,3 +1,12 @@
 #!/bin/bash
 
-pkill hyprlock && pidof hyprlock || hyprlock &
+lock() {
+  pkill hyprlock 2>/dev/null
+  pkill -f fprintd-stub 2>/dev/null
+  fprintd-stub &
+  hyprctl --instance 0 eval 'hl.config({ misc = { allow_session_lock_restore = true } })'
+  sleep 0.5
+  hyprctl --instance 0 dispatch 'hl.dsp.exec_cmd("hyprlock")'
+}
+
+lock

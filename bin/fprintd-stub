@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+from gi.repository import GLib
+
+BUS_NAME = 'net.reactivated.Fprint'
+MANAGER_PATH = '/net/reactivated/Fprint/Manager'
+IFACE_MANAGER = 'net.reactivated.Fprint.Manager'
+IFACE_INTRO = 'org.freedesktop.DBus.Introspectable'
+
+INTRO_XML = '''<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/net/reactivated/Fprint/Manager">
+  <interface name="net.reactivated.Fprint.Manager">
+    <method name="GetDevices">
+      <arg type="ao" name="devices" direction="out"/>
+    </method>
+    <method name="GetDefaultDevice">
+      <arg type="o" name="device" direction="out"/>
+    </method>
+  </interface>
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg type="s" name="data" direction="out"/>
+    </method>
+  </interface>
+</node>'''
+
+class FprintdStub(dbus.service.Object):
+    @dbus.service.method(IFACE_INTRO, out_signature='s')
+    def Introspect(self):
+        return INTRO_XML
+
+    @dbus.service.method(IFACE_MANAGER, out_signature='ao')
+    def GetDevices(self):
+        return dbus.Array([], signature='o')
+
+    @dbus.service.method(IFACE_MANAGER, out_signature='o')
+    def GetDefaultDevice(self):
+        raise dbus.DBusException('net.reactivated.Fprint.Error.NoSuchDevice',
+                                 'No devices available')
+
+def main():
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SessionBus()
+    try:
+        bus_name = dbus.service.BusName(BUS_NAME, bus)
+    except dbus.exceptions.NameExistsException:
+        return
+    obj = FprintdStub(bus, MANAGER_PATH)
+    loop = GLib.MainLoop()
+    GLib.timeout_add_seconds(10, loop.quit)
+    try:
+        loop.run()
+    except KeyboardInterrupt:
+        loop.quit()
+
+if __name__ == '__main__':
+    main()
