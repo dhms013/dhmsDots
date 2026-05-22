@@ -30,7 +30,11 @@ local brightDown = qs .. " osdBrightnessDown handle"
 
 -- terminal
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal), { description = "terminal" })
-hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(terminal .. " -e tmux attach"), { description = "sub-terminal" })
+hl.bind(
+	"SUPER + SHIFT + RETURN",
+	hl.dsp.exec_cmd(terminal .. " -e tmux attach || tmux new -s dhms"),
+	{ description = "tmux" }
+)
 
 -- menus
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
