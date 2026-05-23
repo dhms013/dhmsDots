@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# omarchy:summary=Set up fingerprint authentication for sudo, polkit, and lock screen
-# omarchy:requires-sudo=true
-
 set -e
 
 check_fingerprint_hardware() {
