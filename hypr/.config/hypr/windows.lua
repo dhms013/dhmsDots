@@ -58,6 +58,14 @@ hl.window_rule({
 	opacity = "1 override",
 })
 
+-- Steam
+hl.window_rule({
+	name = "Steam",
+	match = { title = "^(Steam)$" },
+	opacity = "1 override",
+	idle_inhibit = "focus",
+})
+
 -- Where Winds Meet
 hl.window_rule({
 	name = "where-winds-meet",
