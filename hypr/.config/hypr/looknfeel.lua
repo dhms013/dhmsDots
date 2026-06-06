@@ -4,8 +4,8 @@
 
 hl.config({
 	general = {
-		gaps_in = 1,
-		gaps_out = 1,
+		gaps_in = 3,
+		gaps_out = 3,
 		border_size = 3,
 		resize_on_border = true,
 		extend_border_grab_area = 15,
@@ -43,20 +43,74 @@ hl.config({
 	},
 })
 
-hl.curve("village", { type = "bezier", points = { { 0.22, 1 }, { 0.36, 1 } } })
-hl.curve("borderEase", { type = "bezier", points = { { 0.22, 1 }, { 0.36, 1 } } })
-hl.curve("silk_drop", { type = "bezier", points = { { 0.28, 1.54 }, { 0.70, 1 } } })
+hl.curve("float", { type = "bezier", points = { { 0.22, 0.9 }, { 0.2, 1.0 } } })
+hl.curve("drift", { type = "bezier", points = { { 0.3, 1.05 }, { 0.38, 1.0 } } })
+hl.curve("glassFade", { type = "bezier", points = { { 0.18, 0.0 }, { 0.12, 1.0 } } })
+hl.curve("workspaceGlide", { type = "bezier", points = { { 0.23, 0.84 }, { 0.34, 1.0 } } })
 
-hl.animation({ leaf = "global", enabled = true, speed = 10, bezier = "default" })
-hl.animation({ leaf = "border", enabled = true, speed = 6, bezier = "borderEase" })
-hl.animation({ leaf = "windows", enabled = true, speed = 5, bezier = "village", style = "slide" })
-hl.animation({ leaf = "windowsIn", enabled = true, speed = 5, bezier = "village", style = "slide" })
-hl.animation({ leaf = "windowsOut", enabled = true, speed = 4, bezier = "village", style = "slide" })
-hl.animation({ leaf = "windowsMove", enabled = true, speed = 5, bezier = "village" })
-hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "village" })
-hl.animation({ leaf = "fadeIn", enabled = true, speed = 4, bezier = "village" })
-hl.animation({ leaf = "fadeOut", enabled = true, speed = 3, bezier = "village" })
-hl.animation({ leaf = "layers", enabled = true, speed = 4, bezier = "village" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "village" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 3, bezier = "village" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 2.2, bezier = "silk_drop", style = "slidevert" })
+hl.animation({
+	leaf = "windows",
+	enabled = true,
+	speed = 3,
+	bezier = "float",
+})
+hl.animation({
+	leaf = "windowsIn",
+	enabled = true,
+	speed = 3,
+	bezier = "drift",
+	style = "popin 10%",
+})
+hl.animation({
+	leaf = "windowsOut",
+	enabled = true,
+	speed = 3,
+	bezier = "glassFade",
+	style = "popin 82%",
+})
+hl.animation({
+	leaf = "windowsMove",
+	enabled = true,
+	speed = 3,
+	bezier = "float",
+})
+hl.animation({
+	leaf = "border",
+	enabled = true,
+	speed = 3,
+	bezier = "glassFade",
+})
+hl.animation({
+	leaf = "fade",
+	enabled = true,
+	speed = 3,
+	bezier = "glassFade",
+})
+hl.animation({
+	leaf = "layers",
+	enabled = true,
+	speed = 3,
+	bezier = "drift",
+	style = "slidefade",
+})
+hl.animation({
+	leaf = "layersIn",
+	enabled = true,
+	speed = 3,
+	bezier = "drift",
+	style = "slidefade",
+})
+hl.animation({
+	leaf = "layersOut",
+	enabled = true,
+	speed = 3,
+	bezier = "glassFade",
+	style = "fade",
+})
+hl.animation({
+	leaf = "workspaces",
+	enabled = true,
+	speed = 3,
+	bezier = "workspaceGlide",
+	style = "slide",
+})
