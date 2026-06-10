@@ -123,6 +123,7 @@ hl.bind("SUPER + CTRL + ALT + L", hl.dsp.exec_cmd("toggle-layout"), { descriptio
 hl.bind("SUPER + X", hl.dsp.send_shortcut({ mods = "CTRL", key = "X" }), { description = "cut" })
 hl.bind("SUPER + C", hl.dsp.send_shortcut({ mods = "CTRL", key = "Insert" }), { description = "copy" })
 hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert" }), { description = "paste" })
+-- hl.bind("XF86PowerOff", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
 
 -- screen capture
 hl.bind("PRINT", hl.dsp.exec_cmd("screenshot"), { description = "screenshot" })
