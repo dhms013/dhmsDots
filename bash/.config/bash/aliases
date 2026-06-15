@@ -20,7 +20,7 @@ alias gclone="git clone"
 alias gs="git switch -c"
 alias gpull="git pull"
 alias gm="git merge"
-alias gstat="git status"
+alias gstat="git status -s"
 alias boo="ghostty +boo"
 alias t='tmux attach || tmux new -s dhms'
 n() { if [ "$#" -eq 0 ]; then command nvim . ; else command nvim "$@"; fi; }

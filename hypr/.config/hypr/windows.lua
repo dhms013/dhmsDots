@@ -51,6 +51,13 @@ hl.window_rule({
 	opacity = "1 override",
 })
 
+-- Postman
+hl.window_rule({
+	name = "postman",
+	match = { class = "^(Postman)$" },
+	opacity = "1 override",
+})
+
 -- Neovim
 hl.window_rule({
 	name = "nvim",
