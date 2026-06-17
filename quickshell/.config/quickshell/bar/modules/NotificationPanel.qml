@@ -9,7 +9,7 @@ Item {
     id: root
     property var theme: ({})
     property string appFilter: ""
-    property bool groupedView: true
+    property bool groupedView: false
     property var flatNotifications: notifServer ? notifServer.notificationsForApp(appFilter) : []
     property var groupedNotifications: notifServer ? notifServer.groupedNotifications(appFilter) : []
     property var panelModel: groupedView ? groupedNotifications : flatNotifications
@@ -117,7 +117,7 @@ Item {
             border.width: 1
             clip: true
             opacity: 0
-            scale: 0.92
+            scale: 1
 
             HoverHandler {
                 id: toastHover
@@ -496,6 +496,7 @@ Item {
                     id: notifList
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    visible: root.panelModel.length > 0
                     clip: true
                     spacing: 4
                     boundsBehavior: Flickable.StopAtBounds
@@ -789,11 +790,12 @@ Item {
                         }
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: root.appFilter !== "" ? "no notifications for filter" : "no notifications"
+                            text: root.appFilter !== "" ? "no notifications for filter" : "no notifications..\ngo get a life.."
                             color: t("muted", "#585b70")
                             font.pixelSize: 11
                             font.family: "JetBrains Mono"
                             opacity: 0.5
+                            horizontalAlignment: Text.AlignHCenter
                         }
                     }
                 }
