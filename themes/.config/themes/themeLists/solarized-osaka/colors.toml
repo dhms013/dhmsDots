@@ -1,0 +1,31 @@
+# Solarized Osaka theme for Omarchy
+# Based on craftzdog/solarized-osaka.nvim
+# https://github.com/craftzdog/solarized-osaka.nvim
+
+# Core
+accent               = "#268bd3"
+cursor               = "#839395"
+foreground           = "#839395"
+background           = "#001419"
+selection_foreground = "#839395"
+selection_background = "#1a6397"
+
+# ANSI 16 — normal
+color0  = "#001419"
+color1  = "#db302d"
+color2  = "#849900"
+color3  = "#b28500"
+color4  = "#268bd3"
+color5  = "#d23681"
+color6  = "#29a298"
+color7  = "#fdf5e2"
+
+# ANSI 16 — bright
+color8  = "#063540"
+color9  = "#f55350"
+color10 = "#b7f900"
+color11 = "#ffbf00"
+color12 = "#46acf5"
+color13 = "#f254a0"
+color14 = "#2aeddd"
+color15 = "#ffffff"
