@@ -18,16 +18,26 @@ Item {
         imageSupported: true
 
         onNotification: notif => {
+            if (!notif) return
             notif.tracked = true
-            root.notifications = [notif, ...root.notifications]
+
+            Qt.callLater(() => {
+                root.notifications = [notif, ...root.notifications]
+            })
+
+            notif.closed.connect(() => {
+                root.notifications = root.notifications.filter(n => n !== notif)
+                root.hiddenToasts = root.hiddenToasts.filter(id => id !== notif.id)
+            })
+
             if (root.dndEnabled && !root.isCritical(notif))
                 root.hideToast(notif.id)
         }
     }
 
     function dismiss(notif) {
+        if (!notif) return
         notif.dismiss()
-        root.notifications = root.notifications.filter(n => n.id !== notif.id)
         root.hiddenToasts = root.hiddenToasts.filter(id => id !== notif.id)
     }
 
@@ -47,8 +57,9 @@ Item {
 
     function clearAll() {
         const copy = [...root.notifications]
-        copy.forEach(n => n.dismiss())
-        root.notifications = []
+        for (const n of copy) {
+            if (n) n.dismiss()
+        }
         root.hiddenToasts = []
     }
 
@@ -61,7 +72,7 @@ Item {
         if (!enabled) return
 
         for (const notif of root.notifications) {
-            if (!root.isCritical(notif))
+            if (notif && !root.isCritical(notif))
                 root.hideToast(notif.id)
         }
     }
@@ -71,13 +82,14 @@ Item {
     }
 
     function appNameFor(notif) {
-        return (notif?.appName || "Unknown").trim() || "Unknown"
+        return (notif && notif.appName || "Unknown").trim() || "Unknown"
     }
 
     function appNames() {
         const seen = {}
         const out = []
         for (const notif of root.notifications) {
+            if (!notif) continue
             const name = appNameFor(notif)
             if (seen[name]) continue
             seen[name] = true
@@ -88,13 +100,14 @@ Item {
 
     function notificationsForApp(appName) {
         if (!appName) return [...root.notifications]
-        return root.notifications.filter(n => appNameFor(n) === appName)
+        return root.notifications.filter(n => n && appNameFor(n) === appName)
     }
 
     function groupedNotifications(appName) {
         const groups = {}
         const order = []
         for (const notif of notificationsForApp(appName)) {
+            if (!notif) continue
             const name = appNameFor(notif)
             if (!groups[name]) {
                 groups[name] = {
@@ -113,11 +126,12 @@ Item {
     }
 
     function dismissMany(items) {
-        for (const notif of items || [])
-            dismiss(notif)
+        for (const notif of items || []) {
+            if (notif) dismiss(notif)
+        }
     }
 
     function isCritical(notif) {
-        return notif.urgency === NotificationUrgency.Critical
+        return notif && notif.urgency === NotificationUrgency.Critical
     }
 }

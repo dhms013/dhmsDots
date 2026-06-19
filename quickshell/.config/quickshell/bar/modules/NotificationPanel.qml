@@ -74,7 +74,7 @@ Item {
         namespace: "notif-toast"
 
         property var visibleToasts: notifServer.notifications.filter(
-            n => !notifServer.hiddenToasts.includes(n.id)
+            n => n != null && !notifServer.hiddenToasts.includes(n.id)
         )
         property var latest: visibleToasts.length > 0 ? visibleToasts[0] : null
         property bool hasActions: latest && latest.actions && latest.actions.length > 0
@@ -253,7 +253,7 @@ Item {
 
                     Repeater {
                         model: toastWin.latest && toastWin.latest.actions
-                            ? toastWin.latest.actions : []
+                            ? toastWin.latest.actions.filter(a => a != null) : []
                         delegate: Rectangle {
                             required property var modelData
                             width: hudActLbl.implicitWidth + 16
@@ -457,7 +457,7 @@ Item {
                         spacing: 6
 
                         Repeater {
-                            model: ["All", ...notifServer.appNames()]
+                            model: ["All", ...notifServer.appNames().filter(n => n != null)]
                             delegate: Rectangle {
                                 required property var modelData
                                 property bool active: (modelData === "All" && root.appFilter === "")
@@ -560,9 +560,9 @@ Item {
 
                     delegate: Rectangle {
                         required property var modelData
-                        readonly property bool isGroup: !!modelData.items
-                        readonly property var latest: isGroup ? modelData.latest : modelData
-                        readonly property var entryItems: isGroup ? modelData.items : [modelData]
+                        readonly property bool isGroup: modelData && !!modelData.items
+                        readonly property var latest: isGroup ? modelData?.latest : modelData
+                        readonly property var entryItems: isGroup ? (modelData?.items || []) : (modelData ? [modelData] : [])
                         property real slide: 0
                         property real slideLimit: Math.min(140, width * 0.45)
                         property bool dismissing: false
@@ -658,7 +658,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: latest.appName
+                                    text: latest?.appName || ""
                                     color: Qt.rgba(1,1,1,0.3)
                                     font.pixelSize: 10
                                     font.family: "JetBrains Mono"
@@ -667,7 +667,7 @@ Item {
                                 }
 
                                 Rectangle {
-                                    visible: isGroup && modelData.count > 1
+                                    visible: isGroup && (modelData?.count || 0) > 1
                                     width: grpCnt.implicitWidth + 10
                                     height: 17
                                     radius: 9
@@ -675,7 +675,7 @@ Item {
                                     Text {
                                         id: grpCnt
                                         anchors.centerIn: parent
-                                        text: modelData.count
+                                        text: modelData?.count ?? 0
                                         color: t("accent", "#89b4fa")
                                         font.pixelSize: 8
                                         font.family: "JetBrains Mono"
@@ -701,9 +701,9 @@ Item {
                                     }
 
                             Text {
-                                visible: (latest.summary || "") !== ""
+                                visible: latest && (latest.summary || "") !== ""
                                 Layout.fillWidth: true
-                                text: latest.summary || ""
+                                text: latest?.summary || ""
                                 color: t("fg", "#cdd6f4")
                                 font.pixelSize: 12
                                 font.weight: Font.DemiBold
@@ -712,10 +712,10 @@ Item {
                             }
 
                             Text {
-                                visible: (latest.body || "").trim() !== ""
+                                visible: latest && (latest.body || "").trim() !== ""
                                     && latest.body !== latest.summary
                                 Layout.fillWidth: true
-                                text: latest.body || ""
+                                text: latest?.body || ""
                                 color: Qt.rgba(1,1,1,0.38)
                                 font.pixelSize: 11
                                 font.family: "JetBrains Mono"
@@ -725,9 +725,9 @@ Item {
                             }
 
                             Text {
-                                visible: isGroup && modelData.count > 1
+                                visible: isGroup && (modelData?.count || 0) > 1
                                 Layout.fillWidth: true
-                                text: "Collapsed " + modelData.count + " notifications from " + latest.appName
+                                text: "Collapsed " + (modelData?.count || 0) + " notifications from " + (latest?.appName || "")
                                 color: Qt.alpha(t("fg", "#cdd6f4"), 0.44)
                                 font.pixelSize: 9
                                 font.family: "JetBrains Mono"
@@ -736,9 +736,9 @@ Item {
 
                             Row {
                                 spacing: 6
-                                visible: latest.actions && latest.actions.length > 0
+                                visible: latest && latest.actions && latest.actions.length > 0
                                 Repeater {
-                                    model: latest.actions
+                                    model: latest ? latest.actions.filter(a => a != null) : []
                                     delegate: Rectangle {
                                         required property var modelData
                                         width: pALbl.implicitWidth + 16
