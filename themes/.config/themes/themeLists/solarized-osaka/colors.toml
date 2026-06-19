@@ -1,9 +1,8 @@
-# Solarized Osaka theme for Omarchy
 # Based on craftzdog/solarized-osaka.nvim
 # https://github.com/craftzdog/solarized-osaka.nvim
 
 # Core
-accent               = "#268bd3"
+accent               = "#278bd3"
 cursor               = "#839395"
 foreground           = "#839395"
 background           = "#001419"

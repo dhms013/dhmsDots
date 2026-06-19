@@ -4,7 +4,8 @@
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 
-local terminal = "uwsm-app -- ghostty"
+local terminal = "uwsm-app -- foot"
+local subTerminal = "uwsm-app -- ghostty"
 local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
 local browser = "uwsm-app -- zen-browser"
@@ -31,11 +32,12 @@ local brightDown = qs .. " osdBrightnessDown handle"
 
 -- terminal
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal), { description = "terminal" })
-hl.bind(
-	"SUPER + SHIFT + RETURN",
-	hl.dsp.exec_cmd(terminal .. " -e tmux attach || tmux new -s dhms"),
-	{ description = "tmux" }
-)
+-- hl.bind(
+-- 	"SUPER + SHIFT + RETURN",
+-- 	hl.dsp.exec_cmd(terminal .. " -e tmux attach || tmux new -s dhms"),
+-- 	{ description = "tmux" }
+-- )
+hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(subTerminal), { description = "sub-terminal" })
 
 -- menus
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
