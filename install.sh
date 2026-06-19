@@ -13,6 +13,14 @@ BRANCH="main"
 export DOTFILES_DIR="$HOME/.dhmsDots"
 SCRIPTS_DIR="$DOTFILES_DIR/packages/scripts"
 
+# ── 0. Check OS ────────────────────────────────────────────────────────────
+check_os() {
+  if [ ! -f /etc/os-release ] || ! grep -q '^ID=arch' /etc/os-release; then
+    echo "Packages download scripts only works on Arch Linux..."
+    exit 1
+  fi
+}
+
 # ── 1. Bootstrap: clone or update the repo ───────────────────────────────────
 bootstrap_repo() {
   if [ -d "$DOTFILES_DIR" ]; then
@@ -70,6 +78,7 @@ reboot_countdown() {
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+check_os
 sudo_keepalive
 
 # Pre-flight: ensure git is available before cloning
