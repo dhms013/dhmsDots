@@ -94,7 +94,8 @@ keyrings
 { pkg-update; } || echo -e "\033[0;31mPackage update failed, continuing...\033[0m"
 { frmwr-updt; } || echo -e "\033[0;31mFirmware update failed, continuing...\033[0m"
 
-{ migrate-run; } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
+# { migrate-run; } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
+migrate-run
 pkg-check-orphan
 sudo updatedb
 
