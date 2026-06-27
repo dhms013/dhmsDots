@@ -47,6 +47,18 @@ if [[ -n "$pkg_names" ]]; then
     echo -e "\033[38;2;0;204;119m$pkg_line\033[0m"
   done <<<"$pkg_names"
 
+  resolve_conflicts() {
+    local pkg=$1
+    local conflicts
+    conflicts=$(paru -Si "$pkg" 2>/dev/null | sed -n '/Conflicts With/ s/.*: //p' | tr '\n' ' ')
+
+    for conflict in $conflicts; do
+      if pacman -Q "$conflict" &>/dev/null; then
+        pkgdrop "$conflict"
+      fi
+    done
+  }
+
   installed=()
   failed=()
 
@@ -54,6 +66,7 @@ if [[ -n "$pkg_names" ]]; then
   while read -r pkg_line; do
     if [[ $pkg_line == *\ \(AUR\) ]]; then
       pkg="${pkg_line% (AUR)}"
+      resolve_conflicts "$pkg"
       if paru -S --noconfirm "$pkg"; then
         installed+=("$pkg (AUR)")
       else
@@ -61,6 +74,7 @@ if [[ -n "$pkg_names" ]]; then
       fi
     else
       pkg="$pkg_line"
+      resolve_conflicts "$pkg"
       if sudo pacman -S --noconfirm "$pkg"; then
         installed+=("$pkg")
       else
