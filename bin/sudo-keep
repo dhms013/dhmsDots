@@ -13,7 +13,7 @@ if ! sudo -v; then
   exit 1
 fi
 while true; do
-  sudo -n true
+  sudo -v
   sleep 60
-  kill -0 "$$" || exit
+  kill -0 "$PPID" || exit
 done 2>/dev/null &
