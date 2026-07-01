@@ -16,7 +16,7 @@ Item {
 
     readonly property string dockPosition: settings && settings.notificationPosition
         ? settings.notificationPosition
-        : "top-right"
+        : "top-center"
     readonly property bool dockTop: dockPosition.indexOf("top") === 0
     readonly property bool dockBottom: dockPosition.indexOf("bottom") === 0
     readonly property bool dockLeft: dockPosition.indexOf("left") >= 0
