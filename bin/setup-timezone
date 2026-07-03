@@ -1,0 +1,6 @@
+#!/bin/bash
+
+current=$(timedatectl show --property=Timezone --value)
+timezone=$(timedatectl list-timezones | gum filter --height 20 --header "Set timezone (current: $current)") || exit 1
+sudo timedatectl set-timezone "$timezone"
+echo "Timezone changed to $timezone"

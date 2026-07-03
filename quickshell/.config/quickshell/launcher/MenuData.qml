@@ -62,6 +62,10 @@ QtObject {
                 "label": "Themes",
                 "cmd": "quickshell ipc call openThemePicker handle"
             }, {
+                "icon": "",
+                "label": "Timezone",
+                "cmd": "floating-terminal setup-timezone"
+            }, {
                 "icon": "",
                 "label": "Security",
                 "children": [{
