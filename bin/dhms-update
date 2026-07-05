@@ -14,25 +14,28 @@ input_password() {
 }
 
 git_check_branch() {
-  git stash push -m "dhms-update" || true
-  git fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
-
   if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
     gum style --border normal --padding "1 2" "Currently on branch: $CURRENT_BRANCH"
     CHOICE=$(gum choose "Go back to $CURRENT_BRANCH" "Stay on $MAIN_BRANCH")
     if [ "$CHOICE" = "Go back to $CURRENT_BRANCH" ]; then
       RESTORE_BRANCH=true
-      git rebase "$MAIN_BRANCH" "$CURRENT_BRANCH"
     fi
   fi
 
-  git checkout "$MAIN_BRANCH"
-  git stash pop || true
+  git -C $HOME/.dhmsDots stash push -m "dhms-update" || true
+  git -C $HOME/.dhmsDots fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
+
+  if [ "$RESTORE_BRANCH" = true ]; then
+    git -C $HOME/.dhmsDots rebase "$MAIN_BRANCH" "$CURRENT_BRANCH"
+  fi
+
+  git -C $HOME/.dhmsDots checkout -q "$MAIN_BRANCH"
+  git -C $HOME/.dhmsDots stash pop -q || true
 }
 
 git_restore() {
   if [ "$RESTORE_BRANCH" = true ]; then
-    git checkout "$CURRENT_BRANCH"
+    git -C $HOME/.dhmsDots checkout "$CURRENT_BRANCH"
   fi
 }
 
