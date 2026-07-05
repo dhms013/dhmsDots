@@ -30,7 +30,11 @@ git_check_branch() {
   fi
 
   git -C $HOME/.dhmsDots checkout -q "$MAIN_BRANCH"
-  git -C $HOME/.dhmsDots stash pop -q || true
+  git -C $HOME/.dhmsDots stash pop || {
+    gum log --level warn "Stash conflict — overwriting with local changes"
+    git -C $HOME/.dhmsDots checkout stash@{0} -- .
+    git -C $HOME/.dhmsDots stash drop
+  }
 }
 
 git_restore() {
