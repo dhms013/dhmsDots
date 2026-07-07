@@ -75,8 +75,8 @@ hl.bind(
 hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Toggle full width" })
 hl.bind("SUPER + CTRL + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Toggle full screen" })
 hl.bind("SUPER + CTRL + L", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
-hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { description = "Focus on next window" })
-hl.bind("ALT + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }), { description = "Focus on previous window" })
+hl.bind("SUPER + TAB", hl.dsp.window.cycle_next(), { description = "Focus on next window" })
+hl.bind("SUPER + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }), { description = "Focus on previous window" })
 -- move focus with SUPER + VIM motion
 hl.bind("SUPER + H", hl.dsp.focus({ direction = "l" }), { description = "move focus left" })
 hl.bind("SUPER + L", hl.dsp.focus({ direction = "r" }), { description = "move focus right" })
