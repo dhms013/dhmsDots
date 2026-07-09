@@ -22,7 +22,12 @@ git_check_branch() {
     fi
   fi
 
-  git -C $HOME/.dhmsDots stash push -m "dhms-update" || true
+  if ! git -C $HOME/.dhmsDots diff --quiet; then
+    git -C $HOME/.dhmsDots stash push -m "dhms-update"
+    HAS_STASH=true
+  else
+    HAS_STASH=false
+  fi
   git -C $HOME/.dhmsDots fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
 
   if [ "$RESTORE_BRANCH" = true ]; then
@@ -30,11 +35,13 @@ git_check_branch() {
   fi
 
   git -C $HOME/.dhmsDots checkout -q "$MAIN_BRANCH"
-  git -C $HOME/.dhmsDots stash pop || {
-    gum log --level warn "Stash conflict — overwriting with local changes"
-    git -C $HOME/.dhmsDots checkout stash@{0} -- .
-    git -C $HOME/.dhmsDots stash drop
-  }
+  if [ "$HAS_STASH" = true ]; then
+    git -C $HOME/.dhmsDots stash pop || {
+      gum log --level warn "Stash conflict — overwriting with local changes"
+      git -C $HOME/.dhmsDots checkout stash@{0} -- .
+      git -C $HOME/.dhmsDots stash drop
+    }
+  fi
 }
 
 git_restore() {
