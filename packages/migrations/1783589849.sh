@@ -6,7 +6,7 @@ TARGET="$HOME/.config/foot"
 BACKUP="$HOME/.config/foot.bak"
 
 unstow_foot() {
-  if [ -L "$TARGET" ] && [ "$(readlink "$TARGET")" = "$STOW_DIR/$PACKAGE/.config/foot" ]; then
+  if [ -L "$TARGET" ] && [ "$(readlink -f "$TARGET")" = "$STOW_DIR/$PACKAGE/.config/foot" ]; then
     echo "unstowing foot from .dhmsDots"
     stow -d "$STOW_DIR" -t "$HOME" -D "$PACKAGE"
   else
