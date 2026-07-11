@@ -1,0 +1,21 @@
+#!/bin/bash
+
+status=$(systemctl is-active docker)
+
+gum style --border normal --padding "1 2" "Docker is $status"
+
+if [[ -z $1 ]]; then
+  action=$(gum choose on off)
+else
+  action=$1
+fi
+
+case "$action" in
+on)
+  sudo systemctl enable --now docker
+  ;;
+off)
+  sudo systemctl stop docker docker.socket
+  sudo systemctl disable docker
+  ;;
+esac

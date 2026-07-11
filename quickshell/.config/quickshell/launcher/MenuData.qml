@@ -38,6 +38,10 @@ QtObject {
                 "label": "DNS",
                 "cmd": "floating-terminal setup-dns"
             }, {
+                "icon": "",
+                "label": "Docker",
+                "cmd": "floating-terminal docker-set"
+            }, {
                 "icon": "󰉉",
                 "label": "Install",
                 "children": [{
