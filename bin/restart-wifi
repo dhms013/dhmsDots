@@ -1,3 +1,18 @@
 #!/usr/bin/env bash
 
 sudo modprobe -r iwlmvm iwlwifi && sudo modprobe iwlwifi
+
+# Wait for iwd to reconnect and get DHCP lease
+for i in $(seq 1 10); do
+  sleep 1
+  ping -c1 -W1 8.8.8.8 &>/dev/null && {
+    echo "Connected."
+    exit 0
+  }
+done
+
+# If still no connectivity, kick systemd-networkd
+echo "No traffic — restarting systemd-networkd..."
+sudo systemctl restart systemd-networkd
+sleep 3
+ping -c1 -W1 8.8.8.8 &>/dev/null && echo "Connected." || echo "Check your DHCP/DNS config."
