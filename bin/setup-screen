@@ -2,30 +2,36 @@
 
 action="${1:-off}"
 
-detect_backlight_device() {
-    for candidate in amdgpu_bl* intel_backlight acpi_video*; do
-        if [[ -e /sys/class/backlight/$candidate ]]; then
-            echo "$candidate"
-            return 0
-        fi
-    done
-    return 1
-}
-
-device=$(detect_backlight_device)
-
 if [[ $action == "off" ]]; then
-    if [[ -n $device ]]; then
-        # Laptop: avoid AMD DPMS bug, use brightness 0
-        brightnessctl -d "$device" -s && brightnessctl -d "$device" set 0
-    else
-        # Desktop: use DPMS
-        hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })' 2>/dev/null || hyprctl dispatch dpms off
-    fi
+  hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })'
 elif [[ $action == "on" ]]; then
-    if [[ -n $device ]]; then
-        brightnessctl -d "$device" -r
-    fi
-    # Also send DPMS on — harmless no-op if brightness-based, essential for desktop
-    hyprctl dispatch 'hl.dsp.dpms({ action = "enable" })' 2>/dev/null || hyprctl dispatch dpms on
+  hyprctl dispatch 'hl.dsp.dpms({ action = "enable" })'
 fi
+
+# detect_backlight_device() {
+#     for candidate in amdgpu_bl* intel_backlight acpi_video*; do
+#         if [[ -e /sys/class/backlight/$candidate ]]; then
+#             echo "$candidate"
+#             return 0
+#         fi
+#     done
+#     return 1
+# }
+#
+# device=$(detect_backlight_device)
+#
+# if [[ $action == "off" ]]; then
+#     if [[ -n $device ]]; then
+#         # Laptop: avoid AMD DPMS bug, use brightness 0
+#         brightnessctl -d "$device" -s && brightnessctl -d "$device" set 0
+#     else
+#         # Desktop: use DPMS
+#         hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })' 2>/dev/null || hyprctl dispatch dpms off
+#     fi
+# elif [[ $action == "on" ]]; then
+#     if [[ -n $device ]]; then
+#         brightnessctl -d "$device" -r
+#     fi
+#     # Also send DPMS on — harmless no-op if brightness-based, essential for desktop
+#     hyprctl dispatch 'hl.dsp.dpms({ action = "enable" })' 2>/dev/null || hyprctl dispatch dpms on
+# fi
