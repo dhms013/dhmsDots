@@ -79,7 +79,7 @@ Item {
         property var latest: visibleToasts.length > 0 ? visibleToasts[0] : null
         property bool hasActions: latest && latest.actions && latest.actions.length > 0
 
-        readonly property real collapsedH: mainRow.implicitHeight + 18
+        readonly property real collapsedH: mainRow.implicitHeight + 20
         readonly property real expandedExtra: actionRow.implicitHeight + 16
 
         property bool isHovered: false
@@ -190,7 +190,7 @@ Item {
                     Text {
                         text: toastWin.latest ? (toastWin.latest.appName || "") : ""
                         color: Qt.rgba(1,1,1,0.38)
-                        font.pixelSize: 11
+                        font.pixelSize: 15
                         font.family: "JetBrains Mono"
                     }
 
@@ -199,7 +199,7 @@ Item {
                     Text {
                         text: toastWin.latest ? (toastWin.latest.summary || "") : ""
                         color: t("fg", "#cdd6f4")
-                        font.pixelSize: 12
+                        font.pixelSize: 15
                         font.weight: Font.DemiBold
                         font.family: "JetBrains Mono"
                         elide: Text.ElideRight
