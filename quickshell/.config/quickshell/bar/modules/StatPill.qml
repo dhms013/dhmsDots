@@ -34,7 +34,7 @@ Item {
             text: label
             color: hovered ? accent : textColor
             font.pixelSize: 10
-            font.family: "JetBrains Mono"
+            font.family: "JetBrainsMono Nerd Font"
             opacity: hovered ? 1 : 0.5
 
             Behavior on color {
@@ -150,7 +150,7 @@ Item {
             text: value.toFixed(1) + suffix + extraText
             color: accent
             font.pixelSize: 10
-            font.family: "JetBrains Mono"
+            font.family: "JetBrainsMono Nerd Font"
 
             Behavior on color {
                 ColorAnimation {

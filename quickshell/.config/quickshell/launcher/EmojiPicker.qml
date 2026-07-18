@@ -24,8 +24,7 @@ PanelWindow {
     }
 
     function copyEmoji(emoji) {
-        const safe = shellEscape(emoji);
-        Quickshell.execDetached(["bash", "-lc", "printf '%s' \"" + safe + "\" | wl-copy"]);
+        Quickshell.execDetached(["bash", "-c", "printf '%s' \"$1\" | wl-copy", "--", emoji]);
         copiedEmoji = emoji;
         showCopied = true;
         copiedTimer.restart();

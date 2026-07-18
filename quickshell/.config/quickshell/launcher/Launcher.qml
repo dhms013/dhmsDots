@@ -11,7 +11,6 @@ PanelWindow {
     property bool showing: false
     property var theme: ({
     })
-    property var powerActions: null
     property string mode: "menu"
     property string appSearchText: ""
     property bool keybindMode: false
@@ -233,7 +232,6 @@ PanelWindow {
                 anchors.fill: parent
                 anchors.margins: 10
                 theme: launcher.theme
-                powerActions: launcher.powerActions
                 active: launcher.showing && launcher.mode === "menu"
                 visible: launcher.mode === "menu"
                 onCloseRequested: launcher.showing = false

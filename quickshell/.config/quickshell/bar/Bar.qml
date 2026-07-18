@@ -11,7 +11,6 @@ PanelWindow {
     property var launcher:      null
     property var calendarPopup: null
     property var notifServer: null
-    property var powerActions: null
 
     property string bg:        "#1e1e2e"
     property string fg:        "#cdd6f4"
@@ -178,7 +177,7 @@ Item {
                 //             ? "󱅫"
                 //             : "󰂚"
                 //     font.pixelSize: 14
-                //     font.family: "JetBrainsMono Nerd Font Propo"
+                //     font.family: "JetBrainsMono Nerd Font"
                 //     color: root.notifServer && root.notifServer.dndEnabled
                 //         ? root.red
                 //         : root.notifServer && root.notifServer.panelOpen

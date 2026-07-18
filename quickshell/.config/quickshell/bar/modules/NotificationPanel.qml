@@ -191,7 +191,7 @@ Item {
                         text: toastWin.latest ? (toastWin.latest.appName || "") : ""
                         color: Qt.rgba(1,1,1,0.38)
                         font.pixelSize: 15
-                        font.family: "JetBrains Mono"
+                        font.family: "JetBrainsMono Nerd Font"
                     }
 
                     Rectangle { width: 1; height: 10; color: Qt.rgba(1,1,1,0.12) }
@@ -201,7 +201,7 @@ Item {
                         color: t("fg", "#cdd6f4")
                         font.pixelSize: 15
                         font.weight: Font.DemiBold
-                        font.family: "JetBrains Mono"
+                        font.family: "JetBrainsMono Nerd Font"
                         elide: Text.ElideRight
                         Layout.maximumWidth: 300
                     }
@@ -217,7 +217,7 @@ Item {
                             text: "+" + (toastWin.visibleToasts.length - 1)
                             color: Qt.rgba(1,1,1,0.35)
                             font.pixelSize: 10
-                            font.family: "JetBrains Mono"
+                            font.family: "JetBrainsMono Nerd Font"
                         }
                     }
 
@@ -273,7 +273,7 @@ Item {
                                 color: hudActMa.containsMouse
                                     ? t("bg", "#1e1e2e") : t("fg", "#cdd6f4")
                                 font.pixelSize: 11
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 Behavior on color { ColorAnimation { duration: 80 } }
                             }
                             MouseArea {
@@ -344,7 +344,7 @@ Item {
                             color: t("fg", "#cdd6f4")
                             font.pixelSize: 10
                             font.weight: Font.DemiBold
-                            font.family: "JetBrains Mono"
+                            font.family: "JetBrainsMono Nerd Font"
                         }
 
                         Rectangle {
@@ -360,7 +360,7 @@ Item {
                                 color: t("accent", "#89b4fa")
                                 font.pixelSize: 8
                                 font.weight: Font.Bold
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                             }
                         }
 
@@ -388,7 +388,7 @@ Item {
                                     ? t("accent", "#89b4fa")
                                     : Qt.alpha(t("fg", "#cdd6f4"), 0.70)
                                 font.pixelSize: 8
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                             }
 
                             MouseArea {
@@ -423,7 +423,7 @@ Item {
                                     ? t("red", "#f38ba8")
                                     : Qt.alpha(t("fg", "#cdd6f4"), 0.70)
                                 font.pixelSize: 8
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 Behavior on color { ColorAnimation { duration: 100 } }
                             }
 
@@ -479,7 +479,7 @@ Item {
                                     text: modelData
                                     color: active ? t("accent", "#89b4fa") : Qt.alpha(t("fg", "#cdd6f4"), 0.72)
                                     font.pixelSize: 8
-                                    font.family: "JetBrains Mono"
+                                    font.family: "JetBrainsMono Nerd Font"
                                 }
 
                                 MouseArea {
@@ -567,8 +567,9 @@ Item {
                         property real slideLimit: Math.min(140, width * 0.45)
                         property bool dismissing: false
                         property real cardHeight: pInner.implicitHeight + 18
+                        property real dismissAnimHeight: cardHeight
                         width: ListView.view.width
-                        height: cardHeight
+                        height: dismissing ? dismissAnimHeight : cardHeight
                         x: slide
                         opacity: 1 - Math.min(0.35, Math.abs(slide) / (width * 1.8))
                         radius: 10
@@ -587,7 +588,7 @@ Item {
                             dismissing = true
                             slideDrag.enabled = false
                             slide = dir >= 0 ? slideLimit : -slideLimit
-                            cardHeight = 0
+                            dismissAnimHeight = 0
                             dismissTimer.restart()
                         }
 
@@ -661,7 +662,7 @@ Item {
                                     text: latest?.appName || ""
                                     color: Qt.rgba(1,1,1,0.3)
                                     font.pixelSize: 10
-                                    font.family: "JetBrains Mono"
+                                    font.family: "JetBrainsMono Nerd Font"
                                     Layout.fillWidth: true
                                     elide: Text.ElideRight
                                 }
@@ -678,7 +679,7 @@ Item {
                                         text: modelData?.count ?? 0
                                         color: t("accent", "#89b4fa")
                                         font.pixelSize: 8
-                                        font.family: "JetBrains Mono"
+                                        font.family: "JetBrainsMono Nerd Font"
                                         font.weight: Font.Bold
                                     }
                                 }
@@ -707,7 +708,7 @@ Item {
                                 color: t("fg", "#cdd6f4")
                                 font.pixelSize: 12
                                 font.weight: Font.DemiBold
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 elide: Text.ElideRight
                             }
 
@@ -718,7 +719,7 @@ Item {
                                 text: latest?.body || ""
                                 color: Qt.rgba(1,1,1,0.38)
                                 font.pixelSize: 11
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 wrapMode: Text.WordWrap
                                 maximumLineCount: 2
                                 elide: Text.ElideRight
@@ -730,7 +731,7 @@ Item {
                                 text: "Collapsed " + (modelData?.count || 0) + " notifications from " + (latest?.appName || "")
                                 color: Qt.alpha(t("fg", "#cdd6f4"), 0.44)
                                 font.pixelSize: 9
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 elide: Text.ElideRight
                             }
 
@@ -756,7 +757,7 @@ Item {
                                             color: pAMa.containsMouse
                                                 ? t("bg", "#1e1e2e") : t("fg", "#cdd6f4")
                                             font.pixelSize: 10
-                                            font.family: "JetBrains Mono"
+                                            font.family: "JetBrainsMono Nerd Font"
                                             Behavior on color { ColorAnimation { duration: 80 } }
                                         }
                                         MouseArea {
@@ -793,7 +794,7 @@ Item {
                             text: root.appFilter !== "" ? "no notifications for filter" : "no notifications..\ngo get a life.."
                             color: t("muted", "#585b70")
                             font.pixelSize: 11
-                            font.family: "JetBrains Mono"
+                            font.family: "JetBrainsMono Nerd Font"
                             opacity: 0.5
                             horizontalAlignment: Text.AlignHCenter
                         }

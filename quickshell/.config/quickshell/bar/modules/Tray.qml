@@ -202,22 +202,6 @@ Item {
                     }
                 }
 
-                IconImage {
-                    anchors.centerIn: parent
-                    width: 13
-                    height: 13
-                    implicitSize: 13
-                    source: root._isDirectIconSource(modelData.icon) ? "" : (modelData.icon || "")
-                    asynchronous: true
-                    mipmap: true
-                    visible: glyphIcon.text === "" && source !== "" && icon.status === Image.Error
-                    opacity: icon.opacity
-
-                    Behavior on opacity {
-                        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                    }
-                }
-
                 Text {
                     id: glyphIcon
                     anchors.centerIn: parent

@@ -152,7 +152,7 @@ delegate: Item {
                                 : Qt.alpha(root.theme.muted || "#585b70", 0.56))
                     opacity: ws.pressed ? 0.6 : 1.0
                     font.pixelSize: ws.wsKanji ? (ws.active || ws.hovered ? 11 : 10) : ws.styleStrip ? 9 : 0
-                    font.family: "JetBrains Mono"
+                    font.family: "JetBrainsMono Nerd Font"
                     font.weight: ws.active || ws.hovered ? Font.DemiBold : Font.Medium
 
                     Behavior on color { ColorAnimation { duration: 100 } }

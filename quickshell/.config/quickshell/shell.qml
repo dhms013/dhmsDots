@@ -14,6 +14,25 @@ ShellRoot {
     readonly property string currentDir: homeDir + "/.config/themes/current"
     readonly property string themeNamePath: currentDir + "/theme.name"
     readonly property string themeColorsPath: currentDir + "/theme/colors.toml"
+
+    function shellQuote(s) {
+        return "'" + String(s).replace(/'/g, "'\\''") + "'";
+    }
+
+    function reloadTheme() {
+        themeLoader.stdout.buf = "";
+        themeLoader.running = false;
+        reloadTimer.restart();
+    }
+
+    Timer {
+        id: reloadTimer
+        interval: 200
+        onTriggered: {
+            themeLoader.running = true;
+        }
+    }
+
     property string bg: "#1e1e2e"
     property string fg: "#cdd6f4"
     property string accent: "#89b4fa"
@@ -50,44 +69,15 @@ ShellRoot {
         green = get("color2") || green;
     }
 
-    QtObject {
-        id: powerActions
-
-        property bool open: false
-        property string title: ""
-        property string message: ""
-        property var command: null
-        property int selectedIndex: 0
-
-        function requestAction(titleText, messageText, cmd) {
-            title = titleText;
-            message = messageText;
-            command = cmd;
-            selectedIndex = 0;
-            open = true;
-        }
-
-        function close() {
-            open = false;
-            command = null;
-            selectedIndex = 0;
-        }
-
-        function moveSelection(delta) {
-            selectedIndex = (selectedIndex + delta + 2) % 2;
-        }
-
-    }
-
     Process {
         id: themeLoader
 
-        command: ["bash", "-lc", "cat " + shell.themeColorsPath + " 2>/dev/null"]
+        command: ["bash", "-lc", "cat " + shell.shellQuote(shell.themeColorsPath) + " 2>/dev/null"]
         running: true
         onExited: {
-            if (themeLoader.stdout.buf.length > 10)
-                parseToml(themeLoader.stdout.buf);
-
+            const raw = (themeLoader.stdout.buf || "").trim();
+            if (raw.length > 0)
+                parseToml(raw);
             themeLoader.stdout.buf = "";
         }
 
@@ -104,14 +94,12 @@ ShellRoot {
     Process {
         id: themeWatcher
 
-        command: ["bash", "-lc", "if command -v inotifywait >/dev/null 2>&1; then " + "  exec inotifywait -m -e close_write " + shell.themeNamePath + "; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(stat -c %Y " + shell.themeNamePath + " 2>/dev/null || echo missing); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 1; " + "  done; " + "fi"]
+        command: ["bash", "-lc", "qpath=" + shell.shellQuote(shell.themeNamePath) + "; " + "if command -v inotifywait >/dev/null 2>&1; then " + "  exec inotifywait -m -e close_write \"$qpath\"; " + "else " + "  last=''; " + "  while true; do " + "    cur=$(stat -c %Y \"$qpath\" 2>/dev/null || echo missing); " + "    if [ \"$cur\" != \"$last\" ]; then printf 'changed\\n'; last=\"$cur\"; fi; " + "    sleep 1; " + "  done; " + "fi"]
         running: true
 
         stdout: SplitParser {
             onRead: (_) => {
-                themeLoader.stdout.buf = "";
-                themeLoader.running = false;
-                themeLoader.running = true;
+                reloadTheme();
             }
         }
 
@@ -120,7 +108,6 @@ ShellRoot {
     Bar {
         launcher: appLauncher
         notifServer: notifServer
-        powerActions: powerActions
         bg: shell.bg
         fg: shell.fg
         accent: shell.accent
@@ -135,7 +122,6 @@ ShellRoot {
         id: appLauncher
 
         theme: shell.palette
-        powerActions: powerActions
     }
 
     ThemePicker {
@@ -204,164 +190,6 @@ ShellRoot {
         target: "clearNotifications"
     }
 
-    PanelWindow {
-        id: powerConfirm
-
-        visible: powerActions.open
-        color: "transparent"
-        exclusiveZone: 0
-        WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-        onVisibleChanged: {
-            if (visible)
-                powerConfirm.forceActiveFocus();
-
-        }
-        Keys.onPressed: (event) => {
-            if (!powerActions.open)
-                return ;
-
-            if (event.key === Qt.Key_Left || event.key === Qt.Key_Up) {
-                powerActions.moveSelection(-1);
-                event.accepted = true;
-            } else if (event.key === Qt.Key_Right || event.key === Qt.Key_Down || event.key === Qt.Key_Tab) {
-                powerActions.moveSelection(1);
-                event.accepted = true;
-            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
-                powerActions.activateSelected();
-                event.accepted = true;
-            } else if (event.key === Qt.Key_Escape) {
-                powerActions.close();
-                event.accepted = true;
-            }
-        }
-
-        anchors {
-            top: true
-            left: true
-            right: true
-            bottom: true
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: powerActions.close()
-
-            Rectangle {
-                id: powerConfirmCard
-
-                width: 320
-                implicitHeight: contentColumn.implicitHeight + 32
-                radius: 14
-                color: shell.bg
-                border.color: shell.dim
-                border.width: 1
-                anchors.centerIn: parent
-                opacity: powerActions.open ? 1 : 0
-                scale: powerActions.open ? 1 : 0.96
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                    }
-                }
-
-                ColumnLayout {
-                    id: contentColumn
-
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 12
-
-                    Text {
-                        text: powerActions.title
-                        color: shell.fg
-                        font.pixelSize: 14
-                        font.family: "JetBrainsMono Nerd Font Propo"
-                        font.weight: Font.DemiBold
-                    }
-
-                    Text {
-                        text: powerActions.message
-                        color: shell.muted
-                        font.pixelSize: 10
-                        font.family: "JetBrainsMono Nerd Font Propo"
-                        wrapMode: Text.WordWrap
-                        Layout.fillWidth: true
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 8
-
-                        Rectangle {
-                            id: cancelButton
-
-                            Layout.fillWidth: true
-                            height: 32
-                            radius: 9
-                            color: powerActions.selectedIndex === 0 ? Qt.alpha(shell.accent, 0.16) : Qt.alpha(shell.dim, 0.45)
-                            border.color: powerActions.selectedIndex === 0 ? Qt.alpha(shell.accent, 0.5) : Qt.alpha(shell.dim, 0.7)
-                            border.width: 1
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "Cancel"
-                                color: powerActions.selectedIndex === 0 ? shell.accent : shell.fg
-                                font.pixelSize: 10
-                                font.family: "JetBrainsMono Nerd Font Propo"
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                hoverEnabled: true
-                                onEntered: powerActions.selectedIndex = 0
-                                onClicked: powerActions.close()
-                            }
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 120
-                                }
-
-                            }
-
-                            Behavior on border.color {
-                                ColorAnimation {
-                                    duration: 120
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 140
-                        easing.type: Easing.OutCubic
-                    }
-
-                }
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 170
-                        easing.type: Easing.OutCubic
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
     // ALL IpcHandler here for keybinds
     IpcHandler {
         function handle() {
@@ -400,14 +228,6 @@ ShellRoot {
 
     IpcHandler {
         function handle() {
-            themePicker.showing = true;
-        }
-
-        target: "openThemePicker"
-    }
-
-    IpcHandler {
-        function handle() {
             bgPicker.showing = true;
         }
 
@@ -423,21 +243,24 @@ ShellRoot {
         target: "openScreenrecord"
     }
 
+    Process {
+        id: srChecker
+
+        command: ["bash", "-c", "test -f /tmp/sr_show && rm /tmp/sr_show"]
+        running: false
+        onExited: (exitCode) => {
+            if (exitCode === 0)
+                screenrecord.showing = true;
+        }
+    }
+
     Timer {
         id: srCheckTimer
-
         interval: 200
         onTriggered: {
             srCheckTimer.stop();
-            const proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", ""]; running: false }', shell, "srCheck");
-            proc.command = ["bash", "-c", "test -f /tmp/sr_show && rm /tmp/sr_show"];
-            proc.onExited.connect(function(exitCode) {
-                if (exitCode === 0)
-                    screenrecord.showing = true;
-
-                proc.destroy();
-            });
-            proc.running = true;
+            srChecker.running = false;
+            srChecker.running = true;
         }
     }
 

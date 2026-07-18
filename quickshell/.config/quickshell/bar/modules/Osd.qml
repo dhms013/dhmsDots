@@ -187,7 +187,7 @@ Item {
                                 color: root.t("fg", "#cdd6f4")
                                 font.pixelSize: 10
                                 font.weight: Font.DemiBold
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                                 elide: Text.ElideRight
                             }
 
@@ -196,7 +196,7 @@ Item {
                                 color: root.t("muted", "#585b70")
                                 font.pixelSize: 9
                                 font.weight: Font.Medium
-                                font.family: "JetBrains Mono"
+                                font.family: "JetBrainsMono Nerd Font"
                             }
                         }
 
@@ -206,7 +206,7 @@ Item {
                             text: root.service ? root.service.subtitle : ""
                             color: root.t("muted", "#585b70")
                             font.pixelSize: 9
-                            font.family: "JetBrains Mono"
+                            font.family: "JetBrainsMono Nerd Font"
                             elide: Text.ElideRight
                         }
                     }
