@@ -23,3 +23,10 @@ hl.monitor({
 	position = "0x-1080",
 	scale = "1",
 })
+
+hl.monitor({
+	output = "DP-2",
+	mode = "preferred",
+	position = "0x-1080",
+	scale = "1",
+})
