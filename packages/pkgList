@@ -45,6 +45,7 @@ noto-fonts-cjk
 noto-fonts-emoji
 npm
 nyancat
+ookla-speedtest-bin
 opencode
 pipes-rs
 plocate
@@ -59,7 +60,6 @@ qt6ct
 quickshell
 satty
 slurp
-speedtest-cli
 starship
 stow
 tmux

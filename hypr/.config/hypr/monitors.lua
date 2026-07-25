@@ -27,6 +27,7 @@ hl.monitor({
 hl.monitor({
 	output = "DP-2",
 	mode = "preferred",
-	position = "0x-1080",
+	position = "-1920x-1080",
+	transform = 2,
 	scale = "1",
 })
