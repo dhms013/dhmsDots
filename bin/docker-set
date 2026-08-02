@@ -10,12 +10,18 @@ else
   action=$1
 fi
 
-case "$action" in
-on)
-  sudo systemctl enable --now docker
+case "$status-$action" in
+active-on)
+  exit 0
   ;;
-off)
+active-off)
   sudo systemctl stop docker docker.socket
   sudo systemctl disable docker
+  ;;
+inactive-on)
+  sudo systemctl enable --now docker
+  ;;
+inactive-off)
+  exit 0
   ;;
 esac
