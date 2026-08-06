@@ -8,6 +8,9 @@ import "modules"
 PanelWindow {
     id: root
 
+    required property var modelData
+    screen: modelData
+
     property var launcher:      null
     property var calendarPopup: null
     property var notifServer: null

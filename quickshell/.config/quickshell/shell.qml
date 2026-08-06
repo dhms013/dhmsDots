@@ -14,25 +14,6 @@ ShellRoot {
     readonly property string currentDir: homeDir + "/.config/themes/current"
     readonly property string themeNamePath: currentDir + "/theme.name"
     readonly property string themeColorsPath: currentDir + "/theme/colors.toml"
-
-    function shellQuote(s) {
-        return "'" + String(s).replace(/'/g, "'\\''") + "'";
-    }
-
-    function reloadTheme() {
-        themeLoader.stdout.buf = "";
-        themeLoader.running = false;
-        reloadTimer.restart();
-    }
-
-    Timer {
-        id: reloadTimer
-        interval: 200
-        onTriggered: {
-            themeLoader.running = true;
-        }
-    }
-
     property string bg: "#1e1e2e"
     property string fg: "#cdd6f4"
     property string accent: "#89b4fa"
@@ -52,6 +33,16 @@ ShellRoot {
         "green": shell.green
     })
 
+    function shellQuote(s) {
+        return "'" + String(s).replace(/'/g, "'\\''") + "'";
+    }
+
+    function reloadTheme() {
+        themeLoader.stdout.buf = "";
+        themeLoader.running = false;
+        reloadTimer.restart();
+    }
+
     function parseToml(raw) {
         function get(key) {
             const rx = new RegExp('(?:^|\\n)' + key + '\\s*=\\s*"(#[0-9a-fA-F]{3,8})"');
@@ -69,6 +60,15 @@ ShellRoot {
         green = get("color2") || green;
     }
 
+    Timer {
+        id: reloadTimer
+
+        interval: 200
+        onTriggered: {
+            themeLoader.running = true;
+        }
+    }
+
     Process {
         id: themeLoader
 
@@ -78,6 +78,7 @@ ShellRoot {
             const raw = (themeLoader.stdout.buf || "").trim();
             if (raw.length > 0)
                 parseToml(raw);
+
             themeLoader.stdout.buf = "";
         }
 
@@ -105,17 +106,23 @@ ShellRoot {
 
     }
 
-    Bar {
-        launcher: appLauncher
-        notifServer: notifServer
-        bg: shell.bg
-        fg: shell.fg
-        accent: shell.accent
-        dim: shell.dim
-        highlight: shell.highlight
-        red: shell.red
-        green: shell.green
-        muted: shell.muted
+    Variants {
+        model: Quickshell.screens
+
+        Bar {
+            screen: modelData
+            launcher: appLauncher
+            notifServer: notifServer
+            bg: shell.bg
+            fg: shell.fg
+            accent: shell.accent
+            dim: shell.dim
+            highlight: shell.highlight
+            red: shell.red
+            green: shell.green
+            muted: shell.muted
+        }
+
     }
 
     Launcher {
@@ -251,11 +258,13 @@ ShellRoot {
         onExited: (exitCode) => {
             if (exitCode === 0)
                 screenrecord.showing = true;
+
         }
     }
 
     Timer {
         id: srCheckTimer
+
         interval: 200
         onTriggered: {
             srCheckTimer.stop();
