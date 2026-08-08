@@ -229,6 +229,7 @@ PanelWindow {
             MenuView {
                 id: menuView
 
+                launcherScreenName: screen.name
                 anchors.fill: parent
                 anchors.margins: 10
                 theme: launcher.theme
@@ -438,6 +439,7 @@ PanelWindow {
                 AppList {
                     id: appList
 
+                    launcherScreenName: screen.name
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     theme: launcher.theme

@@ -8,6 +8,7 @@ Item {
 
     property var theme: ({
     })
+    property string launcherScreenName: ""
     property var powerActions: null
     property bool active: false
     property var navStack: []
@@ -215,7 +216,8 @@ Item {
 
     function runCmd(cmd) {
         root.closeRequested();
-        Quickshell.execDetached(["bash", "-c", "export PATH=$HOME/.dhmsDots/bin:$PATH; " + cmd]);
+        const script = "export PATH=$HOME/.dhmsDots/bin:$PATH;\n" + "WS=$(hyprctl monitors -j | jq -r --arg s \"" + root.launcherScreenName + "\" '.[] | select(.name==$s) | .activeWorkspace.id' | head -1);\n" + "[ -n \"$WS\" ] && hyprctl dispatch workspace \"$WS\";\n" + "exec " + cmd;
+        Quickshell.execDetached(["bash", "-c", script]);
     }
 
     Component.onCompleted: flatItems = flattenTree(menuRoot, [])

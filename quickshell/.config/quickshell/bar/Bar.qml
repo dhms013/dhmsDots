@@ -96,6 +96,7 @@ Item {
 
                 Indicators {
                     anchors.verticalCenter: parent.verticalCenter
+                    launcherScreenName: screen.name
                     notifServer: root.notifServer
                     accent: root.accent
                     muted: root.muted

@@ -6,6 +6,7 @@ import Quickshell.Io
 Item {
     id: list
 
+    property string launcherScreenName: ""
     property var allApps: []
     property var filteredApps: []
     property int selectedIdx: 0
@@ -83,13 +84,14 @@ Item {
             var result = app.name;
             Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "wl-copy \\"' + result + '\\""]; running: true }', list);
             list.launched();
-            return;
+            return ;
         }
         const cmd = app.exec.replace(/%[uUfFdDnNickvm]/g, "").trim();
         if (!cmd)
             return ;
 
-        Quickshell.execDetached(["bash", "-c", cmd]);
+        const script = "WS=$(hyprctl monitors -j | jq -r --arg s \"" + list.launcherScreenName + "\" '.[] | select(.name==$s) | .activeWorkspace.id' | head -1);\n" + "[ -n \"$WS\" ] && hyprctl dispatch workspace \"$WS\";\n" + "exec uwsm-app -- bash -c " + cmd;
+        Quickshell.execDetached(["bash", "-c", script]);
         list.launched();
     }
 
