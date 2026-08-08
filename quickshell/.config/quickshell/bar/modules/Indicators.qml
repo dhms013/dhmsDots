@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Io
+import Quickshell
 
 Item {
     id: root
@@ -86,13 +87,10 @@ Item {
     // ── shell helpers ─────────────────────────────────────────────
     property int _cmdSeq: 0
 
-    function runCmd(cmd) {
-        var escapedCmd = cmd.replace(/"/g, '\\"');
-        Qt.createQmlObject(
-            'import Quickshell.Io; Process { command: ["bash", "-c", "setsid --fork bash -c \\"export PATH=\\$HOME/.dhmsDots:\\$PATH; ' + escapedCmd + '\\" &"]; running: true }',
-            root, "proc" + (++_cmdSeq)
-        )
-    }
+function runCmd(cmd) {
+    root.closeRequested();
+    Quickshell.execDetached(["bash", "-c", "export PATH=$HOME/.dhmsDots/bin:$PATH; " + cmd]);
+}
 
     // ── UI ────────────────────────────────────────────────────────
     Row {

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Io
 
 Item {
@@ -213,11 +214,8 @@ Item {
     }
 
     function runCmd(cmd) {
-        root.closeRequested(); // close launcher first
-        Qt.callLater(() => {
-            var escapedCmd = cmd.replace(/"/g, '\\"');
-            Qt.createQmlObject('import Quickshell.Io; Process { command: ["bash", "-c", "setsid --fork bash -c \\"export PATH=\\$HOME/.dhmsDots/bin:\\$PATH; ' + escapedCmd + '\\" &"]; running: true }', root, "dynProc" + (++_cmdSeq));
-        });
+        root.closeRequested();
+        Quickshell.execDetached(["bash", "-c", "export PATH=$HOME/.dhmsDots/bin:$PATH; " + cmd]);
     }
 
     Component.onCompleted: flatItems = flattenTree(menuRoot, [])
