@@ -1,5 +1,47 @@
 #!/bin/bash
+set -euo pipefail
+
+# Official > AUR > blackarch
+# BlackArch may only upgrade packages that no other source provides. Anything
+# BlackArch ships that also exists in the AUR is pinned out of the repo upgrade
+# and updated by the AUR phase instead.
 
 echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
-paru -Syyu --noconfirm --cleanafter
+PIN=""
+AUR_OK=1
+
+if pacman -Slq blackarch &>/dev/null; then
+  readarray -t cands < <(comm -12 \
+    <(pacman -Slq blackarch | sort) \
+    <(pacman -Qq | sort))
+
+  if [ "${#cands[@]}" -gt 0 ]; then
+    in_aur=""
+    for ((i = 0; i < ${#cands[@]}; i += 200)); do
+      batch=("${cands[@]:i:200}")
+      url="https://aur.archlinux.org/rpc/v5/info?$(printf 'arg[]=%s&' "${batch[@]}")"
+      if out=$(curl -fsS --connect-timeout 5 --max-time 15 "$url" | jq -r '.results[]?.Name' 2>/dev/null); then
+        in_aur+="${out}"$'\n'
+      else
+        AUR_OK=0
+        break
+      fi
+    done
+
+    if [ "$AUR_OK" -eq 0 ]; then
+      PIN=$(printf '%s\n' "${cands[@]}" | paste -sd, -) # AUR unreachable → pin everything
+    else
+      PIN=$(comm -12 \
+        <(printf '%s\n' "${cands[@]}" | sort) \
+        <(printf '%s\n' "$in_aur" | sort) | paste -sd, -)
+    fi
+  fi
+fi
+
+if [ -n "$PIN" ]; then
+  sudo pacman -Syu --noconfirm --ignore="$PIN"
+  paru -Sua --noconfirm --cleanafter
+else
+  paru -Syyu --noconfirm --cleanafter
+fi
