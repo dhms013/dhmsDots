@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "dhms.emojis",
+  "name": "Emojis",
+  "version": "1.0.0",
+  "author": "dhms",
+  "description": "Search, copy, and type emojis",
+  "kinds": [
+    "overlay"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "Emojis.qml"
+  }
+}

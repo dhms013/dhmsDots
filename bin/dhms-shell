@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# dhms:summary=Send an IPC call to the running Dhms shell
+# dhms:args=[-q] <target> <method> [args...]
+# dhms:examples=dhms shell shell ping | dhms-shell shell toggle dhms.menu '{"menu":"root"}'
+
+QUIET=0
+if [[ ${1:-} == "-q" ]]; then
+  QUIET=1
+  shift
+fi
+
+fail() {
+  (( QUIET )) && exit 0
+  echo "$1" >&2
+  exit 1
+}
+
+if (( $# == 0 )) || [[ $1 == "-h" || $1 == "--help" ]]; then
+  cat <<USAGE
+Usage: dhms-shell [-q] <target> <method> [args...]
+
+Forwards an IPC call to the running Dhms shell. The shell is expected
+to already be running; this command does not start it.
+
+Options:
+  -q  Quiet best-effort mode. Suppress output and return success even when
+      the shell, target, method, or arguments are unavailable.
+
+Examples:
+  dhms-shell shell ping
+  dhms-shell -q dhms.indicators refresh
+  dhms-shell shell listPlugins
+  dhms-shell shell toggle dhms.menu '{"menu":"root"}'
+USAGE
+  exit 0
+fi
+
+(( $# >= 2 )) || fail "Usage: dhms-shell <target> <method> [args...]"
+# Production path is the stowed one; quickshell matches IPC instances by the
+# exact -p string, so both sides must agree on it.
+SHELL_DIR="$HOME/.config/shell"
+[[ -d $SHELL_DIR ]] || SHELL_DIR="${DHMSDOTS_PATH:-$HOME/.dhmsDots}/shell/.config/shell"
+[[ -f $SHELL_DIR/shell.qml ]] || fail "dhms-shell config not found: $SHELL_DIR/shell.qml"
+
+# qs matches instances by display, and a caller from outside the session (an
+# ssh or TTY dhms-restart-shell, and the migrations it runs for) has none,
+# so recover it from the compositor socket.
+if [[ -z ${WAYLAND_DISPLAY:-} ]]; then
+  socket=$(ls -t "${XDG_RUNTIME_DIR:-/run/user/$UID}"/wayland-[0-9]* 2>/dev/null | grep -v '\.lock$' | head -n1)
+  [[ -n $socket ]] && export WAYLAND_DISPLAY=${socket##*/}
+fi
+
+if [[ $1 == "shell" && ( $2 == "summon" || $2 == "toggle" ) ]] && (( $# == 3 )); then
+  set -- "$1" "$2" "$3" "{}"
+fi
+
+# The -- keeps function names that shadow qs subcommands (e.g. show) as
+# positionals. qs reports connection failures with a nonzero exit, but IPC-level
+# failures (unknown target/function, bad arguments) go to stdout with exit 0.
+ipc_timeout=${DHMS_SHELL_IPC_TIMEOUT:-2s}
+output=$(timeout --kill-after=1s "$ipc_timeout" qs ipc -n -p "$SHELL_DIR" call -- "$@" 2>/dev/null)
+ipc_status=$?
+
+if (( ipc_status == 124 || ipc_status == 137 )); then
+  fail "dhms-shell is not responding"
+elif (( ipc_status != 0 )); then
+  fail "dhms-shell is not running"
+fi
+
+case $output in
+  "Target not found." | "Function not found." | "Too few arguments provided"* | "Too many arguments provided"*)
+    fail "$output"
+    ;;
+  # A starting shell answers on stdout and exits 0, so a ping reads it as up
+  # and the next call's answer as a result. It is as unreachable as none.
+  "Not ready to accept queries yet"*)
+    fail "dhms-shell is not ready"
+    ;;
+esac
+
+if (( !QUIET )) && [[ -n $output ]]; then
+  echo "$output"
+fi
+exit 0

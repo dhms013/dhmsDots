@@ -7,11 +7,17 @@ if [[ -z "$1" ]]; then
   exit 1
 fi
 
-BACKGROUND="$1"
+BACKGROUND="$(realpath -- "$1")" || exit 1
 CURRENT_BACKGROUND_LINK="$HOME/.config/themes/current/background"
+
+if [[ ! -f $BACKGROUND ]]; then
+  echo "File does not exist: $BACKGROUND" >&2
+  exit 1
+fi
 
 # Create symlink to the new background
 ln -nsf "$BACKGROUND" "$CURRENT_BACKGROUND_LINK"
 
-# Kill existing swaybg and start new one
-awww img $CURRENT_BACKGROUND_LINK --transition-type 'random' --transition-fps 60 --transition-duration 1
+# Update the live shell immediately when running; the shell also watches the
+# symlink, so this is belt-and-suspenders (and silent when no shell is up).
+dhms-shell -q background set "$BACKGROUND"

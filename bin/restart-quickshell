@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# restart-quickshell — bounce the dhms shell. The config lives at
+# ~/.config/shell (stowed), not the quickshell default dir, so the relaunch
+# must pass -p explicitly.
+
+pkill -x quickshell
+setsid uwsm-app -- quickshell -p "$HOME/.config/shell" >/dev/null 2>&1 &

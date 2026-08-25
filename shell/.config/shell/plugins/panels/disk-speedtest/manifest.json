@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "dhms.disk-speedtest",
+  "name": "Disk speed test",
+  "version": "1.0.0",
+  "author": "dhms",
+  "description": "Live disk write and read speed dials. Summon with: dhms-shell shell summon dhms.disk-speedtest",
+  "kinds": [
+    "panel"
+  ],
+  "entryPoints": {
+    "panel": "Panel.qml"
+  }
+}

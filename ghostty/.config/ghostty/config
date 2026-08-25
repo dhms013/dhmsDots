@@ -1,7 +1,7 @@
 config-file = "~/.config/themes/current/theme/ghostty.conf"
 
 background-opacity = 0.8
-font-size = 7
+font-size = 8
 resize-overlay = "never"
 cursor-style = bar
 cursor-style-blink = false

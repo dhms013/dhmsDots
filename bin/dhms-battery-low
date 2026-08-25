@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# dhms:summary=Send the low battery warning notification and run battery-low hooks.
+# dhms:args=<percentage>
+# dhms:hidden=true
+
+set -euo pipefail
+
+if (($# != 1)); then
+  echo "Usage: dhms-battery-low <percentage>" >&2
+  exit 1
+fi
+
+level=$1
+
+dhms-notification-send -g 󱐋 -u critical "Time to recharge!" "Battery is down to ${level}%" -i battery-caution -t 30000

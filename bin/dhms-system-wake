@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# dhms:summary=Wake displays and restore brightness after idle
+# dhms:group=system
+# dhms:name=wake
+# dhms:examples=dhms system wake
+
+dhms-brightness-display on
+dhms-brightness-keyboard restore
+dhms-hyprland-monitor-clamshell >/dev/null 2>&1 || true

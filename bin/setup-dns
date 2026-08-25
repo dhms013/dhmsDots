@@ -1,5 +1,33 @@
 #!/bin/bash
 
+# dhms:summary=Show or configure the system DNS provider (systemd-resolved)
+# dhms:args=[current|Cloudflare|Google|DHCP|Custom]
+# dhms:examples=setup-dns | setup-dns current | setup-dns Cloudflare
+
+RESOLVED_CONF=/etc/systemd/resolved.conf
+
+# Map the active resolved config back to a provider name. No DNS= lines (or
+# an empty one) means DHCP; known anycast sets map to their provider; anything
+# else is Custom.
+print_current_provider() {
+  local dns
+  dns=$(awk -F= '$1 == "DNS" { print $2; exit }' "$RESOLVED_CONF" 2>/dev/null | xargs)
+  if [[ -z $dns ]]; then
+    echo "DHCP"
+  elif grep -q '1\.1\.1\.1' <<<"$dns"; then
+    echo "Cloudflare"
+  elif grep -q '8\.8\.8\.8' <<<"$dns"; then
+    echo "Google"
+  else
+    echo "Custom"
+  fi
+}
+
+if [[ ${1:-} == "current" ]]; then
+  print_current_provider
+  exit 0
+fi
+
 lock_dns_to_resolved() {
   for file in /etc/systemd/network/*.network; do
     [[ -f $file ]] || continue

@@ -57,7 +57,7 @@ set_theme() {
     THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
   else
     echo "Theme '$THEME_NAME' does not exist"
-    notify-send check doesnt-exists
+    notify-send "Theme not found" "'$THEME_NAME' does not exist in ~/.config/themes/themeLists"
     exit 1
   fi
 
@@ -81,9 +81,28 @@ set_theme() {
 
 # Change background with theme
 set_background() {
-  ln -sf "$(find "$BG_DIR" -type f | sort | head -n 1)" "$LINKED_BG"
-  awww img "$LINKED_BG" --transition-type 'random' --transition-fps 60 --transition-duration 1
+  local bg_target
+  bg_target="$(find "$BG_DIR" -type f | sort | head -n 1)"
+  [[ -n $bg_target ]] || return 0
+
+  # Point the symlink at the resolved image, then push the RESOLVED path over
+  # IPC. Pushing the symlink path itself would string-match as "unchanged" on
+  # every switch after the first and leave only the ~1s watcher to repaint.
+  ln -nsf "$bg_target" "$LINKED_BG"
+  dhms-shell -q background set "$bg_target"
+}
+
+# Re-theme the running shell (bar, menus, popups) without a restart. Mirrors
+# omarchy-theme-set: base64 the theme's colors.toml and generated shell.toml
+# and hand them to `shell applyTheme`. Empty payloads are fine — applyTheme
+# treats them as "keep current".
+push_shell_theme() {
+  local colors_b64="" shell_b64=""
+  [[ -f $CURRENT_THEME_PATH/colors.toml ]] && colors_b64=$(base64 -w 0 "$CURRENT_THEME_PATH/colors.toml")
+  [[ -f $CURRENT_THEME_PATH/shell.toml ]] && shell_b64=$(base64 -w 0 "$CURRENT_THEME_PATH/shell.toml")
+  dhms-shell shell applyTheme "$colors_b64" "$shell_b64" >/dev/null 2>&1 || true
 }
 
 set_theme
 set_background
+push_shell_theme

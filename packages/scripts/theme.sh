@@ -22,7 +22,7 @@ set_initial_theme() {
 
 set_wallpaper() {
   echo "==> Setting wallpaper"
-  awww img ~/.config/themes/current/background
+  dhms-shell -q background set ~/.config/themes/current/background
 }
 
 link_theme_consumers() {

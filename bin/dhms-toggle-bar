@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# dhms:summary=Toggle bar visibility without killing the shell
+# dhms:args=[toggle|on|off]
+# dhms:examples=dhms toggle bar | dhms toggle bar off | dhms toggle bar on
+
+flag="$HOME/.local/state/dhms/toggles/bar-off"
+mkdir -p "$(dirname "$flag")"
+
+case "${1:-toggle}" in
+on)
+  rm -f "$flag"
+  ;;
+off)
+  touch "$flag"
+  ;;
+toggle)
+  if [[ -f $flag ]]; then
+    rm -f "$flag"
+  else
+    touch "$flag"
+  fi
+  ;;
+*)
+  echo "Usage: dhms-toggle-bar [toggle|on|off]" >&2
+  exit 1
+  ;;
+esac

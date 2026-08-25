@@ -1,0 +1,155 @@
+{
+  // dhms menu definition.
+  // JSONC is used for Neovim-friendly highlighting, comments, and trailing commas.
+  // IDs are object keys. Dotted IDs imply hierarchy: setup.security.fido2 belongs
+  // under setup.security. Kind is inferred: action -> action, target -> link,
+  // otherwise submenu. provider:"name" points a submenu at one of the shell's
+  // providers (the providers map in plugins/menu/Menu.qml); new provider names
+  // cannot be declared here. Optional fields: icon, aliases, title, when,
+  // checked, disabled — see omarchy's docs/menu.md for the full schema.
+  //
+  // Root: Update / Setup / System. Card height clamps to maxRows (shell.json
+  // "menu.maxRows", currently 5) with a one-row floor on empty states.
+
+  // Apps: hidden from the menu itself (SUPER+ALT+SPACE must stay clean) but
+  // still routable — SUPER+SPACE opens it via {"menu":"apps"}.
+  "apps": {
+    "icon": "󰀻",
+    "label": "Apps",
+    "aliases": [
+      "app",
+      "applications"
+    ],
+    "hidden": true,
+    "provider": "apps"
+  },
+
+  // Update
+  "update": {
+    "icon": "󰚰",
+    "label": "Update",
+    "aliases": [
+      "upgrade"
+    ],
+    "action": "floating-terminal dhms-update"
+  },
+
+  // Setup
+  "setup": {
+    "icon": "",
+    "label": "Setup",
+    "aliases": [
+      "settings"
+    ]
+  },
+  "setup.background": {
+    "icon": "󰸉",
+    "label": "Background",
+    "aliases": [
+      "background",
+      "wallpaper"
+    ],
+    "action": "dhms-shell shell summon dhms.image-picker"
+  },
+  "setup.dns": {
+    "icon": "󰇖",
+    "label": "DNS",
+    "action": "floating-terminal setup-dns"
+  },
+  "setup.docker": {
+    "icon": "󰡨",
+    "label": "Docker",
+    "action": "floating-terminal docker-set"
+  },
+  "setup.install": {
+    "icon": "󰉉",
+    "label": "Install"
+  },
+  "setup.install.packages": {
+    "icon": "󰣇",
+    "label": "Packages",
+    "action": "floating-terminal pkg-install-all"
+  },
+  "setup.install.themes": {
+    "icon": "󰸌",
+    "label": "Themes",
+    "action": "floating-terminal theme-install"
+  },
+  "setup.power-profile": {
+    "icon": "\udb81\udc0b",
+    "label": "Power Profiles",
+    "aliases": [
+      "power-profiles",
+      "powerprofiles"
+    ],
+    "provider": "power-profiles"
+  },
+  "setup.remove": {
+    "icon": "󰭌",
+    "label": "Remove",
+    "aliases": [
+      "uninstall"
+    ],
+    "action": "floating-terminal pkg-remove"
+  },
+  "setup.timezone": {
+    "icon": "\ueb22",
+    "label": "Timezone",
+    "action": "floating-terminal setup-timezone"
+  },
+  "setup.security": {
+    "icon": "",
+    "label": "Security"
+  },
+  "setup.security.fingerprint": {
+    "icon": "󰈷",
+    "label": "Fingerprint",
+    "when": "[[ -d /usr/lib/fprintd ]]",
+    "action": "floating-terminal setup-fingerprint"
+  },
+  "setup.security.fido2": {
+    "icon": "",
+    "label": "Fido2",
+    "action": "floating-terminal setup-fido2"
+  },
+
+  // System
+  "system": {
+    "icon": "",
+    "label": "System",
+    "aliases": [
+      "power-menu"
+    ]
+  },
+  "system.suspend": {
+    "icon": "󰒲",
+    "label": "Suspend",
+    "action": "dhms-suspend"
+  },
+  "system.lock": {
+    "icon": "\uf023",
+    "label": "Lock",
+    "action": "dhms-lock"
+  },
+  "system.logout": {
+    "icon": "󰍃",
+    "label": "Logout",
+    "action": "uwsm stop"
+  },
+  "system.reboot": {
+    "icon": "󰜉",
+    "label": "Reboot",
+    "aliases": [
+      "restart"
+    ],
+    "action": "systemctl reboot --no-wall"
+  },
+  "system.shutdown": {
+    "icon": "\uf011",
+    "label": "Shutdown",
+    "aliases": [
+      "poweroff"
+    ],
+    "action": "systemctl poweroff --no-wall"
+  }
+}

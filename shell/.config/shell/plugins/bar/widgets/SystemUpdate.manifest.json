@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "dhms.system-update",
+  "name": "dhms update",
+  "version": "1.0.0",
+  "author": "dhms",
+  "description": "Indicates available dhms updates",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "SystemUpdate.qml"
+  },
+  "barWidget": {
+    "displayName": "dhms update",
+    "description": "Indicates available dhms updates",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

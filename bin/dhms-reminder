@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# dhms-reminder — stub until a reminder daemon exists. The bar indicator polls
+# `dhms-reminder show --json`; report an empty list so it stays inactive.
+
+case "${1:-}" in
+  show)
+    [[ ${2:-} == "--json" ]] && printf '{"reminders":[]}\n'
+    ;;
+esac

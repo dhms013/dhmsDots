@@ -10,25 +10,26 @@ local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
 local browser = "uwsm-app -- zen-browser"
 local subBrowser = "uwsm-app -- zen-browser -P umbeldisco"
-local qs = "uwsm-app -- quickshell ipc call"
-local apps = qs .. " openApps handle"
-local keybinds = qs .. " openKeybindings handle"
-local menu = qs .. " openMenu handle"
-local powerMenu = qs .. " openSystem handle"
-local emoji = qs .. " openEmojiPicker handle"
-local notification = qs .. " openNotificationPanel handle"
-local notificationClear = qs .. " clearNotifications handle"
-local restartQuickshell = "restart-services quickshell"
-local backgroundPicker = qs .. " openBackgroundPicker handle"
-local themePicker = qs .. " openThemes handle"
-local screenrecord = qs .. " openScreenrecord handle"
+local qs = "dhms-shell shell toggle"
+local apps = qs .. ' dhms.menu \'{"menu":"apps"}\''
+local menu = qs .. ' dhms.menu \'{"menu":"root"}\''
+local powerMenu = qs .. ' dhms.menu \'{"menu":"system"}\''
+local emoji = qs .. " dhms.emojis"
+-- TODO(dhms): pending migration from old quickshell (no panel in new shell yet)
+-- local notification = "uwsm-app -- quickshell ipc call openNotificationPanel handle"
+-- local notificationClear = "uwsm-app -- quickshell ipc call clearNotifications handle"
+local keybinds = "dhms-menu-keybinds"
+local restartQuickshell = "restart-quickshell"
+local backgroundPicker = qs .. " dhms.image-picker"
+local themePicker = 'theme=$(dhms-theme-switcher); [ -n "$theme" ] && theme-set "$theme"'
+local screenrecord = "screenrecord"
 local whatsapp = 'uwsm-app -- "/opt/WhatsApp Desktop/whatsapp-linux-desktop"'
-local muteOutput = qs .. " osdVolumeMute handle"
-local muteInput = qs .. " osdMic handle"
-local volumeDown = qs .. " osdVolumeDown handle"
-local volumeUp = qs .. " osdVolumeUp handle"
-local brightUp = qs .. " osdBrightnessUp handle"
-local brightDown = qs .. " osdBrightnessDown handle"
+local muteOutput = "dhms-audio-output-volume mute-toggle"
+local muteInput = "dhms-audio-input-mute"
+local volumeDown = "dhms-audio-output-volume lower"
+local volumeUp = "dhms-audio-output-volume raise"
+local brightUp = "dhms-brightness-display +5%"
+local brightDown = "dhms-brightness-display 5%-"
 
 -- terminal
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal), { description = "terminal" })
@@ -44,8 +45,9 @@ hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
 hl.bind("SUPER + ALT + SPACE", hl.dsp.exec_cmd(menu), { description = "menu" })
 hl.bind("SUPER + ESCAPE", hl.dsp.exec_cmd(powerMenu), { description = "power menu" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd(emoji), { description = "emoji" })
-hl.bind("SUPER + N", hl.dsp.exec_cmd(notification), { description = "notification" })
-hl.bind("SHIFT + DELETE", hl.dsp.exec_cmd(notificationClear), { description = "clear notification" })
+-- TODO(dhms): pending migration from old quickshell (no panel in new shell yet)
+-- hl.bind("SUPER + N", hl.dsp.exec_cmd(notification), { description = "notification" })
+-- hl.bind("SHIFT + DELETE", hl.dsp.exec_cmd(notificationClear), { description = "clear notification" })
 hl.bind("SHIFT + ALT + DELETE", hl.dsp.exec_cmd(restartQuickshell), { description = "restart quickshell" })
 hl.bind("SUPER + SHIFT + SLASH", hl.dsp.exec_cmd(keybinds), { description = "keybindings" })
 hl.bind("SUPER + CTRL + SPACE", hl.dsp.exec_cmd(backgroundPicker), { description = "background" })
