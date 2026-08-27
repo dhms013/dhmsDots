@@ -19,7 +19,9 @@ local keybinds = "dhms-menu-keybinds"
 local restartQuickshell = "restart-quickshell"
 local backgroundPicker = qs .. " dhms.image-picker"
 local themePicker = 'theme=$(dhms-theme-switcher); [ -n "$theme" ] && theme-set "$theme"'
-local screenrecord = "screenrecord"
+local screenrecord = "screenrecord --stop-recording || "
+	.. qs
+	.. ' dhms.menu \'{"menu":"trigger.capture.screenrecord"}\''
 local whatsapp = 'uwsm-app -- "/opt/WhatsApp Desktop/whatsapp-linux-desktop"'
 local muteOutput = "dhms-audio-output-volume mute-toggle"
 local muteInput = "dhms-audio-input-mute"
@@ -95,22 +97,22 @@ hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true, description
 hl.bind(
 	"SUPER + code:20",
 	hl.dsp.window.resize({ x = -100, y = 0, relative = true }),
-	{ description = "Expand window left" }
+	{ description = "Shrink window left" }
 )
 hl.bind(
 	"SUPER + code:21",
 	hl.dsp.window.resize({ x = 100, y = 0, relative = true }),
-	{ description = "Shrink window left" }
+	{ description = "Expand window left" }
 )
 hl.bind(
 	"SUPER + SHIFT + code:20",
 	hl.dsp.window.resize({ x = 0, y = -100, relative = true }),
-	{ description = "Shrink window up" }
+	{ description = "Expand window up" }
 )
 hl.bind(
 	"SUPER + SHIFT + code:21",
 	hl.dsp.window.resize({ x = 0, y = 100, relative = true }),
-	{ description = "Expand window down" }
+	{ description = "Shrink window down" }
 )
 
 -- toggle system
@@ -122,6 +124,23 @@ hl.bind("SUPER + X", hl.dsp.send_shortcut({ mods = "CTRL", key = "X" }), { descr
 hl.bind("SUPER + C", hl.dsp.send_shortcut({ mods = "CTRL", key = "Insert" }), { description = "copy" })
 hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert" }), { description = "paste" })
 -- hl.bind("XF86PowerOff", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
+
+-- notification controls
+hl.bind(
+	"SUPER + SHIFT + comma",
+	hl.dsp.exec_cmd("dhms-shell notifications dismissAll"),
+	{ description = "Dismiss all notifications" }
+)
+hl.bind(
+	"SUPER + CTRL + comma",
+	hl.dsp.exec_cmd("dhms-shell notifications toggleDnd"),
+	{ description = "Toggle silencing notifications" }
+)
+hl.bind(
+	"SUPER + SHIFT + ALT + comma",
+	hl.dsp.exec_cmd("dhms-shell notifications showHistory"),
+	{ description = "Open notification history" }
+)
 
 -- screen capture
 hl.bind("PRINT", hl.dsp.exec_cmd("screenshot"), { description = "screenshot" })

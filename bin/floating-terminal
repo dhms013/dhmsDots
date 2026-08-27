@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cmd="$*"
-exec setsid uwsm-app -- xdg-terminal-exec --app-id=dhms.terminal --title=dhms.$cmd -e bash -c "show-logo; $cmd; show-done"
+exec uwsm-app -- xdg-terminal-exec --app-id=dhms.terminal --title="dhms.$cmd" -e bash -c "show-logo; $cmd; show-done"

@@ -537,15 +537,23 @@ Remaining indicators: `Dnd.qml`, `ScreenRecording.qml`, `StayAwake.qml`.
 `dhms-hyprland-session-locked`, `dhms-system-wake`, `dhms-network-speedtest`,
 `dhms-disk-speedtest` — all sed omarchy→dhms, bash -n clean.
 
-## First-run verification (2026-08-24)
+## Screenrecord + DNS batch (2026-08-28)
 
-`qs -p ~/.dhmsDots/shell/.config/shell`: loads clean. Fixed during run:
-- 4 stale `dotsPath + "/shell/..."` paths (emojis.json, ImagePicker dir,
-  hidden-entries.sh, clipboard capture.sh) -> `Quickshell.shellDir + ...`
-- `bin/dhms-reminder` stub added (bar indicator polls `show --json`)
-- PluginRegistry inotify watcher parks on `sleep infinity` when inotifywait
-  is absent instead of error-looping
-Live checks passed: IPC ping ok, 36 plugins registered with expected enabled/
-disabled sets, Hyprland layers show dhms-bar (1920x26) + dhms-background +
-dhms-menu overlay on summon. Remaining WARN (portal app-id) is environmental,
-not ours.
+### Screenrecord
+- **Menu** (`plugins/menu/menu.jsonc`): Added `trigger.capture.screenrecord` submenu with 3 options from old quickshell (no audio / desktop audio / desktop+mic), icons `` (old quickshell glyph). Parent menus `Trigger` / `Capture` removed — ALT+PRINT toggles directly.
+- **Keybind** (`hypr/.config/hypr/keybindings.lua:22,137`): `ALT+PRINT` runs `screenrecord --stop-recording || dhms-shell shell toggle dhms.menu '{"menu":"trigger.capture.screenrecord"}'` — stops if recording, else opens menu.
+- **Indicator** (`plugins/bar/indicators/ScreenRecording.qml`): Auto-refresh every 5s + 600ms post-click probe (mirrors StayAwake pattern). Click behavior matches ALT+PRINT: stop if recording, else toggle menu.
+- **Script** (`bin/screenrecord`): Fixed to keep `gpu-screen-recorder` alive (removed `</dev/null >/dev/null 2>&1 & disown` that caused early exit). pgrep `^gpu-screen-recorder` now works for indicator.
+
+### DNS panel
+- **Panel.qml `setDns()`**: All 4 pills (DHCP/Cloudflare/Google/Custom) now launch `floating-terminal setup-dns <provider>` via `root.bar.run()`.
+- **Probe**: `dnsCommand("")` → `setup-dns current` (non-interactive). `dnsCommand(provider)` builds `setup-dns <provider>`. `pendingDnsProvider` + dead actionProc DNS branch removed.
+- **Status**: `floating-terminal setup-dns <provider>` works perfectly from shell → terminal opens, runs `show-logo`, then `setup-dns`, then `show-done` (waits for keypress). **BUT** when invoked from panel via `root.bar.run("floating-terminal setup-dns ...")`, the terminal spawns and immediately closes after `show-logo` — `setup-dns` never runs, `show-done` never reached. The command works perfectly when typed in shell; only fails via panel's `bar.run()` → `Util.execDetached(["bash", "-lc", ...])`.
+
+### Notification shortcuts (kept 3 of 5)
+- `SUPER+SHIFT+comma` → dismiss all
+- `SUPER+CTRL+comma` → toggle DND
+- `SUPER+SHIFT+ALT+comma` → notification history
+- Removed: dismiss last, invoke last
+
+(End of file - total 551 lines)
