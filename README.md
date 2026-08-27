@@ -106,7 +106,7 @@ This repo manages configs for:
 - hyprland-preview-share-picker
 - kitty
 - nvim
-- quickshell (based on [anomshell](https://github.com/atif-1402/anomshell/tree/main))
+- quickshell (based on [Omarchy](https://omarchy.org/))
 - sddm theme
 - starship
 - themes
@@ -154,7 +154,6 @@ This will:
 
 1. [Omarchy](https://omarchy.org/) — my first Linux setup, provided so much inspiration for this repo
 2. [Typecraft Dev](https://github.com/typecraft-dev) — [install.sh](./install.sh) is adapted from [Crucible](https://github.com/typecraft-dev/crucible/tree/main)
-3. [anomshell](https://github.com/atif-1402/anomshell/tree/main) — for the beautifull yet simple quickshell
 
 ---
 

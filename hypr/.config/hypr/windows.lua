@@ -93,7 +93,6 @@ hl.window_rule({
 	name = "imv",
 	match = { class = "^(imv)$" },
 	float = true,
-	stay_focused = true,
 	center = true,
 })
 
@@ -102,7 +101,6 @@ hl.window_rule({
 	name = "mpv",
 	match = { class = "^(mpv)$" },
 	float = true,
-	stay_focused = true,
 	center = true,
 	opacity = "1 override",
 })
@@ -112,7 +110,6 @@ hl.window_rule({
 	name = "dhms-terminal",
 	match = { class = "^(dhms\\.terminal)$" },
 	float = true,
-	stay_focused = true,
 	center = true,
 	idle_inhibit = "focus",
 	size = { 600, 400 },
@@ -123,7 +120,6 @@ hl.window_rule({
 	name = "satty",
 	match = { class = "^(com\\.gabm\\.satty)$" },
 	float = true,
-	stay_focused = true,
 	center = true,
 	size = { 800, 600 },
 })

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "dhms.system-monitor",
+  "name": "System Monitor",
+  "version": "1.0.0",
+  "author": "dhms",
+  "description": "Live CPU and RAM usage (RAM includes swap)",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "SystemMonitor.qml"
+  },
+  "barWidget": {
+    "displayName": "System Monitor",
+    "description": "Live CPU and RAM usage (RAM includes swap)",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

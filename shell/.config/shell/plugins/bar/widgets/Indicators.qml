@@ -8,7 +8,7 @@ BarWidget {
   id: root
   moduleName: "dhms.indicators"
 
-  readonly property var defaultIndicatorEntries: [ "Dictation", "ScreenRecording", "Reminder", "NightLight", "Dnd", "StayAwake" ]
+  readonly property var defaultIndicatorEntries: [ "Dictation", "Reminder", "NightLight", "Dnd", "ScreenRecording", "StayAwake" ]
   readonly property var indicatorEntries: indicatorEntriesFromSettings(settings)
   property var activeIndicatorIds: []
   property var indicatorActiveStates: ({})

@@ -55,6 +55,8 @@ Example `shell.json` (bar subtree only shown):
 | Name | What it does | Interactions |
 |---|---|---|
 | `dhms.menu` | dhms menu launcher | left = menu · right = terminal |
+| `dhms.system-monitor` | Live CPU + RAM usage (RAM includes swap) | left = btop |
+| `dhms.network-speed` | Live download/upload throughput | hover = session totals |
 | `dhms.workspaces` | Hyprland workspace switcher | left = focus workspace |
 | `dhms.clock` | Date/time label + popup with a month grid, ISO week numbers, and month stepping | left = popup · right = cycle label format · middle = timezone selector |
 | `dhms.media` | MPRIS now-playing — scrolling track + artist, cover-art popup | left = play/pause · middle = next · scroll = prev/next · right = popup |

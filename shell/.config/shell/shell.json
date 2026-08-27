@@ -4,7 +4,6 @@
     "maxRows": 5
   },
   "idle": {
-    "screensaver": 150,
     "lock": 300
   },
   "bar": {
@@ -14,7 +13,7 @@
     "layout": {
       "left": [
         {
-          "id": "dhms.menu"
+          "id": "dhms.system-monitor"
         },
         {
           "id": "dhms.workspaces"
@@ -41,6 +40,9 @@
         }
       ],
       "right": [
+        {
+          "id": "dhms.network-speed"
+        },
         {
           "id": "dhms.tray"
         },

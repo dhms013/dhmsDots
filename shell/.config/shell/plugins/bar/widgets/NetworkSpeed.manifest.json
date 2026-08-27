@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "dhms.network-speed",
+  "name": "Network Speed",
+  "version": "1.0.0",
+  "author": "dhms",
+  "description": "Live download and upload throughput",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "NetworkSpeed.qml"
+  },
+  "barWidget": {
+    "displayName": "Network Speed",
+    "description": "Live download and upload throughput",
+    "category": "Network",
+    "allowMultiple": false
+  }
+}

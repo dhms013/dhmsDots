@@ -97,6 +97,9 @@ Panel {
   property string passwordSsid: ""
   property string passwordText: ""
   property string identityText: ""
+  // IP/gateway render masked until revealed — same posture as the Wi-Fi QR
+  // card's show-password row. One toggle covers both rows.
+  property bool addressesVisible: false
 
   // ConnectionFailReason values as a plain object, so Model.js helpers stay
   // pure JS and Node-testable.
@@ -343,6 +346,7 @@ Panel {
       routerPingLatency = -1
       internetPingLatency = -1
       internetPingPacketLoss = 0
+      addressesVisible = false
       setScannerEnabled(false)
     }
   }
@@ -448,6 +452,12 @@ Panel {
   function copyToClipboard(value) {
     if (!value || !root.bar) return
     Quickshell.execDetached(["bash", "-c", "printf %s " + Util.shellQuote(value) + " | wl-copy"])
+  }
+
+  // Keeps dots/colons so the address shape stays readable while every hex
+  // digit and octet numeral is hidden.
+  function maskAddress(value) {
+    return String(value || "").replace(/[0-9a-f]/gi, "\u2022")
   }
 
   readonly property string icon: Model.connectionIcon(kind, signalStrength)
@@ -1251,14 +1261,14 @@ Panel {
 
           InfoLabel { text: "IP Address" }
           DetailValue {
-            text: root.info.ip || "--"
-            copyable: !!root.info.ip
+            text: root.info.ip ? (root.addressesVisible ? root.info.ip : root.maskAddress(root.info.ip)) : "--"
+            concealable: !!root.info.ip
             tooltipText: "Copy IP"
           }
           InfoLabel { text: "Gateway" }
           DetailValue {
-            text: root.info.gateway || "--"
-            copyable: !!root.info.gateway
+            text: root.info.gateway ? (root.addressesVisible ? root.info.gateway : root.maskAddress(root.info.gateway)) : "--"
+            concealable: !!root.info.gateway
             tooltipText: "Copy gateway"
           }
         }
@@ -1924,7 +1934,11 @@ Panel {
 
   component DetailValue: InfoValue {
     property bool copyable: false
+    // Concealable values start masked; first click reveals, later clicks copy.
+    property bool concealable: false
     property string tooltipText: "Copy to clipboard"
+
+    readonly property bool concealed: concealable && !root.addressesVisible
 
     Layout.fillWidth: true
     horizontalAlignment: Text.AlignRight
@@ -1932,15 +1946,21 @@ Panel {
     MouseArea {
       id: valueMouse
       anchors.fill: parent
-      enabled: copyable && parent.text !== ""
+      enabled: (copyable || concealable) && parent.text !== "" && parent.text !== "--"
       hoverEnabled: enabled
       cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-      onClicked: root.copyToClipboard(parent.text)
+      onClicked: {
+        if (parent.concealed) {
+          root.addressesVisible = true
+          return
+        }
+        root.copyToClipboard(parent.text)
+      }
     }
 
     PanelToolTip {
       visible: valueMouse.enabled && valueMouse.containsMouse
-      text: tooltipText
+      text: concealed ? "Show address" : tooltipText
       fontFamily: root.bar.fontFamily
     }
   }

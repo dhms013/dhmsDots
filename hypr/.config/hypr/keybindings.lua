@@ -15,9 +15,6 @@ local apps = qs .. ' dhms.menu \'{"menu":"apps"}\''
 local menu = qs .. ' dhms.menu \'{"menu":"root"}\''
 local powerMenu = qs .. ' dhms.menu \'{"menu":"system"}\''
 local emoji = qs .. " dhms.emojis"
--- TODO(dhms): pending migration from old quickshell (no panel in new shell yet)
--- local notification = "uwsm-app -- quickshell ipc call openNotificationPanel handle"
--- local notificationClear = "uwsm-app -- quickshell ipc call clearNotifications handle"
 local keybinds = "dhms-menu-keybinds"
 local restartQuickshell = "restart-quickshell"
 local backgroundPicker = qs .. " dhms.image-picker"
@@ -45,9 +42,6 @@ hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
 hl.bind("SUPER + ALT + SPACE", hl.dsp.exec_cmd(menu), { description = "menu" })
 hl.bind("SUPER + ESCAPE", hl.dsp.exec_cmd(powerMenu), { description = "power menu" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd(emoji), { description = "emoji" })
--- TODO(dhms): pending migration from old quickshell (no panel in new shell yet)
--- hl.bind("SUPER + N", hl.dsp.exec_cmd(notification), { description = "notification" })
--- hl.bind("SHIFT + DELETE", hl.dsp.exec_cmd(notificationClear), { description = "clear notification" })
 hl.bind("SHIFT + ALT + DELETE", hl.dsp.exec_cmd(restartQuickshell), { description = "restart quickshell" })
 hl.bind("SUPER + SHIFT + SLASH", hl.dsp.exec_cmd(keybinds), { description = "keybindings" })
 hl.bind("SUPER + CTRL + SPACE", hl.dsp.exec_cmd(backgroundPicker), { description = "background" })
@@ -61,9 +55,9 @@ hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("Telegram"), { description = "teleg
 hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd(whatsapp), { description = "whatsapp" })
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(fileManager), { description = "file manager" })
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd(editor), { description = "editor" })
-hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("dhms-terminal wiremix"), { description = "audio" })
-hl.bind("SUPER + CTRL + B", hl.dsp.exec_cmd("dhms-terminal bluetui"), { description = "bluetooth" })
-hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd("dhms-terminal impala"), { description = "wifi" })
+hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd(qs .. " dhms.audio"), { description = "audio" })
+hl.bind("SUPER + CTRL + B", hl.dsp.exec_cmd(qs .. " dhms.bluetooth"), { description = "bluetooth" })
+hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd(qs .. " dhms.network"), { description = "network" })
 
 -- window's management
 hl.bind("SUPER + Q", hl.dsp.window.close(), { description = "Close window" })
