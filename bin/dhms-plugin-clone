@@ -87,7 +87,8 @@ Copies a built-in plugin into ~/.config/dhms/plugins/<username>.<id>/ so you
 can edit it freely. The clone keeps all of the source plugin's files and kinds
 and uses "My <name>" as its display name, then replaces the built-in with the
 clone. The username prefix keeps the id yours, so a shared clone does not
-collide with anyone else's. --edit opens the clone in \$EDITOR afterwards.
+collide with anyone else's. Set DHMS_CLONE_PREFIX to override the prefix when
+the default would produce a reserved dhms.* id. --edit opens the clone in \$EDITOR afterwards.
 
 USAGE
 }
@@ -128,7 +129,9 @@ source_info=$(dhms-plugin-catalog | jq -r --arg id "$source_id" '
 [[ -n $source_info ]] || fail "unknown built-in plugin: $source_id"
 IFS=$'\t' read -r source_dir source_manifest source_name <<<"$source_info"
 
-new_id="${USER:-$(id -un)}.${source_id#dhms.}"
+new_id="${DHMS_CLONE_PREFIX:-${USER:-$(id -un)}}.${source_id#dhms.}"
+[[ $new_id != dhms.* ]] || \
+  fail "clone id '$new_id' would collide with the reserved dhms.* namespace; set DHMS_CLONE_PREFIX to another prefix"
 display_name="My $source_name"
 target_dir="$PLUGINS_DIR/$new_id"
 [[ ! -e $target_dir && ! -L $target_dir ]] || fail "$target_dir already exists"

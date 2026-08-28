@@ -9,7 +9,7 @@ First-party non-bar plugins are enabled unless listed in `disabledPlugins[]`;
 at startup; other panels, overlays, and menus are loaded on demand.
 
 User-installed plugins live alongside these conceptually but on disk under
-`~/.config/quickshell/plugins/<plugin-id>/` rather than in this directory.
+`~/.config/dhms/plugins/<plugin-id>/` rather than in this directory.
 
 | Plugin        | id                        | kinds                   | entry point                           |
 |---------------|---------------------------|-------------------------|---------------------------------------|
@@ -44,9 +44,9 @@ own plugin directories, each with its own `manifest.json`.
 ## Bar
 
 The built-in status bar and default full-bar option. Layout lives in the
-top-level `bar:` subtree of `~/.config/quickshell/shell.json` (with the shell
-providing [`config/dhms/shell.json`](../../config/dhms/shell.json) when
-the user has no file). See [`bar/README.md`](bar/README.md) for the widget catalogue
+top-level `bar:` subtree of `~/.config/shell/shell.json` (with the shell
+providing [`config/shell.json`](../config/shell.json) when the user has no
+file). See [`bar/README.md`](bar/README.md) for the widget catalogue
 and customization schema.
 
 ## Image picker
@@ -99,17 +99,18 @@ summoned through the shell (`dhms-shell shell summon dhms.menu ...`),
 so it shares the long-running `dhms-shell` process instead of starting a
 second Quickshell instance.
 
-The menu definition lives outside the shell host code:
+The menu definition lives in a single in-tree file:
 
-- defaults: `default/dhms/dhms-menu.jsonc`
-- user extensions: `~/.config/quickshell/extensions/dhms-menu.jsonc`
+- [`menu.jsonc`](./menu/menu.jsonc), next to `Menu.qml` in the menu plugin
 
-The shell parses both JSONC files at startup (with `watchChanges: true`
+The shell parses that JSONC file at startup (with `watchChanges: true`
 so edits take effect without a restart), evaluates `when:` / `checked:`
 bash expressions in a single batched subprocess, and executes the
 selected `action:` string directly via `Quickshell.execDetached`. The
 long-running shell process keeps the parsed menu in memory, so the
 keybind → IPC → visible path costs ~30ms cold.
+To fork the menu, clone the plugin with `dhms plugin clone dhms.menu`
+and edit the copy under `~/.config/dhms/plugins/`.
 
 ## Coming soon
 

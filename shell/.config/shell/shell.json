@@ -44,10 +44,10 @@
           "id": "dhms.monitor"
         },
         {
-          "id": "dhms.bluetooth"
+          "id": "dhms.network"
         },
         {
-          "id": "dhms.network"
+          "id": "dhms.bluetooth"
         },
         {
           "id": "dhms.audio"

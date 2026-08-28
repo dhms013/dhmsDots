@@ -597,19 +597,19 @@ Panel {
         }) : "{}");
     }
 
-// Setup-dns needs root and a TTY for sudo, so every pill hands off to a
-  // floating terminal instead of running headless in a Process (which would
-  // silently do nothing without a password prompt).
-  function setDns(provider) {
-    if (!root.bar || !provider || actionProc.running) {
-      console.log("setDns blocked: bar=" + !!root.bar + " provider=" + provider + " actionProc.running=" + actionProc.running)
-      return
+    // Setup-dns needs root and a TTY for sudo, so every pill hands off to a
+    // floating terminal instead of running headless in a Process (which would
+    // silently do nothing without a password prompt).
+    function setDns(provider) {
+        if (!root.bar || !provider || actionProc.running) {
+            console.log("setDns blocked: bar=" + !!root.bar + " provider=" + provider + " actionProc.running=" + actionProc.running);
+            return ;
+        }
+        var cmd = "floating-terminal setup-dns " + Util.shellQuote(provider);
+        console.log("setDns running: " + cmd);
+        root.bar.run(cmd);
+        root.close();
     }
-    var cmd = "floating-terminal setup-dns " + Util.shellQuote(provider)
-    console.log("setDns running: " + cmd)
-    root.bar.run(cmd)
-    root.close()
-  }
 
     function requiresCredentials(security) {
         return Model.requiresCredentials(security, WifiSecurityType.Open, WifiSecurityType.Owe);
@@ -1017,13 +1017,13 @@ Panel {
     Timer {
         id: detailsPoll
 
-        interval: 1500
+        interval: 1000
         repeat: true
         running: root.opened
         onTriggered: {
-            if (!detailsProc.running) {
+            if (!detailsProc.running)
                 detailsProc.running = true;
-            }
+
         }
     }
 
@@ -1101,17 +1101,17 @@ Panel {
     }
 
     BarIconButton {
+        // open() is enough: onOpenedChanged runs refresh(true), which defers the
+        // PHY scan past the first frame. The bare refresh() that used to follow
+        // took the no-scan branch and set scannerEnabled synchronously, undoing
+        // that deferral and stalling the open on NetworkManager's AP flood.
+
         id: button
 
         anchors.fill: parent
         bar: root.bar
         text: root.icon
         onPressed: function(b) {
-            // open() is enough: onOpenedChanged runs refresh(true), which defers the
-            // PHY scan past the first frame. The bare refresh() that used to follow
-            // took the no-scan branch and set scannerEnabled synchronously, undoing
-            // that deferral and stalling the open on NetworkManager's AP flood.
-
             if (root.opened)
                 root.close();
             else
@@ -1753,9 +1753,9 @@ Panel {
                     model: root.wifiStationAvailable ? root.wifiNetworks : []
                     currentIndex: root.selectedIndex
                     onCurrentIndexChanged: {
-                        if (currentIndex >= 0) {
+                        if (currentIndex >= 0)
                             positionViewAtIndex(currentIndex, ListView.Contain);
-                        }
+
                     }
 
                     ScrollBar.vertical: ScrollBar {
@@ -2006,7 +2006,8 @@ Panel {
             onClicked: {
                 if (!row.net)
                     return ;
- // Resync cursor in case keyboard nav moved it away while the mouse
+
+                // Resync cursor in case keyboard nav moved it away while the mouse
                 // stayed parked on this row — the click target is unambiguously here.
                 root.cursorActive = true;
                 root.focusSection = "wifi";
@@ -2096,9 +2097,9 @@ Panel {
                         }
                     }
                     onClicked: {
-                        if (row.net) {
+                        if (row.net)
                             root.forget(row.net);
-                        }
+
                     }
                 }
 
@@ -2196,20 +2197,20 @@ Panel {
                 text: row.isPasswordOpen ? root.identityText : ""
                 onAccepted: pwField.forceActiveFocus()
                 onTextChanged: {
-                    if (row.isPasswordOpen && text !== root.identityText) {
+                    if (row.isPasswordOpen && text !== root.identityText)
                         root.identityText = text;
-                    }
+
                 }
                 Keys.onEscapePressed: root.cancelPasswordPrompt()
                 onVisibleChanged: {
-                    if (visible) {
+                    if (visible)
                         Qt.callLater(forceActiveFocus);
-                    }
+
                 }
                 Component.onCompleted: {
-                    if (visible) {
+                    if (visible)
                         Qt.callLater(forceActiveFocus);
-                    }
+
                 }
             }
 
@@ -2233,20 +2234,20 @@ Panel {
                 text: row.isPasswordOpen ? root.passwordText : ""
                 onAccepted: row.submitCredentials()
                 onTextChanged: {
-                    if (row.isPasswordOpen && text !== root.passwordText) {
+                    if (row.isPasswordOpen && text !== root.passwordText)
                         root.passwordText = text;
-                    }
+
                 }
                 Keys.onEscapePressed: root.cancelPasswordPrompt()
                 onVisibleChanged: {
-                    if (visible && !row.isEnterprise) {
+                    if (visible && !row.isEnterprise)
                         Qt.callLater(forceActiveFocus);
-                    }
+
                 }
                 Component.onCompleted: {
-                    if (visible && !row.isEnterprise) {
+                    if (visible && !row.isEnterprise)
                         Qt.callLater(forceActiveFocus);
-                    }
+
                 }
             }
 

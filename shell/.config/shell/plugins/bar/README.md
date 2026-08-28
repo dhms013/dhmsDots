@@ -9,14 +9,14 @@ the shell for its whole session.
 - `Bar.qml` is dhms-owned bar engine code, loaded by the dhms-shell host. Users should not edit it directly.
 - `widgets/` holds simple first-party bar widgets with sibling manifests.
 - Feature plugins such as `../panels/audio/`, `../panels/network/`, `../panels/power/`, and `../agents/` provide richer popup bar plugins.
-- The bar receives its config from the host shell as a `barConfig` property; the host loads it from `~/.config/quickshell/shell.json` (or `config/dhms/shell.json` when the user has no file).
-- `dhms bar position` updates only the user shell.json file.
+- The bar receives its config from the host shell as a `barConfig` property; the host loads it from `~/.config/shell/shell.json` (or `$DHMSDOTS_PATH/shell/.config/shell/config/shell.json` when the user has no file).
+- Moving the bar via the drag gesture persists the new position into the user `shell.json`.
 
 ## Customizing
 
-The bar config lives under the `bar:` key of [`~/.config/quickshell/shell.json`](../../README.md#shelljson-shape). Out of the box the shell uses [`config/dhms/shell.json`](../../../config/dhms/shell.json). Once you customize anything via the bar gestures, `dhms bar ...`, or by editing shell.json directly, your file is canonical — there is no deep-merge.
+The bar config lives under the `bar:` key of [`~/.config/shell/shell.json`](../../README.md#shelljson-shape). Out of the box the shell uses [`config/shell.json`](../../config/shell.json). Once you customize anything via the bar gestures or by editing shell.json directly, your file is canonical — there is no deep-merge.
 
-The bar is configured directly on the bar itself: drag empty bar space (or click-and-hold) to move the bar to another screen edge, double-left-click empty center-bar space to toggle transparency, and drag widgets to reorder them. The `dhms bar position`, `dhms bar transparent`, `dhms bar move`, and `dhms bar set` commands do the same from scripts. Enable or disable widgets with `dhms plugin enable` and `dhms plugin disable` (widget ids come from `dhms plugin list`).
+The bar is configured directly on the bar itself: drag empty bar space (or click-and-hold) to move the bar to another screen edge, double-left-click empty center-bar space to toggle transparency, and drag widgets to reorder them. From scripts, use `dhms-shell shell moveBarWidget`, `dhms-shell shell setBarWidget`, and `dhms plugin enable <id> <placement>` for the same layout edits. Enable or disable widgets with `dhms plugin enable` and `dhms plugin disable` (widget ids come from `dhms plugin list`).
 
 Example `shell.json` (bar subtree only shown):
 
@@ -93,7 +93,7 @@ Command module:
     "layout": {
       "right": [
         { "id": "dhms.tray" },
-        { "id": "vpn", "type": "command", "exec": "~/.config/quickshell/bar/scripts/vpn-status", "interval": 5, "tooltip": "VPN", "onClick": "nm-connection-editor" },
+        { "id": "vpn", "type": "command", "exec": "$HOME/bin/vpn-status", "interval": 5, "tooltip": "VPN", "onClick": "nm-connection-editor" },
         { "id": "dhms.audio" }
       ]
     }
@@ -123,7 +123,7 @@ QML module:
 }
 ```
 
-Then create `~/.config/quickshell/bar/modules/gpu.qml`. If you want to store it elsewhere, add a `source` path.
+Then create e.g. `~/.config/dhms/bar/modules/gpu.qml`. If you want to store it elsewhere, add a `source` path.
 
 Custom QML modules should be an `Item` with `implicitWidth` and `implicitHeight`. They may optionally define these properties, which the bar fills after loading:
 
@@ -148,7 +148,7 @@ Item {
 
   MouseArea {
     anchors.fill: parent
-    onClicked: if (bar) bar.run("dhms-launch-or-focus-tui btop")
+    onClicked: if (bar) bar.run("dhms-terminal btop")
   }
 }
 ```
@@ -175,8 +175,8 @@ richer popup plugins live in feature directories such as `../panels/audio/`,
 `dhms.network`, and `dhms.clock`.
 
 Third-party widgets ship as separate plugins under
-`~/.config/quickshell/plugins/<plugin-id>/` with their own `manifest.json`
+`~/.config/dhms/plugins/<plugin-id>/` with their own `manifest.json`
 declaring `kinds: ["bar-widget"]` and a `barWidget` entry point. See
 [../../README.md](../../README.md) for the manifest schema. Rescan, enable,
 and place third-party plugins with `dhms-shell shell rescanPlugins`,
-`dhms plugin enable`, and `dhms bar move`.
+`dhms plugin enable`, and `dhms-shell shell moveBarWidget <id> '<placement>'`.

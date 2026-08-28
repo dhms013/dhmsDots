@@ -94,7 +94,7 @@ The full schema lives in `services/PluginRegistry.qml`.
 ## Installing a third-party plugin
 
 A plugin is a **git repo** with a `manifest.json` at its root. Adding one
-clones it straight into `~/.config/quickshell/plugins/<id>/` (named by the
+clones it straight into `~/.config/dhms/plugins/<id>/` (named by the
 manifest id); updating is a fast-forward pull of that checkout.
 
 ```bash
@@ -128,24 +128,29 @@ an installed plugin is a plain git checkout, anything beyond add/update
 
 You can still drop a plugin in without git:
 
-1. Put it in `~/.config/quickshell/plugins/<plugin-id>/` with a `manifest.json`
+1. Put it in `~/.config/dhms/plugins/<plugin-id>/` with a `manifest.json`
    plus the QML referenced from its `entryPoints`.
 2. `dhms-shell shell rescanPlugins`.
 3. `dhms plugin enable <id>`. Bar widgets start in
    `barWidget.defaultSection`, or in the center when it is omitted, and can be
-   moved with `dhms bar move`; a full bar replaces the one in use.
+   moved with `dhms-shell shell moveBarWidget <id> '<placement>'`; a full bar
+   replaces the one in use.
 
 The lower-level IPC equivalents remain available via `dhms-shell shell rescanPlugins`,
 `dhms-shell shell enablePlugin <id> '{}'`, and `dhms-shell shell listPlugins`.
-The `dhms plugin` commands wrap those calls. `dhms bar move` and
-`dhms bar set` edit the persisted widget layout in `shell.json`.
+The `dhms plugin` commands wrap those calls. `dhms-shell shell moveBarWidget`
+and `dhms-shell shell setBarWidget` edit the persisted widget layout in
+`shell.json`.
 
 To hack on a built-in plugin safely, clone it into user config instead of
 editing the built-in source. The complete plugin directory is copied, including
 every declared kind and local dependency. A built-in id such as
-`dhms.clock` becomes `<username>.clock` (e.g. `dhh.clock`), with `My Clock`
+`dhms.clock` becomes `<username>.clock` (e.g. `alice.clock`), with `My Clock`
 as its display name. The username prefix keeps shared clones from colliding
-with each other or with other plugin authors.
+with each other or with other plugin authors. The `dhms.*` namespace is
+reserved for built-ins, so cloning is refused when the username would produce
+a reserved id (a `dhms` username included) — set `DHMS_CLONE_PREFIX` to pick a
+different prefix.
 
 ```bash
 dhms plugin clone dhms.clock
@@ -157,10 +162,11 @@ the interactive picker, then opens the new `<username>.*` directory in `$EDITOR`
 Existing shortcuts and shell IPC calls made to the built-in id are routed to
 the enabled clone, so cloning does not require changing its callers. Removing
 an active clone switches back to its built-in source.
-Saving a file anywhere under `~/.config/quickshell/plugins/` reloads plugin code
+Saving a file anywhere under `~/.config/dhms/plugins/` reloads plugin code
 automatically; `dhms-shell shell rescanPlugins` remains available to force a reload.
 
-First-party plugins under `shell/plugins/` are discovered the same way and load
+First-party plugins under `$DHMSDOTS_PATH/shell/.config/shell/plugins/`
+are discovered the same way and load
 by default. Disabling a non-widget records it in `disabledPlugins[]`; disabling
 a widget removes it from the bar layout while leaving its component available
 to add again. A full bar has no off state and is replaced by enabling another.
@@ -168,10 +174,10 @@ to add again. A full bar has no off state and is replaced by enabling another.
 ## IPC contract
 
 The shell exposes a single `shell` IPC target plus whatever extra targets
-individual plugins register (e.g. the bar's `bar` target for refresh
-hooks, the image picker's `image-selector` target). `dhms-menu` uses the
-shell target to summon the first-party `dhms.menu` plugin instead of
-running a separate Quickshell instance.
+individual plugins register (e.g. the image picker's `image-selector`
+target, plus `media`, `notifications`, and `background`). The menu
+keybind uses the shell target to summon the first-party `dhms.menu`
+plugin instead of running a separate Quickshell instance.
 
 | Method                                   | Returns | Effect                                                |
 |------------------------------------------|---------|-------------------------------------------------------|
@@ -181,21 +187,28 @@ running a separate Quickshell instance.
 | `toggle <id> <payloadJson>`              | —       | summon if closed, hide if open                        |
 | `call <id> <method> <arg>`               | string  | call a method on an already-loaded plugin             |
 | `rescanPlugins`                          | —       | re-walk plugin dirs and hot-reload plugin code        |
-| `reloadConfig`                           | `ok`    | reload `~/.config/quickshell/shell.json`                 |
+| `reloadConfig`                           | `ok`    | reload `~/.config/shell/shell.json`                      |
 | `setPluginEnabled <id> <enabled>`        | `ok` / `unknown` | flip the persisted enabled bit (see note)    |
 | `listPlugins`                            | JSON    | every discovered plugin, sorted by name               |
+| `enablePlugin <id> <placementJson>`      | `ok` / error | enable a plugin, placing a widget in the bar    |
+| `putBarWidget <id> <placementJson>`      | `ok` / error | place a bar widget without duplicating an entry  |
+| `moveBarWidget <id> <placementJson>`     | `ok` / error | move a bar widget to another bar section         |
+| `setBarWidget <id> <key> <valueJson> <selectorJson>` | `ok` / error | change an inline widget setting      |
+| `toggleBarTransparency`                  | `ok` / `no-bar` | flip the bar's transparent look              |
+| `applyTheme <colorsB64> <shellB64>`      | `ok`    | swap theme colors and shell variables live             |
 
 Direct invocation:
 
 ```
-quickshell ipc -p $DHMSDOTS_PATH/shell call shell ping
+qs ipc -n -p $DHMSDOTS_PATH/shell/.config/shell call -- shell ping
 ```
 
-Hyprland autostart launches the shell directly with `quickshell -p
-$DHMSDOTS_PATH/shell`. Use `dhms-restart-shell` to stop every running
-instance of that config and launch one fresh shell process.
+Hyprland autostart launches the shell directly with `qs -p
+$DHMSDOTS_PATH/shell/.config/shell` (or the stowed `~/.config/shell`).
+Use `restart-quickshell` to stop every running instance of that config
+and launch one fresh shell process.
 
-A convenience wrapper, [`dhms-shell`](../bin/dhms-shell), forwards IPC
+A convenience wrapper, [`dhms-shell`](../../../bin/dhms-shell), forwards IPC
 calls to the running shell. It does not start the shell.
 
 ```
@@ -217,13 +230,14 @@ customization from the shipped defaults lives in it.
 
 | Path                              | Owner          | Purpose                                                |
 |-----------------------------------|----------------|--------------------------------------------------------|
-| `~/.config/quickshell/shell.json`    | the shell      | full layout + per-entry settings + enabled plugin list |
-| `~/.config/quickshell/plugins/<id>/` | user           | drop-in third-party plugin source files                |
+| `~/.config/shell/shell.json`    | the shell      | full layout + per-entry settings + enabled plugin list |
+| `~/.config/dhms/plugins/<id>/`  | user           | drop-in third-party plugin source files                |
 
-The `config/dhms/shell.json` default config describes the
-fresh-install state. When the user has no `shell.json`, the shell uses
-the defaults verbatim. Once the user customizes anything, `shell.json`
-becomes the authoritative file — we do **not** deep-merge defaults back in.
+The `$DHMSDOTS_PATH/shell/.config/shell/config/shell.json` default config
+describes the fresh-install state. When the user has no `shell.json`, the
+shell uses the defaults verbatim. Once the user customizes anything,
+`shell.json` becomes the authoritative file — we do **not** deep-merge
+defaults back in.
 
 ### shell.json shape
 
