@@ -1,7 +1,6 @@
 7zip
 adw-gtk-theme
 asciiquarium
-awww
 base
 bash-completion
 bat
@@ -32,6 +31,7 @@ hyprlock
 imagemagick
 impala
 imv
+inotify-tools
 jq
 lazygit
 luarocks
@@ -39,6 +39,7 @@ man-db
 mpv
 nautilus
 neovim
+networkmanager
 nodejs
 noto-fonts
 noto-fonts-cjk

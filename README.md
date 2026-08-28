@@ -24,7 +24,7 @@ It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back 
 
 ## About
 
-Based on [OMARCHY](https://omarchy.org/), my first linux setup, although it has been customized to suit my needs
+Based on [Omarchy](https://omarchy.org/), my first linux setup, although it has been customized to suit my needs
 
 - **Post-install** helper for Hyprland configs
 - Installs my base packages from pacman & AUR
@@ -88,7 +88,7 @@ These apps are referenced directly in Hyprland keybinds.
 
 ## Dependencies
 
-- Hyprland (basic setup) installed
+- Hyprland installed (basic setup)
 - Bash — I never use zsh or fish
 - Internet connection~
 
@@ -106,7 +106,7 @@ This repo manages configs for:
 - hyprland-preview-share-picker
 - kitty
 - nvim
-- quickshell (based on [Omarchy](https://omarchy.org/))
+- shell — the dhms desktop shell (Quickshell, adapted from [Omarchy](https://omarchy.org/)) — [docs](./shell/.config/shell/README.md)
 - sddm theme
 - starship
 - themes
@@ -138,8 +138,8 @@ git clone --depth=1 https://github.com/dhms013/dhmsDots.git $HOME/.dhmsDots
 ```
 3. Run the installer
 ```bash
-cd .dhmsDots
-sh install.sh
+cd $HOME/.dhmsDots
+bash install.sh
 ```
 
 This will:

@@ -5,6 +5,7 @@
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 INITIAL_THEME="dhms"
+export PATH="$DOTFILES_DIR/bin:$PATH"
 
 apply_gtk_theme() {
   echo "==> Applying GTK and icon theme"
