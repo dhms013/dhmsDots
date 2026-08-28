@@ -1,4 +1,19 @@
 #!/bin/bash
 
 echo
-gum spin --spinner "globe" --title "Done! Press any key to close..." -- bash -c 'read -n 1 -s'
+frames=('Ω' 'Ο' 'Ø' 'Π' 'Δ' 'Σ' 'Ζ' 'Θ' 'Ξ' 'Ψ') # globe-style braille spinner
+(
+  trap 'exit' TERM
+  i=0
+  while :; do
+    printf '\r%s Done! Press any key to close... ' "${frames[$((i % ${#frames[@]}))]}"
+    i=$((i + 1))
+    sleep 0.08
+  done
+) &
+spinner_pid=$!
+if [ -t 0 ]; then read -n 1 -s; else read -n 1 -s </dev/tty; fi
+kill "$spinner_pid" 2>/dev/null
+wait "$spinner_pid" 2>/dev/null
+printf '\r%*s\r' 40 ''
+echo

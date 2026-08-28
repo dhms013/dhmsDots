@@ -36,7 +36,21 @@ print_key() {
 # ── Test Connection ───────────────────────────────────────────
 test_connection() {
   echo ""
-  gum spin --spinner "globe" --title "Press any key after public key added to GitHub/GitLab..." -- bash -c 'read -n 1 -s'
+  frames=('Ω' 'Ο' 'Ø' 'Π' 'Δ' 'Σ' 'Ζ' 'Θ' 'Ξ' 'Ψ') # globe-style braille spinner
+  (
+    trap 'exit' TERM
+    i=0
+    while :; do
+      printf '\r%s Press any key after public key added to GitHub/GitLab... ' "${frames[$((i % ${#frames[@]}))]}"
+      i=$((i + 1))
+      sleep 0.08
+    done
+  ) &
+  spinner_pid=$!
+  if [ -t 0 ]; then read -n 1 -s; else read -n 1 -s </dev/tty; fi || true
+  kill "$spinner_pid" 2>/dev/null || true
+  wait "$spinner_pid" 2>/dev/null || true
+  printf '\r%*s\r' 70 ''
   ssh -T git@github.com
 }
 
