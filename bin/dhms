@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# dhms:summary=Dispatch dhms subcommands (plugin group)
+# dhms:group=plugin
+# dhms:args=<plugin <subcommand> [args...]>
+# dhms:examples=dhms plugin add https://github.com/acme/dhms-weather.git --enable
+
+set -euo pipefail
+
+usage() {
+  cat <<USAGE
+Usage: dhms plugin <subcommand> [args...]
+
+Shell plugin workflows:
+
+  add|install <git-url> [--enable] [--yes]  Clone, validate, and add a plugin repo
+  catalog                                    Emit every discovered plugin manifest as JSON
+  clone <source-id> [--edit]                 Copy a built-in plugin into your own config
+  enable <id> [placement]                    Enable a plugin (optionally placed in the bar)
+  disable <id>                               Disable a plugin
+  list [--json]                              List discovered plugins
+  rm|remove [id] [--yes]                     Remove an installed plugin
+  update [id] [--yes]                        Update installed git-managed plugins
+  validate <plugin-folder>                   Validate a plugin folder's manifest
+
+USAGE
+}
+
+case "${1:-}" in
+  "" | -h | --help | help)
+    usage
+    exit 0
+    ;;
+esac
+
+if [[ $1 != "plugin" ]]; then
+  echo "dhms: only the 'plugin' group is dispatched so far" >&2
+  usage >&2
+  exit 1
+fi
+shift
+
+if (( $# == 0 )); then
+  usage
+  exit 0
+fi
+
+case "$1" in
+  "" | -h | --help | help)
+    usage
+    exit 0
+    ;;
+esac
+
+sub="${1:-}"
+shift
+
+case "$sub" in
+  install) sub="add" ;;
+  rm) sub="remove" ;;
+esac
+
+case "$sub" in
+  add | catalog | clone | disable | enable | list | remove | update | validate)
+    exec "dhms-plugin-$sub" "$@"
+    ;;
+  *)
+    echo "dhms: unknown plugin subcommand: $sub" >&2
+    usage >&2
+    exit 1
+    ;;
+esac

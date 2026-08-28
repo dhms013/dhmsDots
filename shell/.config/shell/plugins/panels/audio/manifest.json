@@ -3,7 +3,7 @@
   "id": "dhms.audio",
   "name": "Audio",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Volume slider, output picker, per-app mixer",
   "kinds": [
     "bar-widget"

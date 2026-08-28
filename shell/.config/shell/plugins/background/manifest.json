@@ -3,7 +3,7 @@
   "id": "dhms.background",
   "name": "Background",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Desktop background renderer with click handling and transitions",
   "kinds": [
     "service"

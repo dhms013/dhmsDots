@@ -3,7 +3,7 @@
   "id": "dhms.monitor",
   "name": "Display",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Brightness slider and laptop display controls",
   "kinds": [
     "bar-widget"

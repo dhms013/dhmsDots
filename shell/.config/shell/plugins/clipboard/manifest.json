@@ -3,7 +3,7 @@
   "id": "dhms.clipboard",
   "name": "Clipboard",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "A clipboard manager to view and paste history",
   "kinds": [
     "overlay"

@@ -119,8 +119,9 @@ but PAM authentication requires `/etc/pam.d/dhms-lock-password` (see
    enabled — indicator auto-hides when no /sys/class/power_supply/BAT*).
 9. DNS: optionally ship etc/sudoers.d/dhms-dns + install dhms-dns to /usr/bin
    for passwordless provider switching (works via polkit today).
-10. Install `inotifytools` package (`sudo pacman -S inotify-tools`) for live
-    third-party plugin watching; PluginRegistry parks silently without it.
+10. DONE (2026-08-29): `inotify-tools` installed → PluginRegistry live-watches
+    `~/.config/dhms/plugins`. Hot-reload now works; `dhms shell rescanPlugins`
+    also stays available to force a re-walk.
 
 ## Switchover (done 2026-08-24)
 
@@ -555,5 +556,48 @@ Remaining indicators: `Dnd.qml`, `ScreenRecording.qml`, `StayAwake.qml`.
 - `SUPER+CTRL+comma` → toggle DND
 - `SUPER+SHIFT+ALT+comma` → notification history
 - Removed: dismiss last, invoke last
+
+## Plugin management suite port + author attribution + bar trim (2026-08-29)
+
+### dhms plugin workflows — full omarchy parity (scope 3, incl. hot-reload)
+Ported the whole omarchy shell-plugin CLI suite to `bin/` (sed omarchy→dhms,
+bash -n clean, zero omarchy residues):
+- `dhms-plugin-{add,catalog,clone,enable,disable,list,remove,update,validate}`,
+  `dhms-git-url-check` (transport-helper security gate, allowlist identical),
+  `dhms-menu-plugin` (enable/disable/clone/remove picker; clone/remove launch
+  our `floating-terminal`, not omarchy's presentation launcher).
+- NEW `bin/dhms` CLI that dispatches the `plugin` group: aliases
+  `install`→`add`, `rm`→`remove`; help/list/catalog routes through. Only the
+  plugin group dispatches today.
+- Adaptations vs omarchy (all verified against live runtime):
+  - third-party dir `~/.config/dhms/plugins` (PluginRegistry.qml:11); first-party
+    tree `$DHMSDOTS_PATH/shell/.config/shell/plugins` (catalog default
+    `${DHMSDOTS_PATH:-$HOME/.dhmsDots}`).
+  - clone/remove use manifest key `dhms.clonedFrom` / `dhms.clonePaths`
+    (update_manifest writes `.dhms = {...}`); registry reads `manifest.dhms`
+    (PluginRegistry.qml:152) — not omarchy's `.omarchy`.
+  - reserved namespace in validate: `dhms.*` (not `omarchy.*`); catalog
+    first-party test `startswith("dhms.")`.
+  - IPC via `dhms-shell shell rescanPlugins/enablePlugin/setPluginEnabled/
+    listPlugins` (all present in shell.qml).
+- E2E verified: `dhms plugin add file:///tmp/... --yes` (clone→validate→install→
+  rescan→`list` shows third-party disabled), `dhms plugin remove --yes` (list no
+  longer shows it); `git-url-check` refuses `ext::` transport helpers, `-o…`
+  options; `validate` rejects reserved `dhms.*`. Real add leaves NO temp junk
+  (`.add.tmp.$$` / `.clone.*` / `.bak` cleanup verified).
+
+### dhms.network-speed removed from bar
+Dropped the `{ "id": "dhms.network-speed" }` right-layout entry from BOTH
+`shell/.config/shell/shell.json` and `~/.config/shell/shell.json` (jq, both
+valid, still identical). Widget plugin remains (system-monitor overlay covers
+it); network speed visible instead via SystemMonitor.
+
+### Author attribution restored to omarchy
+The wholesale rebrand had also overwritten every manifest `author`. Reverted all
+32 `"author": "dhms"` → `"author": "Omarchy"` (matching omarchy upstream casing)
+across `shell/.config/shell/plugins/**`; `id` values stay `dhms.*`; README's
+doc-example `"author": "You"` untouched. The 6 provenance comments in QML/jsonc
+that already credit omarchy ("Mirror omarchy's flow", "omarchy's docs/menu.md",
+etc.) were deliberately LEFT as omarchy — they are attribution, per user intent.
 
 (End of file - total 551 lines)

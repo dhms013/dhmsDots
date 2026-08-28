@@ -3,7 +3,7 @@
   "id": "dhms.indicators",
   "name": "Indicators",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Manual state indicators",
   "kinds": [
     "bar-widget"

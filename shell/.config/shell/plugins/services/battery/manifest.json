@@ -3,7 +3,7 @@
   "id": "dhms.battery",
   "name": "Battery",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Low battery warning service",
   "kinds": [
     "service"

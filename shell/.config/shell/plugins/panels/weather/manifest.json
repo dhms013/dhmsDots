@@ -3,7 +3,7 @@
   "id": "dhms.weather",
   "name": "Weather",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Weather pill with detail popup",
   "kinds": [
     "bar-widget"

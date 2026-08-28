@@ -3,7 +3,7 @@
   "id": "dhms.system-monitor",
   "name": "System Monitor",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Live CPU and RAM usage (RAM includes swap)",
   "kinds": [
     "bar-widget"

@@ -9,19 +9,30 @@
   "bar": {
     "position": "top",
     "transparent": false,
-    "centerAnchor": "dhms.clock",
+    "centerAnchor": "dhms.workspaces",
     "layout": {
       "left": [
         {
           "id": "dhms.system-monitor"
         },
         {
-          "id": "dhms.workspaces"
+          "id": "dhms.indicators"
+        },
+        {
+          "id": "dhms.weather"
         }
       ],
       "center": [
         {
-          "id": "dhms.indicators"
+          "id": "dhms.workspaces"
+        },
+        {
+          "id": "dhms.keyboard-layout"
+        }
+      ],
+      "right": [
+        {
+          "id": "dhms.tray"
         },
         {
           "id": "dhms.clock",
@@ -30,21 +41,7 @@
           "verticalFormat": "HH\n—\nmm"
         },
         {
-          "id": "dhms.keyboard-layout"
-        },
-        {
-          "id": "dhms.weather"
-        },
-        {
-          "id": "dhms.system-update"
-        }
-      ],
-      "right": [
-        {
-          "id": "dhms.network-speed"
-        },
-        {
-          "id": "dhms.tray"
+          "id": "dhms.monitor"
         },
         {
           "id": "dhms.bluetooth"
@@ -57,13 +54,9 @@
         },
         {
           "id": "dhms.power"
-        },
-        {
-          "id": "dhms.monitor"
         }
       ]
     }
   },
-  "plugins": [],
-  "disabledPlugins": []
+  "plugins": []
 }

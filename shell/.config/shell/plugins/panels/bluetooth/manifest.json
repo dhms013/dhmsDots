@@ -3,7 +3,7 @@
   "id": "dhms.bluetooth",
   "name": "Bluetooth",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Bluetooth device list with connect/disconnect",
   "kinds": [
     "bar-widget"

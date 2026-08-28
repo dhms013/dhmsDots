@@ -3,7 +3,7 @@
   "id": "dhms.keyboard-layout",
   "name": "Keyboard layout",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Current xkb layout, click cycles",
   "kinds": [
     "bar-widget"

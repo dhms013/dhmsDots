@@ -3,7 +3,7 @@
   "id": "dhms.lock",
   "name": "Lock Screen",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Quickshell session lock with separate password and fingerprint PAM flows.",
   "kinds": [
     "service"

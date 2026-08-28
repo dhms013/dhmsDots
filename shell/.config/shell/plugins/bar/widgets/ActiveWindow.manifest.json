@@ -3,7 +3,7 @@
   "id": "dhms.active-window",
   "name": "Active window",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Title of the focused window",
   "kinds": [
     "bar-widget"

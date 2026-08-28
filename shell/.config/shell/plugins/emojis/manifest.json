@@ -3,7 +3,7 @@
   "id": "dhms.emojis",
   "name": "Emojis",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Search, copy, and type emojis",
   "kinds": [
     "overlay"

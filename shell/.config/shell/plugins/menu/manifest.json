@@ -3,7 +3,7 @@
   "id": "dhms.menu",
   "name": "dhms menu",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Quickshell-powered dhms command menu",
   "kinds": [
     "menu",

@@ -3,7 +3,7 @@
   "id": "dhms.speedtest",
   "name": "Speed Test",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Internet speed test with download and upload dials",
   "kinds": [
     "panel"

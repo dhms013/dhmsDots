@@ -3,7 +3,7 @@
   "id": "dhms.network",
   "name": "Network",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Wi-Fi list and connection state",
   "kinds": [
     "bar-widget"

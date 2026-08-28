@@ -3,7 +3,7 @@
   "id": "dhms.network-speed",
   "name": "Network Speed",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Live download and upload throughput",
   "kinds": [
     "bar-widget"

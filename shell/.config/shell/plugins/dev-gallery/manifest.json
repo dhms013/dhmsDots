@@ -3,7 +3,7 @@
   "id": "dhms.dev-gallery",
   "name": "Dev gallery",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Visual reference for dhms-shell common UI components. Summon with: dhms-shell shell summon dhms.dev-gallery '{}' (or run: dhms dev ui-preview).",
   "kinds": [
     "panel"

@@ -3,7 +3,7 @@
   "id": "dhms.system-update",
   "name": "dhms update",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Indicates available dhms updates",
   "kinds": [
     "bar-widget"

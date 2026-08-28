@@ -3,7 +3,7 @@
   "id": "dhms.notifications",
   "name": "Notifications",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Notification daemon, popups, DND, and history",
   "kinds": [
     "service"

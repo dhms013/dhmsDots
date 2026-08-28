@@ -3,7 +3,7 @@
   "id": "dhms.power",
   "name": "Power",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Battery, power profile, and system stats",
   "kinds": [
     "bar-widget"

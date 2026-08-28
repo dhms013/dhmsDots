@@ -3,7 +3,7 @@
   "id": "dhms.workspaces",
   "name": "Workspaces",
   "version": "1.0.0",
-  "author": "dhms",
+  "author": "Omarchy",
   "description": "Workspace number indicators",
   "kinds": [
     "bar-widget"
