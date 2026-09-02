@@ -127,17 +127,17 @@ hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert" }), {
 
 -- notification controls
 hl.bind(
-	"SUPER + SHIFT + comma",
+	"SUPER + comma",
 	hl.dsp.exec_cmd("dhms-shell notifications dismissAll"),
 	{ description = "Dismiss all notifications" }
 )
 hl.bind(
-	"SUPER + CTRL + comma",
+	"SUPER + SHIFT + ALT + comma",
 	hl.dsp.exec_cmd("dhms-shell notifications toggleDnd"),
 	{ description = "Toggle silencing notifications" }
 )
 hl.bind(
-	"SUPER + SHIFT + ALT + comma",
+	"SUPER + SHIFT + comma",
 	hl.dsp.exec_cmd("dhms-shell notifications showHistory"),
 	{ description = "Open notification history" }
 )
