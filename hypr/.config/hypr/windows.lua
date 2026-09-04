@@ -80,14 +80,6 @@ hl.window_rule({
 	idle_inhibit = "focus",
 })
 
--- Where Winds Meet
-hl.window_rule({
-	name = "where-winds-meet",
-	match = { title = "^(Where Winds Meet)$" },
-	opacity = "1 override",
-	idle_inhibit = "focus",
-})
-
 -- Image Viewer (imv)
 hl.window_rule({
 	name = "imv",
@@ -113,6 +105,13 @@ hl.window_rule({
 	center = true,
 	idle_inhibit = "focus",
 	size = { 600, 400 },
+})
+
+-- Terminal tag (universal clipboard detection)
+hl.window_rule({
+	name = "terminal-tag",
+	match = { class = "^(com\\.mitchellh\\.ghostty|kitty|foot|org\\.codeberg\\.dnkl\\.foot|dhms\\.terminal)$" },
+	tag = "+terminal",
 })
 
 -- Satty Screenshot Tool

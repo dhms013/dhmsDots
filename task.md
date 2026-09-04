@@ -90,9 +90,11 @@ new `themes`. Fonts provider dropped. userMenuPath support deleted.
 All plugin dirs for disabled features have been deleted (idle, nightlight,
 reminders, agents, tailscale, dropbox, wifiqr). `disabledPlugins[]` is empty.
 Battery plugin is enabled but its indicator auto-hides on this desktop
-(no `/sys/class/power_supply/BAT*`); reappears on laptop. Lock is enabled
-but PAM authentication requires `/etc/pam.d/dhms-lock-password` (see
-"Pending adjustments" item 2). Fingerprint menu row self-hides via `when:` guard.
+(no `/sys/class/power_supply/BAT*`); reappears on laptop. Lock is enabled —
+active lock is hyprlock (`/etc/pam.d/hyprlock` present, works on desktop +
+laptop); the Quickshell overlay lock is dormant and would need
+`/etc/pam.d/dhms-lock-password` if ever wired (see "Pending adjustments"
+item 2). Fingerprint menu row self-hides via `when:` guard.
 
 ## Pending adjustments (LATER, do not forget)
 
@@ -100,9 +102,15 @@ but PAM authentication requires `/etc/pam.d/dhms-lock-password` (see
    autostart.lua + restart-services launch `quickshell -p ~/.config/shell`,
    keybindings.lua rewired to dhms-shell IPC (see "Switchover" section).
    Old quickshell dir untouched but no longer launches.
-2. PAM prerequisite for lock: create `/etc/pam.d/dhms-lock-password` on each
-   machine (laptop + desktop) — needs sudo; lock screen works but PAM auth
-   won't without it. Fingerprint PAM (`dhms-lock-fingerprint`) optional.
+2. PENDING (2026-08-29): PAM for the Quickshell overlay lock —
+   `/etc/pam.d/dhms-lock-password` missing on both machines. Only matters if
+   the shell lock overlay (`plugins/lock/`, `PamContext` config
+   "dhms-lock-password", Service.qml:321) is ever wired in — it is currently
+   unbound and `dhms-shell shell lock` returns "missing-pam". hyprlock (the
+   active lock, SUPER+CTRL+L) uses its own `/etc/pam.d/hyprlock` and works
+   today on desktop (password) + laptop (fingerprint). If/when wanted:
+   `sudo cp /etc/pam.d/system-login /etc/pam.d/dhms-lock-password` per machine.
+   Fingerprint PAM (`dhms-lock-fingerprint`) optional.
 3. Idle strategy stays as-is (system hypridle + toggle-idle via StayAwake
    indicator); nightlight needs gammastep/hyprsunset backend — deferred.
 4. Retire old `quickshell/.config/quickshell` once user decides; migrate any

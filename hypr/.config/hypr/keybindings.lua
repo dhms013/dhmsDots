@@ -119,10 +119,59 @@ hl.bind(
 hl.bind("SUPER + CTRL + I", hl.dsp.exec_cmd("toggle-idle"), { description = "toggle idle" })
 hl.bind("SUPER + CTRL + ALT + L", hl.dsp.exec_cmd("toggle-layout"), { description = "toggle layout" })
 
+-- universal clipboard
+-- Send with explicit mods to the focused surface by omitting the window target,
+-- so the shortcuts reach both normal windows and focused layer-shell surfaces
+-- such as dhms panels. A virtual keyboard (wtype) won't do: the physically held
+-- SUPER merges into the injected chord at the seat. The down/up split works
+-- around Hyprland send_shortcut sometimes leaving synthetic key state
+-- stuck/repeating.
+-- https://github.com/hyprwm/Hyprland/discussions/14099
+local function send_shortcut_once(mods, key)
+	return function()
+		hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "down" }))
+
+		hl.timer(function()
+			hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "up" }))
+		end, { timeout = 50, type = "oneshot" })
+	end
+end
+
+-- Lean on the terminal tag from windows.lua so there's one definition of what
+-- counts as a terminal. Dynamic tags carry a trailing "*".
+local function active_window_is_terminal()
+	local window = hl.get_active_window()
+	if not window then
+		return false
+	end
+
+	local tags = window.tags
+	if type(tags) == "table" then
+		for _, tag in ipairs(tags) do
+			if tag:gsub("%*$", "") == "terminal" then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+local function universal_clipboard_shortcut(default_mods, default_key, terminal_mods, terminal_key)
+	return function()
+		if active_window_is_terminal() then
+			send_shortcut_once(terminal_mods, terminal_key)()
+		else
+			send_shortcut_once(default_mods, default_key)()
+		end
+	end
+end
+
 -- utilities
-hl.bind("SUPER + X", hl.dsp.send_shortcut({ mods = "CTRL", key = "X" }), { description = "cut" })
-hl.bind("SUPER + C", hl.dsp.send_shortcut({ mods = "CTRL", key = "Insert" }), { description = "copy" })
-hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert" }), { description = "paste" })
+hl.bind("SUPER + X", send_shortcut_once("CTRL", "X"), { description = "Universal cut" })
+hl.bind("SUPER + C", universal_clipboard_shortcut("CTRL", "C", "CTRL", "Insert"), { description = "Universal copy" })
+hl.bind("SUPER + V", universal_clipboard_shortcut("CTRL", "V", "SHIFT", "Insert"), { description = "Universal paste" })
+hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd(qs .. " dhms.clipboard"), { description = "Clipboard manager" })
 -- hl.bind("XF86PowerOff", hl.dsp.exec_cmd("dhms-lock"), { description = "lock screen" })
 
 -- notification controls
