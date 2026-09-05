@@ -10,7 +10,6 @@
   //
   // Root: Update / Setup / System. Card height clamps to maxRows (shell.json
   // "menu.maxRows", currently 5) with a one-row floor on empty states.
-
   // Apps: hidden from the menu itself (SUPER+ALT+SPACE must stay clean) but
   // still routable — SUPER+SPACE opens it via {"menu":"apps"}.
   "apps": {
@@ -23,7 +22,6 @@
     "hidden": true,
     "provider": "apps"
   },
-
   // Update
   "update": {
     "icon": "󰚰",
@@ -33,7 +31,6 @@
     ],
     "action": "floating-terminal dhms-update"
   },
-
   // Setup
   "setup": {
     "icon": "",
@@ -76,32 +73,32 @@
     "action": "floating-terminal theme-install"
   },
   "setup.install.vm": {
-    "icon": "󰍲",
+    "icon": "",
     "label": "VM"
   },
-  "setup.install.vm.windows": {
-    "icon": "󰍲",
-    "label": "Windows",
-    "disabled": "[[ -d /var/lib/dhms/vm/windows ]]",
-    "action": "floating-terminal dhms-vm install windows"
-  },
   "setup.install.vm.arch": {
-    "icon": "󰌽",
+    "icon": "",
     "label": "Arch",
     "disabled": "[[ -d /var/lib/dhms/vm/arch ]]",
     "action": "floating-terminal dhms-vm install arch"
   },
   "setup.install.vm.fedora": {
-    "icon": "󰌽",
+    "icon": "",
     "label": "Fedora",
     "disabled": "[[ -d /var/lib/dhms/vm/fedora ]]",
     "action": "floating-terminal dhms-vm install fedora"
   },
   "setup.install.vm.ubuntu": {
-    "icon": "󰌽",
+    "icon": "",
     "label": "Ubuntu",
     "disabled": "[[ -d /var/lib/dhms/vm/ubuntu ]]",
     "action": "floating-terminal dhms-vm install ubuntu"
+  },
+  "setup.install.vm.windows": {
+    "icon": "",
+    "label": "Windows",
+    "disabled": "[[ -d /var/lib/dhms/vm/windows ]]",
+    "action": "floating-terminal dhms-vm install windows"
   },
   "setup.power-profile": {
     "icon": "\udb81\udc0b",
@@ -172,7 +169,6 @@
     "label": "Fido2",
     "action": "floating-terminal setup-fido2"
   },
-
   // System
   "system": {
     "icon": "",
@@ -212,7 +208,6 @@
     ],
     "action": "systemctl poweroff --no-wall"
   },
-
   // Screenrecord menu. ALT+PRINT toggles this submenu
   // (and stops an in-flight recording first); the entries below are the
   // dhms-native port of the old quickshell Screenrecord picker.

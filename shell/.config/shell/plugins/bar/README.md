@@ -8,7 +8,7 @@ the shell for its whole session.
 - `manifest.json` declares the plugin (`id: dhms.bar`, `kind: bar`) and points at `Bar.qml` as the entry point.
 - `Bar.qml` is dhms-owned bar engine code, loaded by the dhms-shell host. Users should not edit it directly.
 - `widgets/` holds simple first-party bar widgets with sibling manifests.
-- Feature plugins such as `../panels/audio/`, `../panels/network/`, `../panels/power/`, and `../agents/` provide richer popup bar plugins.
+- Feature plugins such as `../panels/audio/`, `../panels/network/`, `../panels/power/`, and `../panels/bluetooth/` provide richer popup bar plugins.
 - The bar receives its config from the host shell as a `barConfig` property; the host loads it from `~/.config/shell/shell.json` (or `$DHMSDOTS_PATH/shell/.config/shell/config/shell.json` when the user has no file).
 - Moving the bar via the drag gesture persists the new position into the user `shell.json`.
 
@@ -55,9 +55,11 @@ Example `shell.json` (bar subtree only shown):
 | Name | What it does | Interactions |
 |---|---|---|
 | `dhms.menu` | dhms menu launcher | left = menu · right = terminal |
+| `dhms.active-window` | Current window title, auto-hides when empty | left = focus · middle/right = close |
 | `dhms.system-monitor` | Live CPU + RAM usage (RAM includes swap) | left = btop |
 | `dhms.network-speed` | Live download/upload throughput | hover = session totals |
 | `dhms.workspaces` | Hyprland workspace switcher | left = focus workspace |
+| `dhms.keyboard-layout` | Current keyboard layout, hidden on single-layout installs | left = cycle layout |
 | `dhms.clock` | Date/time label + popup with a month grid, ISO week numbers, and month stepping | left = popup · right = cycle label format · middle = timezone selector |
 | `dhms.media` | MPRIS now-playing — scrolling track + artist, cover-art popup | left = play/pause · middle = next · scroll = prev/next · right = popup |
 | `dhms.indicators` | Manual state indicators | left = indicator action |
@@ -65,16 +67,14 @@ Example `shell.json` (bar subtree only shown):
 | `dhms.tray` | System tray | hover = reveal drawer · right on chevron = manage |
 | `dhms.weather` | Weather icon + popup with forecast | left = popup · right = full notification |
 | `dhms.microphone` | Mic icon + scroll volume | left = mute toggle · middle = audio panel · scroll = source volume |
-
 | `dhms.audio` | Volume icon + popup with master slider, output-device picker, per-app mixer | left = popup · right = mute · middle = popup · scroll = volume |
 | `dhms.network` | Wi-Fi/Ethernet icon + popup with Wi-Fi scan, signal, connect, DNS provider selection | left = popup |
-| `dhms.tailscale` | Tailscale status, connection switcher, machine browser, and copy actions | left = popup · right = toggle · middle = refresh |
-| `dhms.agents` | AI coding agent limits with pace, today, last week, and all-time model breakdown | left = panel · right = launch agent · middle = next subscription |
-| `dhms.power` | Battery/AC icon + popup with battery stats, power profiles, and system info | left = popup · right = toggle percentage |
 | `dhms.bluetooth` | Bluetooth icon + popup with device list, connect/disconnect, battery | left = popup · right = toggle radio |
+| `dhms.power` | Battery/AC icon + popup with battery stats, power profiles, and system info | left = popup · right = toggle percentage |
 | `dhms.monitor` | Brightness and laptop display controls | left = popup |
+| `dhms.spacer` | Fixed-width spacer for layout breathing room | none |
 
-The `dhms.indicators` widget loads individual bar indicators from `indicators/`. Omit `items` (or set it to an empty array) to show all indicators in the default order, or set `items` to a subset such as `["Dnd", "Reminder", "NightLight"]`. Set `alwaysShow` to `true` to keep inactive indicators visible instead of revealing them only on hover. Multiple `dhms.indicators` instances are allowed, so different sections can show different subsets.
+The `dhms.indicators` widget loads individual bar indicators from `indicators/`. Omit `items` (or set it to an empty array) to show all indicators in the default order, or set `items` to a subset such as `["Dnd", "ScreenRecording", "StayAwake"]`. Set `alwaysShow` to `true` to keep inactive indicators visible instead of revealing them only on hover. Multiple `dhms.indicators` instances are allowed, so different sections can show different subsets.
 
 ## Orientation
 
@@ -169,7 +169,7 @@ Widgets receive `bar` (the shell root), `moduleName` (string), and `settings` (o
 First-party bar widgets are manifest-backed just like third-party widgets.
 Simple widgets carry sibling manifests such as `widgets/Workspaces.manifest.json`;
 richer popup plugins live in feature directories such as `../panels/audio/`,
-`../panels/network/`, and `../agents/`; and feature plugins such as
+`../panels/network/`, and `../panels/bluetooth/`; and feature plugins such as
 `dhms.menu` and `dhms.media` declare their bar-widget entry points in their own
 `manifest.json`. Bar layout ids are namespaced, e.g. `dhms.audio`,
 `dhms.network`, and `dhms.clock`.

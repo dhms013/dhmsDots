@@ -22,23 +22,31 @@ shell/
     PluginRegistry.qml   discovers, validates plugins, looks up enabled state in shell.json
     BarWidgetRegistry.qml unified registry for bar widgets (1p + 3p)
   plugins/
+    background/          wallpaper service
     bar/                 first-party plugins (see plugins/README.md)
+    clipboard/
+    dev-gallery/
+    emojis/
     image-picker/
+    lock/
     menu/
     notifications/
+    osd/
     panels/
       audio/
       bluetooth/
+      clock/
+      disk-speedtest/
       monitor/
       network/
       power/
+      speedtest/
       weather/
-    agents/
+      wifiqr/
+    polkit/
     services/
       battery/
-      idle/
-    osd/
-    polkit/
+      media/
 ```
 
 The plugin discovery path is documented in [plugins/README.md](plugins/README.md).
@@ -244,19 +252,30 @@ defaults back in.
 ```json
 {
   "version": 1,
-  "idle": {
-    "lock": 300
-  },
   "bar": {
     "id": "dhms.bar",
     "position": "top",
     "transparent": false,
     "centerAnchor": "dhms.clock",
     "layout": {
-      "left":   [ { "id": "dhms.menu" }, { "id": "dhms.workspaces" } ],
-      "center": [ { "id": "dhms.clock", "format": "HH:mm" } ],
+      "left": [
+        { "id": "dhms.menu" },
+        { "id": "dhms.system-monitor" },
+        { "id": "dhms.indicators" },
+        { "id": "dhms.weather" }
+      ],
+      "center": [
+        { "id": "dhms.workspaces" },
+        { "id": "dhms.keyboard-layout" }
+      ],
       "right": [
-        { "id": "dhms.audio" }
+        { "id": "dhms.tray" },
+        { "id": "dhms.clock", "format": "ddd d MMM HH:mm" },
+        { "id": "dhms.monitor" },
+        { "id": "dhms.network" },
+        { "id": "dhms.bluetooth" },
+        { "id": "dhms.audio" },
+        { "id": "dhms.power" }
       ]
     }
   },
@@ -287,9 +306,7 @@ defaults back in.
    `allowMultiple: true`. Each instance is independent — e.g. two clock
    widgets in different timezones are just two `{"id":"dhms.clock", "timezone": ...}`
    entries with their own values.
-7. **Idle timings are top-level.** `idle.lock`
-   are seconds since user idle began, so the default lock fires at 300s.
-8. **`version: 1` is required** at the top level. The shell will fall back
+7. **`version: 1` is required** at the top level. The shell will fall back
    to defaults rather than load an unknown version.
 
 Shared services and Pipewire/UPower/Hyprland consolidation are explicitly

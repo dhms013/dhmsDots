@@ -27,21 +27,6 @@
         "emptyText": "No indicators",
         "options": [
           {
-            "value": "Dictation",
-            "label": "Dictation",
-            "description": "Voice typing status"
-          },
-          {
-            "value": "Reminder",
-            "label": "Reminder",
-            "description": "Queued reminder status"
-          },
-          {
-            "value": "NightLight",
-            "label": "Night light",
-            "description": "Blue-light filter"
-          },
-          {
             "value": "Dnd",
             "label": "Do not disturb",
             "description": "Notification silencing"

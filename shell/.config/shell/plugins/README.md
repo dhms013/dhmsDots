@@ -11,31 +11,31 @@ at startup; other panels, overlays, and menus are loaded on demand.
 User-installed plugins live alongside these conceptually but on disk under
 `~/.config/dhms/plugins/<plugin-id>/` rather than in this directory.
 
-| Plugin        | id                        | kinds                   | entry point                           |
-|---------------|---------------------------|-------------------------|---------------------------------------|
-| Bar           | `dhms.bar`             | `bar`                   | `bar/Bar.qml`                         |
-| Image picker  | `dhms.image-picker`    | `overlay`               | `image-picker/ImagePicker.qml`        |
-| Emojis        | `dhms.emojis`          | `overlay`               | `emojis/Emojis.qml`                   |
-| Clipboard mgr | `dhms.clipboard`       | `overlay`               | `clipboard/Clipboard.qml`             |
-| Reminders     | `dhms.reminders`       | `overlay`               | `reminders/ReminderFlow.qml`          |
-| dhms menu  | `dhms.menu`            | `menu`, `bar-widget`    | `menu/Menu.qml`, `menu/BarWidget.qml` |
-| Notifications | `dhms.notifications`   | `service`               | `notifications/Service.qml`           |
-| Audio         | `dhms.audio`           | `bar-widget`            | `panels/audio/Panel.qml`              |
-| Bluetooth     | `dhms.bluetooth`       | `bar-widget`            | `panels/bluetooth/Panel.qml`          |
-| Clock         | `dhms.clock`           | `bar-widget`            | `panels/clock/BarWidget.qml`          |
-| Monitor       | `dhms.monitor`         | `bar-widget`            | `panels/monitor/Panel.qml`            |
-| Network       | `dhms.network`         | `bar-widget`            | `panels/network/Panel.qml`            |
-| Power         | `dhms.power`           | `bar-widget`            | `panels/power/Panel.qml`              |
-| Tailscale     | `dhms.tailscale`       | `bar-widget`            | `panels/tailscale/Panel.qml`          |
-| Agents   | `dhms.agents`     | `bar-widget`            | `agents/Panel.qml`               |
-| Weather       | `dhms.weather`         | `bar-widget`            | `panels/weather/BarWidget.qml`        |
-| Media         | `dhms.media`           | `service`, `bar-widget` | `services/media/Service.qml`, `services/media/BarWidget.qml` |
-| Battery       | `dhms.battery`         | `service`               | `services/battery/Service.qml`        |
-| Idle          | `dhms.idle`            | `service`               | `services/idle/Service.qml`           |
-| Night light   | `dhms.nightlight`      | `service`               | `services/nightlight/Service.qml`     |
-| Lock screen   | `dhms.lock`            | `service`               | `lock/Service.qml`                    |
-| OSD           | `dhms.osd`             | `panel`                 | `osd/Osd.qml`                         |
-| Polkit agent  | `dhms.polkit`          | `service`               | `polkit/PolkitAgent.qml`              |
+| Plugin           | id                        | kinds                     | entry point                                            |
+|------------------|---------------------------|---------------------------|--------------------------------------------------------|
+| Audio            | `dhms.audio`              | `bar-widget`              | `panels/audio/Panel.qml`                               |
+| Background       | `dhms.background`         | `service`                 | `background/Background.qml`                            |
+| Bar              | `dhms.bar`                | `bar`                     | `bar/Bar.qml`                                          |
+| Battery          | `dhms.battery`            | `service`                 | `services/battery/Service.qml`                         |
+| Bluetooth        | `dhms.bluetooth`          | `bar-widget`              | `panels/bluetooth/Panel.qml`                           |
+| Clipboard mgr    | `dhms.clipboard`          | `overlay`                 | `clipboard/Clipboard.qml`                              |
+| Clock            | `dhms.clock`              | `bar-widget`              | `panels/clock/BarWidget.qml`                           |
+| dhms menu        | `dhms.menu`               | `menu`, `bar-widget`      | `menu/Menu.qml`, `menu/BarWidget.qml`                  |
+| Dev gallery      | `dhms.dev-gallery`        | `panel`                   | `dev-gallery/GalleryPanel.qml`                         |
+| Disk speed test  | `dhms.disk-speedtest`     | `panel`                   | `panels/disk-speedtest/Panel.qml`                      |
+| Emojis           | `dhms.emojis`             | `overlay`                 | `emojis/Emojis.qml`                                    |
+| Image picker     | `dhms.image-picker`       | `overlay`                 | `image-picker/ImagePicker.qml`                         |
+| Lock screen      | `dhms.lock`               | `service`                 | `lock/Service.qml`                                     |
+| Media            | `dhms.media`              | `service`, `bar-widget`   | `services/media/Service.qml`, `services/media/BarWidget.qml` |
+| Monitor          | `dhms.monitor`            | `bar-widget`              | `panels/monitor/Panel.qml`                             |
+| Network          | `dhms.network`            | `bar-widget`              | `panels/network/Panel.qml`                             |
+| Notifications    | `dhms.notifications`      | `service`                 | `notifications/Service.qml`                            |
+| OSD              | `dhms.osd`                | `panel`                   | `osd/Osd.qml`                                          |
+| Polkit agent     | `dhms.polkit`             | `service`                 | `polkit/PolkitAgent.qml`                               |
+| Power            | `dhms.power`              | `bar-widget`              | `panels/power/Panel.qml`                               |
+| Speed test       | `dhms.speedtest`          | `panel`                   | `panels/speedtest/Panel.qml`                           |
+| Weather          | `dhms.weather`            | `bar-widget`              | `panels/weather/BarWidget.qml`                         |
+| Wi-Fi QR         | `dhms.wifiqr`             | `panel`                   | `panels/wifiqr/Panel.qml`                              |
 
 First-party bar-only widgets also carry manifests next to their QML files,
 e.g. `bar/widgets/Workspaces.manifest.json`. Rich popup widgets live in their
