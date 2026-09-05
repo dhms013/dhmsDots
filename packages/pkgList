@@ -4,6 +4,7 @@ asciiquarium
 base
 bash-completion
 bat
+brave-origin-bin
 bluetui
 bluez
 bluez-utils
@@ -78,6 +79,5 @@ xdg-desktop-portal-gtk
 xdg-terminal-exec-git
 yaru-icon-theme
 yazi
-zen-browser-bin
 zoxide
 zram-generator

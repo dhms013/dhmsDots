@@ -30,10 +30,10 @@ hl.window_rule({
 	no_focus = true,
 })
 
--- Zen Browser
+-- Brave Browser
 hl.window_rule({
-	name = "zen-browser",
-	match = { class = "^(zen)$" },
+	name = "brave-browser",
+	match = { class = "^(brave-origin)$" },
 	opacity = "1 override",
 })
 

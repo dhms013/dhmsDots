@@ -1,6 +1,23 @@
 #!/bin/bash
 
+resolve_conflicts() {
+  local pkg=$1
+  local conflicts
+  conflicts=$(paru -Si "$pkg" 2>/dev/null | sed -n '/Conflicts With/ s/.*: //p' | tr '\n' ' ')
+
+  for conflict in $conflicts; do
+    if pacman -Q "$conflict" &>/dev/null; then
+      pkgdrop "$conflict"
+    fi
+  done
+}
+
 if pkg-missing "$@"; then
+  for pkg in "$@"; do
+    if pkg-missing "$pkg"; then
+      resolve_conflicts "$pkg"
+    fi
+  done
   paru -S --noconfirm --needed "$@" || exit 1
 fi
 

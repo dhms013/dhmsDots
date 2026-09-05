@@ -11,10 +11,11 @@ xdg-mime default imv.desktop image/webp
 xdg-mime default imv.desktop image/bmp
 xdg-mime default imv.desktop image/tiff
 
-# Use Chromium as the default browser
-xdg-settings set default-web-browser zen.desktop
-xdg-mime default zen.desktop x-scheme-handler/http
-xdg-mime default zen.desktop x-scheme-handler/https
+# Use Brave as the default browser
+xdg-settings set default-web-browser brave-origin.desktop
+xdg-mime default brave-origin.desktop x-scheme-handler/http
+xdg-mime default brave-origin.desktop x-scheme-handler/https
+xdg-mime default brave-origin.desktop text/html
 
 # Open video files with mpv
 xdg-mime default mpv.desktop video/mp4
