@@ -1,0 +1,1004 @@
+#!/bin/bash
+
+# dhms:summary=Install, launch, stop, inspect, or remove a VM (windows, arch, fedora, ubuntu)
+# dhms:args=<install|remove|launch|stop|status|list> <os> [options]
+# dhms:requires-sudo=true
+
+# Port of omarchy/bin/omarchy-windows-vm, generalized to the dockur VM family.
+# Windows (dockurr/windows, unattended install) and the Linux distros
+# (qemux/qemu, manual install via the :8006 web viewer) share the same compose
+# skeleton: a privileged container (KVM, /dev/net/tun, NET_ADMIN) on the
+# root-managed Docker daemon.
+#
+# The compose files live in a root-owned directory and are only ever written by
+# the elevated, input-validated write_compose action. That is the whole point: a
+# root-invoked `docker compose up` must never consume a file that a process
+# running as the user could have rewritten to bind-mount / into the container.
+# Do not move this back under $HOME.
+
+DAEMON="dhms-vm"
+RUNTIME_ROOT="${DHMS_VM_DIR:-/var/lib/dhms/vm}"
+CRED_BASE="$HOME/.config/dhms-vm"
+CREDENTIALS_FILE="$CRED_BASE/windows/credentials"
+KRB5_CONF="$CRED_BASE/krb5.conf"
+PRIV_SRC=$(readlink -f "$0" 2>/dev/null || printf '%s' "$0")
+PRIV_DST="/usr/bin/$DAEMON"
+
+# --- OS driver table ---------------------------------------------------------
+
+valid_os() {
+  case "$1" in
+  windows | arch | fedora | ubuntu) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+os_label() {
+  case "$1" in
+  windows) echo Windows ;;
+  arch) echo Arch ;;
+  fedora) echo Fedora ;;
+  ubuntu) echo Ubuntu ;;
+  esac
+}
+
+os_image() { [[ $1 == windows ]] && echo "dockurr/windows" || echo "qemux/qemu"; }
+
+os_container() { echo "dhms-vm-$1"; }
+
+os_boot() { echo "$1"; }
+
+valid_boot() {
+  # arch|fedora as-is; ubuntu picks ubuntu (desktop) or ubuntus (server);
+  # windows has no BOOT — dockur uses VERSION=11.
+  case "$1:$2" in
+  arch:arch | fedora:fedora | ubuntu:ubuntu | ubuntu:ubuntus | windows:*) return 0 ;;
+  esac
+  return 1
+}
+
+os_webport() {
+  case "$1" in
+  windows) echo 8006 ;;
+  arch) echo 8016 ;;
+  fedora) echo 8026 ;;
+  ubuntu) echo 8036 ;;
+  esac
+}
+
+os_rdpport() { [[ $1 == windows ]] && echo 3389; }
+
+compose_file() { echo "$RUNTIME_ROOT/$1/docker-compose.yml"; }
+
+# --- privilege helpers -------------------------------------------------------
+
+# True when this session can reach the Docker socket directly (user in the
+# docker group). Asking about the socket rather than the configured groups keeps
+# the prompt in place through the window where sudoless Docker is enabled but
+# the reboot that grants the group has not happened yet.
+docker_needs_sudo() {
+  local sock="${DHMS_DOCKER_SOCKET:-/var/run/docker.sock}"
+  [[ -S $sock && -r $sock ]] && return 1
+  return 0
+}
+
+# The command to hand pkexec for the privileged re-exec. pkexec runs whatever
+# executable it is given (after authorization) and only shows the path in the
+# prompt — it does NOT require the target to be root-owned. So resolve to the
+# root-owned copy and refuse to elevate anything a non-root user could have
+# rewritten (including a stale /usr/bin copy — compare checksums against the
+# repository script). Fails closed (empty output) when no trustworthy target
+# is found.
+priv_target() {
+  local candidate owner mode sha_src sha_dst
+  for candidate in "$PRIV_DST" "$(type -P $DAEMON 2>/dev/null)"; do
+    [[ -n $candidate && -x $candidate ]] || continue
+    owner=$(stat -Lc '%u' "$candidate" 2>/dev/null) || continue
+    mode=$(stat -Lc '%a' "$candidate" 2>/dev/null) || continue
+    [[ $owner == "0" ]] || continue
+    ((8#$mode & 022)) && continue # writable by group or other -> reject
+    sha_src=$(sha256sum "$PRIV_SRC" 2>/dev/null | cut -d' ' -f1)
+    sha_dst=$(sha256sum "$candidate" 2>/dev/null | cut -d' ' -f1)
+    [[ -n $sha_src && $sha_src == "$sha_dst" ]] || continue
+    printf '%s\n' "$candidate"
+    return 0
+  done
+  return 1
+}
+
+# Run a privileged VM action. write_compose always elevates (the compose is
+# root-owned); the daemon operations run directly when sudoless Docker is on and
+# otherwise behind a polkit prompt. The stock org.freedesktop.policykit.exec
+# policy is auth_admin (not auth_admin_keep), so each elevated action prompts:
+# a launch asks once to start and, unless authorization is still cached by the
+# agent, again to stop.
+#
+# dhms ships no packaged /usr/bin copy (unlike omarchy), so the first elevation
+# runs a one-shot `bootstrap` action (authorized against the repository script)
+# that installs the current script to a root-owned /usr/bin/dhms-vm. After that,
+# and whenever the repo copy changes, every elevation targets the trustworthy
+# root-owned binary. No sudo/tty is required, so launch works from the app
+# launcher as well as a terminal.
+priv() {
+  local action="$1"
+  shift
+  if [[ $action != write_compose && $action != remove ]] && ! docker_needs_sudo; then
+    "__priv_$action" "$@"
+    return
+  fi
+  local target
+  target=$(priv_target) || {
+    pkexec "$PRIV_SRC" __priv bootstrap "$PRIV_SRC" "$PRIV_DST" || return 1
+    target=$(priv_target) || {
+      echo "$DAEMON: refusing to run a non-root-owned command as root" >&2
+      return 1
+    }
+  }
+  pkexec "$target" __priv "$action" "$@"
+}
+
+dc() { local os="$1"; shift; docker-compose -f "$(compose_file "$os")" "$@"; }
+
+# --- validation (shared by the user-side prompts and the root-side writer) ----
+
+valid_ram() { [[ $1 =~ ^[0-9]{1,3}G$ ]]; }
+valid_cores() { [[ $1 =~ ^[0-9]{1,2}$ ]] && ((10#$1 >= 1)); }
+valid_disk() { [[ $1 =~ ^[0-9]{1,4}G$ ]]; }
+valid_username() { [[ $1 =~ ^[A-Za-z0-9_-]{1,20}$ ]]; }
+valid_tz() { [[ $1 =~ ^[A-Za-z0-9_/.+-]{1,64}$ ]]; }
+valid_path() {
+  [[ $1 =~ ^/[A-Za-z0-9._/-]+$ ]] || return 1
+  # Reject non-normalized paths: a . or .. component canonicalizes at mount time
+  # (e.g. /./ or /a/../ -> /), which would bind-mount a sensitive directory —
+  # host / included — into the guest. Volumes must be given already-normalized.
+  case "$1" in
+  *//* | */./* | */../* | */. | */..) return 1 ;;
+  esac
+  return 0
+}
+valid_password() { [[ $1 =~ ^[[:print:]]{1,64}$ ]]; }
+
+# The only privileged sub-actions __priv may dispatch. A bash command name
+# containing a slash is executed as a path, so validating the action here — not
+# just interpolating it into "__priv_${action}" — is what stops an action like
+# ../tmp/evil from running an arbitrary file as root. The OS key is validated
+# too, so a path like ../../etc/evil can never reach a privileged action.
+valid_priv_action() {
+  case "$1" in
+  write_compose | up | up_wait | down | status | remove)
+    valid_os "$2"
+    ;;
+  bootstrap)
+    return 0
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+}
+
+# --- privileged actions (run as root via pkexec, or directly when sudoless) ---
+
+# One-shot: install the repository script to a root-owned, non group/other
+# writable /usr/bin/dhms-vm so all later pkexec dispatches resolve to a binary
+# a non-root process cannot rewrite.
+__priv_bootstrap() {
+  local src="$1" dst="$2" tmp
+  [[ -n $src && -n $dst ]] || return 1
+  [[ -x $src ]] || return 1
+  tmp=$(mktemp "$(dirname "$dst")/.dhms-vm.XXXXXX" 2>/dev/null) || return 1
+  install -o root -g root -m 0755 "$src" "$tmp" || { rm -f "$tmp"; return 1; }
+  mv -f "$tmp" "$dst"
+  chmod 0755 "$dst" 2>/dev/null || true
+}
+
+# Reads KEY=VALUE lines on stdin, re-validates every field, and writes the
+# per-OS compose atomically as root. Re-validation here is the security boundary:
+# the writer refuses rather than emit a compose an attacker could have
+# influenced. Only these fixed keys are honored; image, container name, devices,
+# caps, and port bindings come from the OS table and are never taken from input.
+__priv_write_compose() {
+  local os="$1"
+  shift
+  valid_os "$os" || { echo "invalid OS: $os" >&2; exit 2; }
+
+  local ram cores disk username password tz storage shared boot key value
+  while IFS='=' read -r key value; do
+    case "$key" in
+    RAM) ram="$value" ;;
+    CORES) cores="$value" ;;
+    DISK) disk="$value" ;;
+    USERNAME) username="$value" ;;
+    PASSWORD) password="$value" ;;
+    TZ) tz="$value" ;;
+    STORAGE) storage="$value" ;;
+    SHARED) shared="$value" ;;
+    BOOT) boot="$value" ;;
+    esac
+  done
+
+  valid_ram "$ram" || { echo "invalid RAM: $ram" >&2; exit 2; }
+  valid_cores "$cores" || { echo "invalid CPU cores: $cores" >&2; exit 2; }
+  valid_disk "$disk" || { echo "invalid disk size: $disk" >&2; exit 2; }
+  valid_tz "$tz" || tz="UTC"
+  valid_path "$storage" || { echo "invalid storage path: $storage" >&2; exit 2; }
+  valid_path "$shared" || { echo "invalid shared path: $shared" >&2; exit 2; }
+  if [[ $os == windows ]]; then
+    valid_username "$username" || { echo "invalid username: $username" >&2; exit 2; }
+    valid_password "$password" || { echo "invalid password" >&2; exit 2; }
+  else
+    valid_boot "$os" "$boot" || { echo "invalid BOOT: $os/$boot" >&2; exit 2; }
+  fi
+
+  # Neutralize anything in the password that could be misread when the compose
+  # is parsed. Two layers apply, in this order at parse time: docker compose
+  # variable interpolation over the raw text ($VAR / $$), then YAML parsing of
+  # the double-quoted scalar. Encode for the inner layer first (backslash, then
+  # double-quote) and the interpolation layer last ($ -> $$), so a password
+  # containing " \\ or $ reaches the guest verbatim. unescape() reverses this in
+  # the opposite order for the RDP credentials.
+  local esc_password=${password//\\/\\\\}
+  esc_password=${esc_password//\"/\\\"}
+  esc_password=${esc_password//\$/\$\$}
+
+  local dir image port_web port_rdp tmp
+  dir="$RUNTIME_ROOT/$os"
+  image=$(os_image "$os")
+  port_web=$(os_webport "$os")
+  port_rdp=$(os_rdpport "$os")
+
+  mkdir -p "$dir"
+  chmod 0755 "$dir" 2>/dev/null || true
+  chown root:root "$dir" 2>/dev/null || true
+
+  tmp=$(mktemp "$dir/.compose.XXXXXX")
+  {
+    echo "services:"
+    echo "  vm:"
+    echo "    image: $image"
+    echo "    container_name: $(os_container "$os")"
+    echo "    environment:"
+    if [[ $os == windows ]]; then
+      echo "      VERSION: \"11\""
+      echo "      RAM_SIZE: \"$ram\""
+      echo "      CPU_CORES: \"$cores\""
+      echo "      DISK_SIZE: \"$disk\""
+      echo "      USERNAME: \"$username\""
+      echo "      PASSWORD: \"$esc_password\""
+      echo "      TZ: \"$tz\""
+      echo "      ARGUMENTS: \"-rtc base=localtime,clock=host,driftfix=slew\""
+    else
+      echo "      BOOT: \"$boot\""
+      echo "      RAM_SIZE: \"$ram\""
+      echo "      CPU_CORES: \"$cores\""
+      echo "      DISK_SIZE: \"$disk\""
+      echo "      TZ: \"$tz\""
+    fi
+    echo "    devices:"
+    echo "      - /dev/kvm"
+    echo "      - /dev/net/tun"
+    echo "    cap_add:"
+    echo "      - NET_ADMIN"
+    echo "    ports:"
+    echo "      - 127.0.0.1:$port_web:8006"
+    if [[ $os == windows ]]; then
+      echo "      - 127.0.0.1:$port_rdp:3389/tcp"
+      echo "      - 127.0.0.1:$port_rdp:3389/udp"
+    fi
+    echo "    volumes:"
+    echo "      - $storage:/storage"
+    echo "      - $shared:/shared"
+    echo "    restart: \"no\""
+    echo "    stop_grace_period: 2m"
+  } >"$tmp"
+
+  # Readable by root and the docker group only. In sudoless mode the user is in
+  # the docker group and runs docker-compose against this file directly; in the
+  # default mode the elevated helper (root) reads it, and other local users
+  # cannot read the guest password. chown falls back to root:root if the docker
+  # group somehow does not exist (sudoless mode could not be enabled anyway).
+  chmod 0640 "$tmp" 2>/dev/null || true
+  chown root:docker "$tmp" 2>/dev/null || chown root:root "$tmp" 2>/dev/null || true
+  mv -f "$tmp" "$(compose_file "$os")"
+}
+
+# Read the host source of a bind mount out of the compose (e.g. /storage).
+# valid_path kept a ':' out of the stored path, so splitting on it is safe.
+get_mount_source() {
+  local os="$1" mnt="$2"
+  sed -n "s|^[[:space:]]*-[[:space:]]*\(/[^:]*\):$mnt\$|\1|p" "$(compose_file "$os")" | head -n1
+}
+
+# Refuse to bring a VM up if a bind-mount source is a symlink, or reached
+# through one. valid_path keeps a traversal string like /./ out of the compose,
+# but a symlink planted at ~/.windows-vm would redirect the privileged mount just
+# the same — docker follows it — and a string check cannot see that. So verify
+# the real directories here, as root, immediately before the mount. A source
+# that does not exist is fine: docker creates it as a plain directory.
+assert_mounts_safe() {
+  local os="$1" mnt src real
+  for mnt in /storage /shared; do
+    src=$(get_mount_source "$os" "$mnt")
+    [[ -n $src ]] || {
+      echo "$DAEMON: missing $mnt mount source in the $os compose" >&2
+      return 1
+    }
+    if [[ -L $src ]]; then
+      echo "$DAEMON: refusing to start — $src is a symlink; the VM mount source must be a real directory" >&2
+      return 1
+    fi
+    if [[ -e $src ]]; then
+      [[ -d $src ]] || {
+        echo "$DAEMON: refusing to start — $src is not a directory" >&2
+        return 1
+      }
+      real=$(realpath "$src" 2>/dev/null)
+      [[ $real == "$src" ]] || {
+        echo "$DAEMON: refusing to start — $src resolves through a symlink to $real" >&2
+        return 1
+      }
+    fi
+  done
+}
+
+# True when another installed compose still references $img.
+image_in_use_by_other() {
+  local os="$1" img="$2" f
+  for f in "$RUNTIME_ROOT"/*/docker-compose.yml; do
+    [[ -f $f ]] || continue
+    case "$f" in
+    */"$os"/docker-compose.yml) continue ;;
+    esac
+    grep -q "image: $img" "$f" && return 0
+  done
+  return 1
+}
+
+__priv_up() { local os="$1"; assert_mounts_safe "$os" && dc "$os" up -d; }
+
+__priv_down() { local os="$1"; dc "$os" down; }
+
+# Bring the VM up and wait until the guest reports it is ready, all under a
+# single elevation so the readiness poll does not prompt on every iteration.
+__priv_up_wait() {
+  local os="$1" status
+  assert_mounts_safe "$os" || return 1
+  status=$(docker inspect --format='{{.State.Status}}' "$(os_container "$os")" 2>/dev/null)
+  if [[ $status != "running" ]]; then
+    dc "$os" up -d || return 1
+  fi
+
+  # docker logs persists across restarts, so anchor the scan to the current
+  # start time; an empty --since would match a stale "started successfully".
+  local started_at count=0
+  while true; do
+    started_at=$(docker inspect --format='{{.State.StartedAt}}' "$(os_container "$os")" 2>/dev/null)
+    if [[ -n $started_at ]] && docker logs --since "$started_at" "$(os_container "$os")" 2>&1 | grep -qi "started successfully"; then
+      return 0
+    fi
+    sleep 2
+    ((++count > 60)) && {
+      echo "Timeout: $os VM did not report ready within 2 minutes" >&2
+      return 1
+    }
+  done
+}
+
+# Print the status (empty if the container does not exist) and always succeed,
+# so a non-zero exit from priv status means the elevation itself failed
+# (authorization declined) rather than "no such container".
+__priv_status() { docker inspect --format='{{.State.Status}}' "$(os_container "$1")" 2>/dev/null || true; }
+
+# Remove a VM. The QEMU image is shared by arch/fedora/ubuntu, so it is only
+# removed when no other installed VM still references it.
+__priv_remove() {
+  local os="$1" img
+  dc "$os" down 2>/dev/null || true
+  img=$(os_image "$os")
+  if ! image_in_use_by_other "$os" "$img"; then
+    docker rmi "$img" 2>/dev/null || true
+  fi
+  rm -f "$(compose_file "$os")"
+  rmdir "$RUNTIME_ROOT/$os" 2>/dev/null || true
+}
+
+# --- config helpers ----------------------------------------------------------
+
+# Feed the collected settings to the elevated writer.
+write_compose() {
+  local os="$1" ram="$2" cores="$3" disk="$4" username="$5" password="$6" tz="$7" storage="$8" shared="$9" boot="${10:-}"
+  {
+    printf 'RAM=%s\nCORES=%s\nDISK=%s\n' "$ram" "$cores" "$disk"
+    if [[ $os == windows ]]; then
+      printf 'USERNAME=%s\nPASSWORD=%s\n' "$username" "$password"
+    else
+      printf 'BOOT=%s\n' "$boot"
+    fi
+    printf 'TZ=%s\nSTORAGE=%s\nSHARED=%s\n' "$tz" "$storage" "$shared"
+  } | priv write_compose "$os"
+}
+
+# Reverse, in the opposite order, the escaping __priv_write_compose applied to
+# the password: undo the interpolation layer ($$ -> $) first, then the YAML
+# layer (\" -> ", then \\ -> \).
+unescape() {
+  local v=$1
+  v=${v//\$\$/\$}
+  v=${v//\\\"/\"}
+  v=${v//\\\\/\\}
+  printf '%s' "$v"
+}
+
+# Store the RDP credentials privately for the user (0600) so the plaintext
+# password is not world-readable. The password is one validated printable line
+# (no newline), so plain KEY=VALUE is safe.
+write_credentials() {
+  local username="$1" password="$2" old_umask dir
+  dir="$(dirname "$CREDENTIALS_FILE")"
+  mkdir -p "$dir"
+  old_umask=$(umask)
+  umask 077
+  printf 'USERNAME=%s\nPASSWORD=%s\n' "$username" "$password" >"$CREDENTIALS_FILE"
+  chmod 600 "$CREDENTIALS_FILE" 2>/dev/null || true
+  umask "$old_umask"
+}
+
+# Read one field from the private credentials file; IFS on the first = keeps a
+# password that itself contains =.
+read_credential() {
+  local want="$1" key value
+  [[ -f $CREDENTIALS_FILE ]] || return 1
+  while IFS='=' read -r key value; do
+    [[ $key == "$want" ]] && {
+      printf '%s' "$value"
+      return 0
+    }
+  done <"$CREDENTIALS_FILE"
+  return 1
+}
+
+read_compose_value() {
+  local key="$1" file="$2"
+  sed -n "s/.*${key}: \"\(.*\)\"/\1/p" "$file" | head -n1
+}
+
+# --- prerequisites -----------------------------------------------------------
+
+check_prerequisites() {
+  local DISK_SIZE_GB=${1:-64}
+  local REQUIRED_SPACE=$((DISK_SIZE_GB + 10)) # Add 10GB for the image and overhead
+
+  # Check for KVM support
+  if [[ ! -e /dev/kvm ]]; then
+    gum style \
+      --border normal \
+      --padding "1 2" \
+      --margin "1" \
+      "❌ KVM virtualization not available!" \
+      "" \
+      "Please enable virtualization in BIOS or run:" \
+      "  sudo modprobe kvm-intel  # for Intel CPUs" \
+      "  sudo modprobe kvm-amd    # for AMD CPUs"
+    exit 1
+  fi
+
+  # Check disk space
+  AVAILABLE_SPACE=$(df "$HOME" | awk 'NR==2 {print int($4/1024/1024)}')
+  if ((AVAILABLE_SPACE < REQUIRED_SPACE)); then
+    echo "❌ Insufficient disk space!"
+    echo "   Available: ${AVAILABLE_SPACE}GB"
+    echo "   Required: ${REQUIRED_SPACE}GB (${DISK_SIZE_GB}GB disk + 10GB for the image)"
+    exit 1
+  fi
+}
+
+# Docker is never a required package: it is enabled/installed on demand exactly
+# when a VM is being used, and can be removed again (case B in remove_vm).
+ensure_docker_runtime() {
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "Docker is not installed. Installing docker + docker-compose on demand..."
+    pkgadd docker docker-compose || return 1
+  fi
+  if ! systemctl is-active --quiet docker 2>/dev/null; then
+    echo "Starting the Docker daemon (needed for the VM)..."
+    docker-set on || return 1
+  fi
+}
+
+remaining_vms() {
+  find "$RUNTIME_ROOT" -mindepth 2 -maxdepth 2 -name docker-compose.yml 2>/dev/null | wc -l
+}
+
+# --- commands ----------------------------------------------------------------
+
+install_vm() {
+  local os="$1"
+  # Set up trap to handle Ctrl+C
+  trap "echo ''; echo 'Installation cancelled by user'; exit 1" INT
+
+  check_prerequisites
+
+  local boot=""
+  if [[ $os == ubuntu ]]; then
+    local variant
+    variant=$(printf 'Desktop\nServer\n' | gum choose --header="Ubuntu variant?" --header.help="Desktop is the default GUI build; Server is the smaller non-GUI LTS")
+    [[ -n $variant ]] || exit 1
+    boot="ubuntu"
+    [[ $variant == Server ]] && boot="ubuntus"
+  else
+    boot=$(os_boot "$os")
+  fi
+  valid_boot "$os" "$boot" || { echo "unsupported OS: $os" >&2; exit 1; }
+
+  local pkgs="gum"
+  [[ $os == windows ]] && pkgs="freerdp openbsd-netcat $pkgs"
+  pkgadd $pkgs
+  ensure_docker_runtime
+
+  mkdir -p "$HOME/.local/share/applications"
+  cat >"$HOME/.local/share/applications/dhms-vm-$os.desktop" <<EOF
+[Desktop Entry]
+Name=$(os_label "$os") (VM)
+Comment=Start the $(os_label "$os") VM via Docker and connect
+Exec=uwsm-app -- dhms-vm launch $os
+Terminal=false
+Type=Application
+Categories=System;Virtualization;
+EOF
+
+  # Get system resources
+  TOTAL_RAM=$(free -h | awk 'NR==2 {print $2}')
+  TOTAL_RAM_GB=$(awk 'NR==1 {printf "%d", $2/1024/1024}' /proc/meminfo)
+  TOTAL_CORES=$(nproc)
+
+  echo ""
+  echo "System Resources Detected:"
+  echo "  Total RAM: $TOTAL_RAM"
+  echo "  Total CPU Cores: $TOTAL_CORES"
+  echo ""
+
+  RAM_OPTIONS=""
+  for size in 2 4 8 16 32 64; do
+    if ((size <= TOTAL_RAM_GB)); then
+      RAM_OPTIONS="$RAM_OPTIONS ${size}G"
+    fi
+  done
+
+  SELECTED_RAM=$(echo $RAM_OPTIONS | tr ' ' '\n' | gum choose --selected="4G" --header="How much RAM would you like to allocate to the $(os_label "$os") VM?")
+
+  # Check if user cancelled
+  if [[ -z $SELECTED_RAM ]]; then
+    echo "Installation cancelled by user"
+    exit 1
+  fi
+
+  SELECTED_CORES=$(gum input --placeholder="Number of CPU cores (1-$TOTAL_CORES)" --value="2" --header="How many CPU cores would you like to allocate to the $(os_label "$os") VM?" --char-limit=2)
+
+  # Check if user cancelled (Ctrl+C in gum input returns empty string)
+  if [[ -z $SELECTED_CORES ]]; then
+    echo "Installation cancelled by user"
+    exit 1
+  fi
+
+  if ! valid_cores "$SELECTED_CORES" || ((SELECTED_CORES > TOTAL_CORES)); then
+    echo "Invalid input. Using default: 2 cores"
+    SELECTED_CORES=2
+  fi
+
+  AVAILABLE_SPACE=$(df "$HOME" | awk 'NR==2 {print int($4/1024/1024)}')
+  MAX_DISK_GB=$((AVAILABLE_SPACE - 10)) # Leave 10GB for the image
+
+  # Check if we have enough space for minimum
+  if ((MAX_DISK_GB < 32)); then
+    echo "❌ Insufficient disk space for the $(os_label "$os") VM!"
+    echo "   Available: ${AVAILABLE_SPACE}GB"
+    echo "   Minimum required: 42GB (32GB disk + 10GB for the image)"
+    exit 1
+  fi
+
+  DISK_OPTIONS=""
+  for size in 32 64 128 256 512; do
+    if ((size <= MAX_DISK_GB)); then
+      DISK_OPTIONS="$DISK_OPTIONS ${size}G"
+    fi
+  done
+
+  # Default to 64G if available, otherwise 32G
+  DEFAULT_DISK="64G"
+  if ! echo "$DISK_OPTIONS" | grep -q "64G"; then
+    DEFAULT_DISK="32G"
+  fi
+
+  SELECTED_DISK=$(echo $DISK_OPTIONS | tr ' ' '\n' | gum choose --selected="$DEFAULT_DISK" --header="How much disk space would you like to give the $(os_label "$os") VM? (64GB+ recommended)")
+
+  # Check if user cancelled
+  if [[ -z $SELECTED_DISK ]]; then
+    echo "Installation cancelled by user"
+    exit 1
+  fi
+
+  # Extract just the number for prerequisite check
+  DISK_SIZE_NUM=$(echo "$SELECTED_DISK" | sed 's/G//')
+
+  # Re-check prerequisites with selected disk size
+  check_prerequisites "$DISK_SIZE_NUM"
+
+  local USERNAME="" PASSWORD=""
+  if [[ $os == windows ]]; then
+    # Prompt for username and password
+    USERNAME=$(gum input --placeholder="Username (Press enter to use default: docker)" --header="Enter Windows username:")
+    if [[ -z $USERNAME ]]; then
+      USERNAME="docker"
+    fi
+    if ! valid_username "$USERNAME"; then
+      echo "Invalid username (use letters, digits, - or _, up to 20 chars). Using default: docker"
+      USERNAME="docker"
+    fi
+
+    PASSWORD=$(gum input --placeholder="Password (Press enter to use default: admin)" --password --header="Enter Windows password:")
+    if [[ -z $PASSWORD ]]; then
+      PASSWORD="admin"
+      PASSWORD_DISPLAY="(default)"
+    else
+      PASSWORD_DISPLAY="(user-defined)"
+    fi
+    if ! valid_password "$PASSWORD"; then
+      echo "Invalid password (printable characters, up to 64). Using default: admin"
+      PASSWORD="admin"
+      PASSWORD_DISPLAY="(default)"
+    fi
+  else
+    PASSWORD_DISPLAY="(none — interactive install)"
+  fi
+
+  # Display configuration summary
+  gum style \
+    --border normal \
+    --padding "1 2" \
+    --margin "1" \
+    --align left \
+    --bold \
+    "$(os_label "$os") VM Configuration" \
+    "" \
+    "RAM:       $SELECTED_RAM" \
+    "CPU:       $SELECTED_CORES cores" \
+    "Disk:      $SELECTED_DISK" \
+    "Username:  $USERNAME" \
+    "Password:  $PASSWORD_DISPLAY"
+
+  # Ask for confirmation
+  echo ""
+  if ! gum confirm "Proceed with this configuration?"; then
+    echo "Installation cancelled by user"
+    exit 1
+  fi
+
+  local storage shared tz
+  storage="$HOME/.$os-vm"
+  shared="$HOME/$(os_label "$os")"
+  mkdir -p "$storage" "$shared"
+  tz=$(timedatectl show -p Timezone --value 2>/dev/null || echo UTC)
+
+  # Write the root-owned compose from the validated settings (one prompt if
+  # sudoless Docker is off), then bring the stack up.
+  write_compose "$os" "$SELECTED_RAM" "$SELECTED_CORES" "$SELECTED_DISK" \
+    "$USERNAME" "$PASSWORD" "$tz" "$storage" "$shared" "$boot" || {
+    echo "❌ Failed to write the $(os_label "$os") VM configuration."
+    exit 1
+  }
+  if [[ $os == windows ]]; then
+    write_credentials "$USERNAME" "$PASSWORD"
+  fi
+
+  echo ""
+  echo "Starting the $(os_label "$os") VM..."
+  if [[ $os == windows ]]; then
+    echo "This will download a Windows 11 image (may take 10-15 minutes)."
+  else
+    echo "This will download the $(os_label "$os") image (size depends on the build)."
+  fi
+  echo ""
+  echo "Monitor installation progress at: http://127.0.0.1:$(os_webport "$os")"
+  echo ""
+
+  if ! priv up "$os"; then
+    echo "❌ Failed to start the $(os_label "$os") VM!"
+    echo "   Common issues:"
+    echo "   - Docker daemon not running: sudo systemctl start docker"
+    echo "   - Port already in use: check if another VM is running"
+    exit 1
+  fi
+
+  echo ""
+  echo "$(os_label "$os") VM is starting up! Opening the web viewer..."
+  sleep 3
+  xdg-open "http://127.0.0.1:$(os_webport "$os")"
+
+  echo ""
+  echo "Installation is running in the background."
+  echo "Monitor progress at: http://127.0.0.1:$(os_webport "$os")"
+  if [[ $os == windows ]]; then
+    echo ""
+    echo "Once finished, launch '$DAEMON launch $os' or use the '$(os_label "$os") (VM)' app entry."
+  fi
+  echo ""
+  echo "To stop the VM: $DAEMON stop $os"
+  echo ""
+}
+
+remove_vm() {
+  local os="$1" remaining
+  if ! gum confirm --default=false "Remove the $(os_label "$os") VM and delete all its data?"; then
+    echo "Removal cancelled by user"
+    exit 1
+  fi
+
+  echo "Removing the $(os_label "$os") VM..."
+  if [[ -f $(compose_file "$os") ]]; then
+    priv remove "$os" || true
+  fi
+
+  rm -f "$HOME/.local/share/applications/dhms-vm-$os.desktop"
+  rm -f "$KRB5_CONF"
+  rm -rf "$CRED_BASE/$os"
+
+  # Docker is only a VM dependency here: when the last VM goes, stop the
+  # daemon automatically (sudo prompts for the password inline). The docker
+  # packages stay installed; the next install re-enables via docker-set on.
+  remaining=$(remaining_vms)
+  if ((remaining == 0)); then
+    echo ""
+    echo "No VMs left. Stopping the Docker daemon..."
+    docker-set off
+    echo "Docker daemon stopped. (re-enable anytime via menu > Setup > Docker)"
+  else
+    echo ""
+    echo "Docker kept for $remaining remaining VM(s)."
+  fi
+
+  echo ""
+  echo "$(os_label "$os") VM removal completed!"
+}
+
+launch_vm() {
+  local os="$1" KEEP_ALIVE=false
+  if [[ $2 = "--keep-alive" ]] || [[ $2 = "-k" ]]; then
+    KEEP_ALIVE=true
+  fi
+
+  if [[ ! -f $(compose_file "$os") ]]; then
+    echo "$DAEMON: the $(os_label "$os") VM is not configured. Please run: $DAEMON install $os"
+    exit 1
+  fi
+
+  ensure_docker_runtime
+
+  if [[ $os == windows ]]; then
+    # RDP credentials come from the private per-user file. Fall back to the
+    # compose only when it is readable (sudoless mode), reversing the writer's
+    # escaping.
+    local WIN_USER WIN_PASS
+    WIN_USER=$(read_credential USERNAME) || WIN_USER=""
+    WIN_PASS=$(read_credential PASSWORD) || WIN_PASS=""
+    if [[ -z $WIN_USER || -z $WIN_PASS ]] && [[ -r $(compose_file "$os") ]]; then
+      [[ -z $WIN_USER ]] && WIN_USER=$(unescape "$(read_compose_value USERNAME "$(compose_file "$os")")")
+      [[ -z $WIN_PASS ]] && WIN_PASS=$(unescape "$(read_compose_value PASSWORD "$(compose_file "$os")")")
+    fi
+    [[ -z $WIN_USER ]] && WIN_USER="docker"
+    [[ -z $WIN_PASS ]] && WIN_PASS="admin"
+
+    echo "Starting the Windows VM (this may prompt for authorization)..."
+    if ! priv up_wait "$os"; then
+      echo "❌ Failed to start the Windows VM!"
+      echo "   Try checking: $DAEMON status windows"
+      dhms-notification-send -u critical "Windows VM" "Failed to start Windows VM"
+      exit 1
+    fi
+
+    # Build the connection info
+    local LIFECYCLE
+    if [[ $KEEP_ALIVE = "true" ]]; then
+      LIFECYCLE="VM will keep running after RDP closes
+To stop: $DAEMON stop windows"
+    else
+      LIFECYCLE="VM will auto-stop when RDP closes"
+    fi
+
+    gum style \
+      --border normal \
+      --padding "1 2" \
+      --margin "1" \
+      --align center \
+      "Connecting to the Windows VM" \
+      "" \
+      "$LIFECYCLE"
+
+    # FreeRDP 3 tries Kerberos before NTLM for NLA, and krb5 ships
+    # /etc/krb5.conf as the MIT sample with default_realm = ATHENA.MIT.EDU.
+    # Every connect then goes looking for MIT's KDC: with internet up it fails
+    # fast, but off the network each attempt blocks ~23s and no RDP window is
+    # ever drawn. The VM authenticates against a local Windows account, so
+    # point FreeRDP at a realm-less config and let it fall straight through to
+    # NTLM.
+    mkdir -p "$(dirname "$KRB5_CONF")"
+    if [[ ! -f $KRB5_CONF ]]; then
+      printf '[libdefaults]\n  dns_lookup_kdc = false\n  dns_lookup_realm = false\n' >"$KRB5_CONF"
+    fi
+    export KRB5_CONFIG="$KRB5_CONF"
+
+    # Detect display scale from Hyprland
+    local HYPR_SCALE SCALE_PERCENT RDP_SCALE
+    HYPR_SCALE=$(hyprctl monitors -j | jq -r '.[] | select (.focused == true) | .scale')
+    SCALE_PERCENT=$(echo "$HYPR_SCALE" | awk '{print int($1 * 100)}')
+
+    RDP_SCALE=""
+    if ((SCALE_PERCENT >= 170)); then
+      RDP_SCALE="/scale:180"
+    elif ((SCALE_PERCENT >= 130)); then
+      RDP_SCALE="/scale:140"
+    fi
+    # If scale is less than 130%, don't set any scale (use default 100)
+
+    # Connect with RDP in fullscreen (auto-detects resolution)
+    xfreerdp3 /u:"$WIN_USER" /p:"$WIN_PASS" /v:127.0.0.1:$(os_rdpport "$os") -grab-keyboard /sound /microphone /clipboard /cert:ignore /title:"Windows VM" /dynamic-resolution /gfx:AVC444 /floatbar:sticky:off,default:visible,show:fullscreen $RDP_SCALE
+
+    # After RDP closes, stop the container unless --keep-alive was specified
+    if [[ $KEEP_ALIVE = "false" ]]; then
+      echo ""
+      echo "RDP session closed. Stopping the Windows VM..."
+      if priv down "$os"; then
+        echo "Windows VM stopped."
+      else
+        echo "⚠️  Could not stop the Windows VM (authorization declined?)."
+        echo "   It may still be running. Stop it with: $DAEMON stop windows"
+      fi
+    else
+      echo ""
+      echo "RDP session closed. Windows VM is still running."
+      echo "To stop it: $DAEMON stop windows"
+    fi
+  else
+    echo "Starting the $(os_label "$os") VM (this may prompt for authorization)..."
+    if ! priv up "$os"; then
+      echo "❌ Failed to start the $(os_label "$os") VM!"
+      echo "   Try checking: $DAEMON status $os"
+      dhms-notification-send -u critical "$(os_label "$os") VM" "Failed to start $(os_label "$os") VM"
+      exit 1
+    fi
+    echo ""
+    echo "Opening the web viewer at http://127.0.0.1:$(os_webport "$os")..."
+    sleep 3
+    xdg-open "http://127.0.0.1:$(os_webport "$os")"
+    gum style \
+      --border normal \
+      --padding "1 2" \
+      --margin "1" \
+      --align center \
+      "$(os_label "$os") VM is running" \
+      "" \
+      "Web viewer: http://127.0.0.1:$(os_webport "$os")" \
+      "" \
+      "To stop: $DAEMON stop $os"
+  fi
+}
+
+stop_vm() {
+  local os="$1"
+  if [[ ! -f $(compose_file "$os") ]]; then
+    echo "$DAEMON: the $(os_label "$os") VM is not configured."
+    exit 1
+  fi
+
+  echo "Stopping the $(os_label "$os") VM..."
+  if priv down "$os"; then
+    echo "$(os_label "$os") VM stopped."
+  else
+    echo "⚠️  Could not stop the VM (authorization declined?). It may still be running."
+    exit 1
+  fi
+}
+
+status_os() {
+  local os="$1" status
+  if [[ ! -f $(compose_file "$os") ]]; then
+    echo "$(os_label "$os"): not installed"
+    return 0
+  fi
+
+  if ! status=$(priv status "$os" 2>/dev/null); then
+    echo "$(os_label "$os"): could not query (authorization declined?)"
+    return 1
+  fi
+
+  if [[ -z $status ]]; then
+    echo "$(os_label "$os"): container not found"
+  elif [[ $status == "running" ]]; then
+    echo "$(os_label "$os"): RUNNING — http://127.0.0.1:$(os_webport "$os")"
+    [[ $os == windows ]] && echo "               RDP: 127.0.0.1:$(os_rdpport "$os")"
+  else
+    echo "$(os_label "$os"): stopped ($status)"
+  fi
+}
+
+status_all() {
+  local os
+  for os in windows arch fedora ubuntu; do
+    status_os "$os"
+  done
+}
+
+show_usage() {
+  echo "Usage: $DAEMON <command> <os> [options]"
+  echo ""
+  echo "Commands:"
+  echo "  install <os>           Install and configure a VM (os: windows, arch, fedora, ubuntu)"
+  echo "  remove <os>            Remove a VM and optionally its data"
+  echo "  launch <os> [options]  Start the VM (if needed) and connect"
+  echo "                         Options:"
+  echo "                           --keep-alive, -k   Keep the VM running after the RDP session closes (windows)"
+  echo "  stop <os>              Stop a running VM"
+  echo "  status [os]            Show VM status (all OSes when <os> is omitted)"
+  echo "  list                   List all installed VMs and their status"
+  echo "  help                   Show this help message"
+  echo ""
+  echo "Examples:"
+  echo "  $DAEMON install windows            # Set up Windows 11 for the first time"
+  echo "  $DAEMON install ubuntu            # Ask desktop vs server, then set up"
+  echo "  $DAEMON launch windows            # Connect via RDP (auto-stop on exit)"
+  echo "  $DAEMON launch arch               # Open the :8006 web viewer"
+  echo "  $DAEMON stop fedora               # Shut the VM down"
+  echo "  $DAEMON status                    # Show every VM"
+}
+
+# Main command dispatcher
+case "$1" in
+__priv)
+  ((EUID == 0)) || {
+    echo "$DAEMON __priv must run as root" >&2
+    exit 1
+  }
+  action="$2"
+  shift 2
+  valid_priv_action "$action" "$1" || {
+    echo "$DAEMON: unknown privileged action" >&2
+    exit 1
+  }
+  "__priv_${action}" "$@"
+  ;;
+install)
+  valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
+  install_vm "$2"
+  ;;
+remove)
+  valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
+  remove_vm "$2"
+  ;;
+launch | start)
+  valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
+  launch_vm "$2" "$3"
+  ;;
+stop | down)
+  valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
+  stop_vm "$2"
+  ;;
+status)
+  if [[ -n $2 ]]; then
+    valid_os "$2" || { echo "Unknown OS: $2" >&2; show_usage >&2; exit 1; }
+    status_os "$2"
+  else
+    status_all
+  fi
+  ;;
+list)
+  status_all
+  ;;
+help | --help | -h | "")
+  show_usage
+  ;;
+*)
+  echo "Unknown command: $1" >&2
+  echo "" >&2
+  show_usage >&2
+  exit 1
+  ;;
+esac

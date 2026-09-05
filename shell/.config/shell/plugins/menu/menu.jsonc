@@ -75,6 +75,34 @@
     "label": "Themes",
     "action": "floating-terminal theme-install"
   },
+  "setup.install.vm": {
+    "icon": "󰍲",
+    "label": "VM"
+  },
+  "setup.install.vm.windows": {
+    "icon": "󰍲",
+    "label": "Windows",
+    "disabled": "[[ -d /var/lib/dhms/vm/windows ]]",
+    "action": "floating-terminal dhms-vm install windows"
+  },
+  "setup.install.vm.arch": {
+    "icon": "󰌽",
+    "label": "Arch",
+    "disabled": "[[ -d /var/lib/dhms/vm/arch ]]",
+    "action": "floating-terminal dhms-vm install arch"
+  },
+  "setup.install.vm.fedora": {
+    "icon": "󰌽",
+    "label": "Fedora",
+    "disabled": "[[ -d /var/lib/dhms/vm/fedora ]]",
+    "action": "floating-terminal dhms-vm install fedora"
+  },
+  "setup.install.vm.ubuntu": {
+    "icon": "󰌽",
+    "label": "Ubuntu",
+    "disabled": "[[ -d /var/lib/dhms/vm/ubuntu ]]",
+    "action": "floating-terminal dhms-vm install ubuntu"
+  },
   "setup.power-profile": {
     "icon": "\udb81\udc0b",
     "label": "Power Profiles",
@@ -89,8 +117,40 @@
     "label": "Remove",
     "aliases": [
       "uninstall"
-    ],
+    ]
+  },
+  "setup.remove.packages": {
+    "icon": "󰣇",
+    "label": "Packages",
     "action": "floating-terminal pkg-remove"
+  },
+  "setup.remove.vm": {
+    "icon": "󰍲",
+    "label": "VM"
+  },
+  "setup.remove.vm.windows": {
+    "icon": "󰍲",
+    "label": "Windows",
+    "when": "[[ -d /var/lib/dhms/vm/windows ]]",
+    "action": "floating-terminal dhms-vm remove windows"
+  },
+  "setup.remove.vm.arch": {
+    "icon": "󰌽",
+    "label": "Arch",
+    "when": "[[ -d /var/lib/dhms/vm/arch ]]",
+    "action": "floating-terminal dhms-vm remove arch"
+  },
+  "setup.remove.vm.fedora": {
+    "icon": "󰌽",
+    "label": "Fedora",
+    "when": "[[ -d /var/lib/dhms/vm/fedora ]]",
+    "action": "floating-terminal dhms-vm remove fedora"
+  },
+  "setup.remove.vm.ubuntu": {
+    "icon": "󰌽",
+    "label": "Ubuntu",
+    "when": "[[ -d /var/lib/dhms/vm/ubuntu ]]",
+    "action": "floating-terminal dhms-vm remove ubuntu"
   },
   "setup.timezone": {
     "icon": "\ueb22",

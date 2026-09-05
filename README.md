@@ -15,10 +15,11 @@ It exists so I can reinstall Arch + Hyprland and get my daily-driver setup back 
 1. [About](#about)
 2. [Preview](#preview)
 3. [Default Apps](#default-apps)
-4. [Dependencies](#dependencies)
-5. [Dotfiles](#dotfiles)
-6. [Installation](#installation)
-7. [Special Thanks](#special-thanks)
+4. [Virtual Machines](#virtual-machines)
+5. [Dependencies](#dependencies)
+6. [Dotfiles](#dotfiles)
+7. [Installation](#installation)
+8. [Special Thanks](#special-thanks)
 
 ---
 
@@ -83,6 +84,32 @@ My Hyprland config uses the following defaults:
 | AUR Helper   | [Paru](https://github.com/morganamilo/paru)         |
 
 These apps are referenced directly in Hyprland keybinds.
+
+---
+
+## Virtual Machines
+
+Run OS VMs in Docker using the dockur family. Docker is enabled on demand when
+you install a VM and is never a required package (remove it again when the last
+VM goes away).
+
+- **Windows 11** — `dockurr/windows`, hands-free install, connect over RDP.
+- **Arch / Fedora / Ubuntu** — `qemux/qemu`, interactive install through a web
+  viewer; Ubuntu asks desktop vs server first.
+
+Install from the shell menu (`Setup > Install > VM`) or:
+
+```bash
+dhms-vm install windows   # or arch / fedora / ubuntu
+dhms-vm status            # list every VM
+dhms-vm launch windows    # connect (RDP / web viewer)
+dhms-vm stop fedora       # shut down
+dhms-vm remove ubuntu     # delete (offers to remove Docker on the last VM)
+```
+
+Requires `/dev/kvm` and at least ~10 GB free in addition to the disk you
+allocate. Guest disks live in `~/.<os>-vm`; shared folders default to `~/<OS>`.
+The guest can only reach those paths — nothing else on the host.
 
 ---
 

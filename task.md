@@ -609,3 +609,46 @@ that already credit omarchy ("Mirror omarchy's flow", "omarchy's docs/menu.md",
 etc.) were deliberately LEFT as omarchy — they are attribution, per user intent.
 
 (End of file - total 551 lines)
+
+## Windows VM feature: dhms.menu VM framework (2026-09-05)
+
+Context for the VM port decision (docker vs podman, menu, runtime lifecycle).
+Chat: "port omarchy windows-vm feature" + follow-ups.
+
+- Feasibility: dockur provides BOTH engines with the same compose skeleton
+  (/dev/kvm, /dev/net/tun, NET_ADMIN, :8006, /storage):
+  - dockurr/windows — Windows 11, hands-free (unattended) install.
+  - qemux/qemu — Linux via BOOT=arch|fedora|ubuntu (manual install through the
+    :8006 web viewer). ubuntus variant = Ubuntu Server.
+- Runtime verdict: DOCKER (v29.7.2 installed, daemon inactive). Podman rootless
+  is lighter while idle but has dockur caveats (crun+keep-groups for /dev/kvm,
+  passt port-forwarding quirks, broken samba device discovery, Win11 CPU-arg
+  workaround) and omarchy's polkit model (docker group + root daemon + pkexec
+  whitelist) only maps to Docker. Idle savings are moot here: the daemon stays
+  OFF except while a VM runs (setup > Docker toggle already covers enable/disable).
+- Runtime lifecycle: docker NEVER in pkgList. install<os> => on-demand (pkgadd
+  docker docker-compose freerdp openbsd-netcat gum if missing; sudo systemctl
+  enable --now docker if inactive). remove<os>: count VMs under
+  /var/lib/dhms/vm/*; >0 => keep runtime silently; 0 => gum confirm, then
+  pkgdrop docker docker-compose + sudo systemctl disable --now docker.
+- Menu: setup.install.vm {windows,arch,fedora,ubuntu}, each `disabled` when
+  /var/lib/dhms/vm/<os> exists; setup.remove reworked leaf→parent
+  {packages (=old pkg-remove action), vm (children = installed OSes,
+  `when`-guarded)}. ubuntu entry asks desktop (BOOT=ubuntu) vs server
+  (BOOT=ubuntus) at install time.
+- bin/dhms-vm: one dispatcher (install|remove|launch|stop|status|list <os>);
+  omarchy priv machinery ported verbatim, parameterized per-OS; root-owned
+  /var/lib/dhms/vm/<os>/docker-compose.yml (0640 root:docker); 0600 credentials
+  (windows only); zero-tty self-install of a root-owned /usr/bin/dhms-vm via a
+  `__priv bootstrap` action (first elevated call re-syncs the priv target, so
+  pkexec resolves a trustworthy root-owned binary without a sudo tty); fixed
+  per-OS host ports on 127.0.0.1 (windows 8006/3389, arch 8016, fedora 8026,
+  ubuntu 8036); shared qemux/qemu image is only docker rmi'd when its LAST VM
+  is removed (refcount by scanning sibling composes).
+- Security invariants to preserve (verbatim from omarchy): validate on BOTH
+  sides of pkexec, only whitelisted __priv actions + OS keys, assert_mounts_safe
+  before up, never let the privileged bring-up consume a compose a user process
+  could have rewritten. Do not move runtime dir back under $HOME.
+- Windows VM port notes: RDP via xfreerdp3 (KRB5_CONFIG realm-less override);
+  drop the legacy ~/.config/windows compose migration (dhms never shipped it);
+  volume defaults storage=$HOME/.<os>-vm, shared=$HOME/Windows.
