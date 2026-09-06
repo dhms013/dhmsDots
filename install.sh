@@ -100,6 +100,7 @@ run_module dotfiles.sh
 run_module services.sh
 run_module dirs.sh
 run_module defaults.sh
+run_module browsers.sh
 run_module theme.sh
 run_module sddm.sh
 run_module uninstall.sh

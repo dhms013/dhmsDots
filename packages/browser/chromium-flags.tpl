@@ -1,0 +1,5 @@
+--ozone-platform=wayland
+--ozone-platform-hint=wayland
+--password-store=gnome-libsecret
+--enable-features=TouchpadOverscrollHistoryNavigation
+--load-extension={{ EXTENSIONS_DIR }}/copy-url,{{ EXTENSIONS_DIR }}/yt-dlp,{{ EXTENSIONS_DIR }}/whatsapp-slim

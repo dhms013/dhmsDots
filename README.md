@@ -80,7 +80,7 @@ My Hyprland config uses the following defaults:
 | Terminal     | ghostty      |
 | Editor       | nvim         |
 | File manager | yazi         |
-| Browser      | Brave Origin |
+| Browser      | brave-origin |
 | AUR Helper   | [Paru](https://github.com/morganamilo/paru)         |
 
 These apps are referenced directly in Hyprland keybinds.
