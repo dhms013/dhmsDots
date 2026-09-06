@@ -1290,12 +1290,19 @@ Item {
                 Text {
                     id: tooltipLabel
 
-                    anchors.centerIn: parent
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.topMargin: 7
+                    anchors.bottomMargin: 7
                     text: root.tooltipText
                     color: Color.tooltip.text
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.body
-                    horizontalAlignment: Text.AlignHCenter
+                    horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
                 }
 

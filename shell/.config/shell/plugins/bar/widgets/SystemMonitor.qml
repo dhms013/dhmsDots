@@ -34,8 +34,18 @@ BarWidget {
 
   readonly property string label: "󰻠 " + Math.round(cpuPct) + "%  󰍛 " + formatUsed(memUsedKb) + "/" + formatTotal(memTotalKb)
   readonly property string tooltipText: coreTooltip() + "\n" +
-    "RAM : " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb) + "\n" +
-    "Swap : " + formatUsed(swapUsedKb) + "/" + formatTotal(swapTotalKb)
+    padL("RAM", 4) + " : " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb) + "\n" +
+    padL("Swap", 4) + " : " + formatUsed(swapUsedKb) + "/" + formatTotal(swapTotalKb)
+
+  // The tooltip font is monospace, so fixed-width label/value fields keep the
+  // colons and the values in exactly one column across every row (c8 vs c10,
+  // RAM vs Swap): labels pad to 4, grid values to 5 where a second column
+  // follows.
+  function padL(s, w) {
+    var out = String(s)
+    while (out.length < w) out += " "
+    return out
+  }
 
   function formatUsed(kb) {
     if (!isFinite(kb) || kb < 0) kb = 0
@@ -51,14 +61,14 @@ BarWidget {
   }
 
   // Sequential horizontal pairing like the user sketch: c0|c1 on the first
-  // row, c2|c3 on the next. padEnd keeps the columns readable even though
-  // the bar font is proportional.
+  // row, c2|c3 on the next. Labels and the first-column value are padded so
+  // both halves start at fixed columns and every colon lines up vertically.
   function coreTooltip() {
     var lines = []
     var n = corePcts.length
     for (var r = 0; r < n; r += 2) {
-      var left = ("c" + r + " : " + Math.round(corePcts[r]) + "%").padEnd(10)
-      var right = r + 1 < n ? ("c" + (r + 1) + " : " + Math.round(corePcts[r + 1]) + "%").padEnd(10) : ""
+      var left = padL("c" + r, 4) + " : " + padL(Math.round(corePcts[r]) + "%", 5)
+      var right = r + 1 < n ? padL("c" + (r + 1), 4) + " : " + Math.round(corePcts[r + 1]) + "%" : ""
       lines.push(left + right)
     }
     return lines.join("\n")
