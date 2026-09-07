@@ -47,25 +47,27 @@ This repo assumes **Arch Linux with Hyprland** is already installed.
 <details>
 <summary>Click to view screenshots</summary>
 <br>
-<img width="1920" height="1080" alt="preview" src="https://github.com/user-attachments/assets/db4835d8-ef14-4376-9fdb-4b38d3afe2e2" />
+<img width="1920" height="1080" alt="theme-dhms" src="https://github.com/user-attachments/assets/ea589257-2bbf-46f1-b1d8-e2e219d8a7de" />
 <br>
-<img width="1920" height="1080" alt="preview-catppuccin" src="https://github.com/user-attachments/assets/24397d4f-d804-482f-9c02-459718a1f714" />
+<img width="1920" height="1080" alt="theme-tokyo-night" src="https://github.com/user-attachments/assets/6b91be1e-3b48-4f6e-8306-749f3359651a" />
 <br>
-<img width="1920" height="1080" alt="preview-osaka-jade" src="https://github.com/user-attachments/assets/bb8ba3ca-5d9c-4d4a-8b1b-407c7450b44d" />
+<img width="1920" height="1080" alt="theme-osaka-jade" src="https://github.com/user-attachments/assets/5a97150e-ce4a-44a9-8b44-ac52ed1b15eb" />
 <br>
-<img width="1920" height="1080" alt="preview-tokyo-night" src="https://github.com/user-attachments/assets/4567c7db-7167-44c8-99d2-21f49d3a345b" />
+<img width="1920" height="1080" alt="theme-catppuccin" src="https://github.com/user-attachments/assets/85da755e-be67-42e9-9248-327c0d8ca4df" />
+<br>
 </details>
 
 <details>
 <summary>Backgrounds selector</summary>
-  
-https://github.com/user-attachments/assets/122c3001-4fe8-466e-85e9-27548a7927d3
+
+https://github.com/user-attachments/assets/cebc5e71-5bb4-4d33-ae37-b55f1a9cb6b2
+
 </details>
 
 <details>
 <summary>Themes selector</summary>
-  
-https://github.com/user-attachments/assets/bbe62cdf-5e51-4d6b-bb2d-cb333bb11e09
+
+https://github.com/user-attachments/assets/f42e008c-e6d3-4096-b669-aa020dcfa951
 
 </details>
 
