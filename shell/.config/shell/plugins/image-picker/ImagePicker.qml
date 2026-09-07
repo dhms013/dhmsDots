@@ -63,6 +63,11 @@ Item {
     // cancel/close, is guaranteed to land AFTER any in-flight preview writes.
     property var previewQueue: []
     property string pendingRenderTheme: ""
+    // Stable path for the lazy.nvim theme spec — lazy's 2s reloader watches
+    // this via the symlinked plugins/theme.lua and fires LazyReload on content
+    // change. Preview writes the previewed theme's neovim.lua here; restore
+    // and select write the committed one back.
+    readonly property string nvimLivePath: home + "/.cache/dhms/nvim-live/neovim.lua"
     // Carried open() args while the committed-background symlink is resolved.
     property string pendingOpenDirs: ""
     property string pendingOpenRows: ""
@@ -174,6 +179,10 @@ Item {
         if (bg)
             queuePreview(["dhms-shell", "-q", "background", "setInstant", bg]);
 
+        var nvimSrc = (parts[3] || "").trim();
+        if (nvimSrc)
+            queuePreview(["bash", "-c", "cp " + Util.shellQuote(nvimSrc) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
+
     }
 
     function queuePreview(command) {
@@ -196,7 +205,8 @@ Item {
             // crash anywhere still boots back to the committed theme.
             var colors = home + "/.config/themes/current/theme/colors.toml";
             var shell = home + "/.config/themes/current/theme/shell.toml";
-            queuePreview(["bash", "-c", "colors=$(base64 -w0 " + Util.shellQuote(colors) + " 2>/dev/null); " + "shell=$(base64 -w0 " + Util.shellQuote(shell) + " 2>/dev/null); " + "dhms-shell -q shell applyTheme \"$colors\" \"$shell\" >/dev/null 2>&1; " + "dhms-shell -q background refresh >/dev/null 2>&1"]);
+            var nvim = home + "/.config/themes/current/theme/neovim.lua";
+            queuePreview(["bash", "-c", "colors=$(base64 -w0 " + Util.shellQuote(colors) + " 2>/dev/null); " + "shell=$(base64 -w0 " + Util.shellQuote(shell) + " 2>/dev/null); " + "dhms-shell -q shell applyTheme \"$colors\" \"$shell\" >/dev/null 2>&1; " + "dhms-shell -q background refresh >/dev/null 2>&1; " + "cp " + Util.shellQuote(nvim) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
         } else if (previewMode === "background" && lastPreviewed) {
             // setInstant never touched the symlink, so refresh restores the commit.
             queuePreview(["dhms-shell", "-q", "background", "refresh"]);
@@ -506,6 +516,15 @@ Item {
         if (opened && imagesLoaded) {
             previewTimer.restart();
         }
+    }
+
+    // Cold-boot prime: ensure the nvim live file exists so that a fresh nvim
+    // always has a valid plugins/theme.lua spec. No-op once set_theme or a
+    // previous preview has already written the file.
+    Component.onCompleted: {
+        var committed = home + "/.config/themes/current/theme/neovim.lua";
+        if (!Util.exists(nvimLivePath))
+            queuePreview(["bash", "-c", "cp " + Util.shellQuote(committed) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
     }
 
     Process {

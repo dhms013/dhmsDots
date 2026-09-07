@@ -4,9 +4,11 @@
 # dhms:args=<theme-name>
 # dhms:examples=dhms-theme-render catppuccin
 
-# Prints one line: colors_b64<TAB>shell_b64<TAB>background_path
+# Prints one line: colors_b64<TAB>shell_b64<TAB>bg_path<TAB>nvim_path
 # The picker feeds colors/shell to `shell applyTheme` and the background to
-# `background setInstant` — both in-memory IPC, nothing committed.
+# `background setInstant` — both in-memory IPC, nothing committed. The nvim
+# path is the theme's neovim.lua (if any), copied to a stable live file so
+# the editor's lazy.nvim reloader picks up the spec change.
 
 set -euo pipefail
 
@@ -88,6 +90,7 @@ fi
 colors_b64=""
 shell_b64=""
 bg_path=""
+nvim_path=""
 if [[ -f $CACHE/$THEME_NAME/colors.toml ]]; then
   colors_b64=$(base64 -w 0 "$CACHE/$THEME_NAME/colors.toml")
 fi
@@ -99,5 +102,8 @@ if [[ -d $THEME_PATH/backgrounds ]]; then
     \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
     -print 2>/dev/null | sort | head -n 1)
 fi
+if [[ -f $CACHE/$THEME_NAME/neovim.lua ]]; then
+  nvim_path="$CACHE/$THEME_NAME/neovim.lua"
+fi
 
-printf '%s\t%s\t%s\n' "$colors_b64" "$shell_b64" "$bg_path"
+printf '%s\t%s\t%s\t%s\n' "$colors_b64" "$shell_b64" "$bg_path" "$nvim_path"

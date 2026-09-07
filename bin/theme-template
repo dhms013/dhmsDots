@@ -106,3 +106,20 @@ push_shell_theme() {
 set_theme
 set_background
 push_shell_theme
+
+# Push the committed theme's neovim.lua spec to the stable live path that
+# lazy.nvim's reloader watches (plugins/theme.lua → ~/.cache/dhms/nvim-live/).
+# The 2s poller detects the content change and fires LazyReload → colorscheme
+# switches in every running nvim instance. On preview the picker writes a
+# different theme's neovim.lua here; this step ensures the select path lands
+# the committed one.
+push_nvim_theme() {
+  local nvim_src="$CURRENT_THEME_PATH/neovim.lua"
+  local live_dst="$HOME/.cache/dhms/nvim-live/neovim.lua"
+  if [[ -f $nvim_src ]]; then
+    mkdir -p "$(dirname "$live_dst")"
+    cp "$nvim_src" "$live_dst"
+  fi
+}
+
+push_nvim_theme

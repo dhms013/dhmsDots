@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "id": "dhms.image-picker",
   "name": "Image picker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Omarchy",
+  "co-authors": ["dhms"],
   "description": "Image-grid selector overlay used for wallpapers, themes, and any other directory of images",
   "kinds": [
     "overlay"
