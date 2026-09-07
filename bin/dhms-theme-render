@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# dhms:summary=Render a theme's colors.toml + generated shell.toml for live preview (no disk mutation of current/)
+# dhms:args=<theme-name>
+# dhms:examples=dhms-theme-render catppuccin
+
+# Prints one line: colors_b64<TAB>shell_b64<TAB>background_path
+# The picker feeds colors/shell to `shell applyTheme` and the background to
+# `background setInstant` — both in-memory IPC, nothing committed.
+
+set -euo pipefail
+
+THEME_NAME="$1"
+THEMES_PATH="$HOME/.config/themes/themeLists"
+TEMPLATES_DIR="$HOME/.config/themes/themed"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/dhms/theme-previews"
+THEME_PATH="$THEMES_PATH/$THEME_NAME"
+
+[[ -d $THEME_PATH ]] || {
+  printf '\t\t\n'
+  exit 0
+}
+
+mkdir -p "$CACHE"
+
+hex_to_rgb() {
+  local hex="${1#\#}"
+  printf "%d,%d,%d" "0x${hex:0:2}" "0x${hex:2:2}" "0x${hex:4:2}"
+}
+
+# Signature covers everything that affects the rendered output: the theme dir,
+# its colors.toml, and the user template set.
+signature() {
+  local tpl_sig
+  tpl_sig=$(find "$TEMPLATES_DIR" -maxdepth 1 -name '*.tpl' -type f -printf '%P:%s:%T@\n' 2>/dev/null | sort)
+  printf 'v1\n%s:%s\n%s:%s\n%s\n' \
+    "$THEME_PATH" "$(stat -Lc '%s:%Y' "$THEME_PATH" 2>/dev/null)" \
+    "$THEME_PATH/colors.toml" "$(stat -Lc '%s:%Y' "$THEME_PATH/colors.toml" 2>/dev/null)" \
+    "$tpl_sig"
+}
+
+render() {
+  local dst="$CACHE/$THEME_NAME" colors_file sed_script hex key value
+  local output_path filename out
+
+  rm -rf "$dst"
+  mkdir -p "$dst"
+
+  colors_file="$THEME_PATH/colors.toml"
+  if [[ -f $colors_file ]]; then
+    sed_script=$(mktemp)
+    while IFS='=' read -r key value; do
+      key="${key//[\"\' ]/}"
+      [[ $key && $key != \#* ]] || continue
+      value="${value#*[\"\']}"
+      value="${value%%[\"\']*}"
+      printf 's|{{ %s }}|%s|g\n' "$key" "$value"
+      printf 's|{{ %s_strip }}|%s|g\n' "$key" "${value#\#}"
+      if [[ $value =~ ^# ]]; then
+        hex=$(hex_to_rgb "$value")
+        echo "s|{{ ${key}_rgb }}|${hex}|g"
+      fi
+    done <"$colors_file" >"$sed_script"
+
+    shopt -s nullglob
+    for tpl in "$TEMPLATES_DIR"/*.tpl; do
+      filename=$(basename "$tpl" .tpl)
+      output_path="$dst/$filename"
+      if [[ ! -f $output_path ]]; then
+        sed -f "$sed_script" "$tpl" >"$output_path"
+      fi
+    done
+    rm "$sed_script"
+  fi
+
+  # Copy the theme's own files (shell.toml, colors.toml, previews, configs)
+  # after generated ones so theme-specific configs win, matching theme-template.
+  cp -r "$THEME_PATH/"* "$dst/" 2>/dev/null || true
+
+  printf '%s' "$signature" >"$dst.sig"
+}
+
+signature="$(signature)"
+if [[ ! -f $CACHE/$THEME_NAME.sig ]] || ! cmp -s "$CACHE/$THEME_NAME.sig" <(printf '%s' "$signature"); then
+  render
+fi
+
+colors_b64=""
+shell_b64=""
+bg_path=""
+if [[ -f $CACHE/$THEME_NAME/colors.toml ]]; then
+  colors_b64=$(base64 -w 0 "$CACHE/$THEME_NAME/colors.toml")
+fi
+if [[ -f $CACHE/$THEME_NAME/shell.toml ]]; then
+  shell_b64=$(base64 -w 0 "$CACHE/$THEME_NAME/shell.toml")
+fi
+if [[ -d $THEME_PATH/backgrounds ]]; then
+  bg_path=$(find -L "$THEME_PATH/backgrounds" -maxdepth 1 -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
+    -print 2>/dev/null | sort | head -n 1)
+fi
+
+printf '%s\t%s\t%s\n' "$colors_b64" "$shell_b64" "$bg_path"

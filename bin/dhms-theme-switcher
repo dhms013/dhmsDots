@@ -91,6 +91,7 @@ menu_args=(
   --show-labels
   --filterable
   --lazy-thumbnails
+  --preview-mode theme
   --selected "$selected_preview"
 )
 

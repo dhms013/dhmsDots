@@ -11,10 +11,11 @@ lazy_thumbnails=false
 prepare_only=false
 preload=false
 cache_only=false
+preview_mode=""
 image_dirs=()
 
 usage() {
-  echo "Usage: dhms-menu-images [--selected <image>] [--print-name] [--show-labels] [--filterable] [--lazy-thumbnails] [--preload] [--cache-only] <image-dir>..."
+  echo "Usage: dhms-menu-images [--selected <image>] [--print-name] [--show-labels] [--filterable] [--lazy-thumbnails] [--preload] [--cache-only] [--preview-mode <background|theme>] <image-dir>..."
 }
 
 while (( $# > 0 )); do
@@ -26,6 +27,15 @@ while (( $# > 0 )); do
       fi
 
       selected_image="$2"
+      shift 2
+      ;;
+    --preview-mode)
+      if (( $# < 2 )); then
+        usage >&2
+        exit 1
+      fi
+
+      preview_mode="$2"
       shift 2
       ;;
     --print-name)
@@ -271,7 +281,8 @@ if ! open_result=$(dhms-shell image-selector open \
      "$selection_file" \
      "$done_file" \
      "$show_labels" \
-     "$filterable"); then
+     "$filterable" \
+     "$preview_mode"); then
   echo "Image selector failed to accept request" >&2
   exit 1
 fi

@@ -827,7 +827,8 @@ ShellRoot {
                   selectionFile: string,
                   doneFile: string,
                   showLabels: string,
-                  filterable: string): string {
+                  filterable: string,
+                  previewMode: string): string {
       var payload = JSON.stringify({
         imageDirs: imageDirs,
         imageRows: Util.decodeBase64(imageRowsB64),
@@ -835,7 +836,8 @@ ShellRoot {
         selectionFile: selectionFile,
         doneFile: doneFile,
         showLabels: showLabels,
-        filterable: filterable
+        filterable: filterable,
+        previewMode: previewMode
       })
       return shell.summon("dhms.image-picker", payload) ? "ok" : "unknown"
     }
