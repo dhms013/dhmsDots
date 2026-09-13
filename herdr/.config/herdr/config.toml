@@ -1,3 +1,4 @@
+onboarding = false
 # Mirrors the Omarchy tmux config in config/tmux/tmux.conf
 # tmux session -> herdr workspace, tmux window -> herdr tab, tmux pane -> herdr pane
 
@@ -32,12 +33,12 @@ close_pane = ["prefix+x", "alt+esc"]
 zoom = "prefix+z"
 last_pane = "prefix+;"
 
-focus_pane_left = "ctrl+alt+left"
-focus_pane_down = "ctrl+alt+down"
-focus_pane_up = "ctrl+alt+up"
-focus_pane_right = "ctrl+alt+right"
+focus_pane_left = "ctrl+alt+h"
+focus_pane_down = "ctrl+alt+j"
+focus_pane_up = "ctrl+alt+k"
+focus_pane_right = "ctrl+alt+l"
 
-resize_mode = ["prefix+ctrl+left", "prefix+ctrl+down", "prefix+ctrl+up", "prefix+ctrl+right"]
+resize_mode = ["prefix+ctrl+h", "prefix+ctrl+j", "prefix+ctrl+k", "prefix+ctrl+l"]
 
 # Like resize-pane on C-M-S-arrows
 resize_pane_left = "ctrl+alt+shift+left"
@@ -51,7 +52,8 @@ rename_pane = "prefix+shift+o"
 # Windows -> tabs
 new_tab = "prefix+c"
 rename_tab = "prefix+r"
-close_tab = "prefix+k"
+# bind X kill-window (prefix + shift+x)
+close_tab = "prefix+shift+x"
 switch_tab = ["prefix+1..9", "alt+1..9"]
 previous_tab = ["prefix+p", "alt+left"]
 next_tab = ["prefix+n", "alt+right"]
@@ -69,6 +71,9 @@ next_workspace = ["prefix+shift+n", "alt+down"]
 
 [ui]
 accent = "blue"
+
+# set -g status-position top
+tab_bar_position = "top"
 
 # tmux drew single-line dividers between adjacent panes and no outer frame
 pane_gaps = false
@@ -93,3 +98,15 @@ tab_bar_right = [{ type = "zoom" }, { type = "hostname" }]
 # the basename of the pane cwd. This is what Hyprland shows in the group bar,
 # and it resolves on the server so remote sessions name the remote host.
 window_title = "{hostname}: {workspace}"
+
+# tmux settings with no herdr equivalent (intentionally absent):
+#   prefix2 C-b / bind C-Space send-prefix   -> herdr has a single prefix only
+#   set -g escape-time 0                     -> no equivalent
+#   set -g focus-events on                   -> always on
+#   set -g set-clipboard on                  -> ui.copy_on_select handles this
+#   set -g allow-passthrough on              -> no equivalent
+#   setw -g aggressive-resize on             -> no equivalent
+#   set -g base-index 1 / renumber-windows   -> herdr is always 1-based
+#   set -g history-limit 50000               -> advanced.scrollback_limit_bytes (bytes)
+#   set -g status-interval 5 / status lengths -> not configurable
+#   setw -g mode-keys vi                     -> herdr copy mode is vi-style by default
