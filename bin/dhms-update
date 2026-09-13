@@ -28,7 +28,15 @@ git_check_branch() {
   else
     HAS_STASH=false
   fi
-  git -C $HOME/.dhmsDots fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
+
+  if [ "$CURRENT_BRANCH" = "$MAIN_BRANCH" ]; then
+    # Already on main: git forbids fetching into the checked-out branch,
+    # so fast-forward via the remote-tracking ref instead.
+    git -C $HOME/.dhmsDots fetch origin
+    git -C $HOME/.dhmsDots merge --ff-only "origin/$MAIN_BRANCH"
+  else
+    git -C $HOME/.dhmsDots fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
+  fi
 
   if [ "$RESTORE_BRANCH" = true ]; then
     git -C $HOME/.dhmsDots rebase "$MAIN_BRANCH" "$CURRENT_BRANCH"
