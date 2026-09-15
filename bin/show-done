@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Show a spinner and wait for a keypress after an install finishes
+
 echo
 frames=('Ω' 'Ο' 'Ø' 'Π' 'Δ' 'Σ' 'Ζ' 'Θ' 'Ξ' 'Ψ') # globe-style braille spinner
 (

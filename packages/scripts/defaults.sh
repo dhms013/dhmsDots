@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Set default applications for images, the browser, video, and text files
+
 echo "==> Setting default applications"
 update-desktop-database ~/.local/share/applications
 

@@ -1,9 +1,11 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# browsers.sh — One-time Chromium-family browser provisioning: managed policy
-# dirs (themeable without sudo afterward), Wayland/keyring flags, and the
-# Copy URL / yt-dlp / WhatsApp Slim extensions with their native messaging hosts.
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Provision Chromium-family browsers: managed policy dirs, Wayland/keyring flags, and extensions
+# dhms:requires-sudo=true
+#
+# One-time browser provisioning: managed policy dirs (themeable without sudo
+# afterward), Wayland/keyring flags, and the Copy URL / yt-dlp / WhatsApp Slim
+# extensions with their native messaging hosts.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,7 +22,7 @@ FLAGS_TEMPLATE="$DOTFILES_DIR/packages/browser/chromium-flags.tpl"
 HOSTS_SRC="$DOTFILES_DIR/packages/browser/native-messaging-hosts"
 
 # The browser theme (whose per-browser flag file lives at ~/.config/<name>-flags.conf)
-# is written by theme-browser without sudo, so these dirs are made a+rw once here.
+# is written by theme-browser without sudo, so these dirs are made group-writable (root:wheel) once here.
 MANAGED_POLICY_DIRS=(
   /etc/chromium/policies/managed
   /etc/opt/chrome/policies/managed
@@ -54,9 +56,13 @@ BROWSER_DIRS=(
 
 create_policy_dirs() {
   echo "==> Creating managed browser policy directories"
+  # Group-writable by wheel, NOT world-writable: theme-browser (run as the
+  # user) still updates policies without sudo, but arbitrary local processes
+  # can no longer inject browser policy. Requires the user to be in wheel.
   for dir in "${MANAGED_POLICY_DIRS[@]}"; do
     sudo mkdir -p "$dir"
-    sudo chmod a+rw "$dir"
+    sudo chown root:wheel "$dir"
+    sudo chmod 775 "$dir"
   done
 }
 

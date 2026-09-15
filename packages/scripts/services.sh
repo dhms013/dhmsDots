@@ -1,7 +1,7 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# services.sh — Enable and start required services
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Enable and start required services
+# dhms:requires-sudo=true
 
 enable_services() {
   echo "==> Enabling services"

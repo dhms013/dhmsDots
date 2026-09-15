@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# dhms:summary=Reload the Intel Wi-Fi driver modules and renew the DHCP lease to recover the connection
+# dhms:group=network
+# dhms:requires-sudo=true
+
 sudo modprobe -r iwlmvm iwlwifi && sudo modprobe iwlwifi
 
 sleep 5

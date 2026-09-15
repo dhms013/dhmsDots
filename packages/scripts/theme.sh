@@ -1,7 +1,7 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# theme.sh — Apply GTK/icon theme, symlink initial theme, link consumers
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Apply GTK/icon theme, symlink initial theme, link consumers
+# dhms:requires-sudo=true
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 INITIAL_THEME="dhms"

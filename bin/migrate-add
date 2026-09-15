@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# dhms:summary=Register a new one-shot migration script in packages/migrations
+# dhms:args=[--no-edit]
+
+# Creates an empty script named after the latest commit's Unix timestamp and
+# opens it in nvim unless --no-edit is given. migrate-run executes each script
+# once per machine and tracks completion in ~/.local/state/dhms/migrations.
+
 cd ~/.dhmsDots/
 migration_file="$HOME/.dhmsDots/packages/migrations/$(git log -1 --format=%cd --date=unix).sh"
 touch $migration_file

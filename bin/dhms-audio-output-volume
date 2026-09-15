@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Adjust output volume and show the Dhms OSD
+# dhms:group=audio
 # dhms:args=<raise|lower|mute-toggle|+N|-N>
 # dhms:examples=dhms audio output volume raise | dhms audio output volume lower | dhms audio output volume mute-toggle | dhms audio output volume +1
 

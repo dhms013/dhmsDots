@@ -1,7 +1,6 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# dirs.sh — Create required user directories
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Create required user directories
 
 DOWNLOADS_DIR="$HOME/Downloads/"
 DOCUMENTS_DIR="$HOME/Documents/"

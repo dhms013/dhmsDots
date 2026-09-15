@@ -1,7 +1,6 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# dotfiles.sh — Stow dotfiles and copy supplementary config
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Stow dotfiles and copy supplementary config
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 
@@ -14,8 +13,12 @@ STOW_PKGS=(
 backup_if_exists() {
   local target="$1"
   if [ -e "$target" ] || [ -L "$target" ]; then
-    echo "==> Backing up: $target → ${target}.bak"
-    mv "$target" "${target}.bak"
+    # Timestamped: a rerun must never overwrite the .bak holding the
+    # user's ORIGINAL config with the previous run's output.
+    local ts
+    ts="$(date +%Y%m%d-%H%M%S)"
+    echo "==> Backing up: $target → ${target}.bak.$ts"
+    mv "$target" "${target}.bak.$ts"
   fi
 }
 
@@ -24,7 +27,6 @@ resolve_stow_target() {
 
   case "$pkg" in
   bash) echo "$HOME/.bashrc" ;;
-  starship) echo "$HOME/.config/starship.toml" ;;
   *) echo "$HOME/.config/$pkg" ;;
   esac
 }
@@ -37,13 +39,18 @@ stow_dotfiles() {
   done
 
   echo "==> Stowing dotfiles"
-  cd "$DOTFILES_DIR"
-  stow --adopt "${STOW_PKGS[@]}"
+  cd "$DOTFILES_DIR" || exit 1
+  # No --adopt: after backup_if_exists there is nothing to adopt, and adopt
+  # would silently rewrite repo files with machine-local content if a target
+  # slipped through (e.g. a nested path the backup loop did not cover).
+  stow "${STOW_PKGS[@]}"
 }
 
 copy_extra_configs() {
-  echo "==> Copying application launchers and extra configs"
-  cp -R "$DOTFILES_DIR/applications/" ~/.local/share/applications/
+  echo "==> Copying extra configs"
+  # applications/ was removed: since the quickshell -> dhms shell migration the
+  # shell ships its own launchers, so nothing is copied to
+  # ~/.local/share/applications from here anymore.
   cp -R "$DOTFILES_DIR/config/"* ~/.config/
   chmod -R 775 ~/.dhmsDots/bin/
   mkdir -p ~/.config/themes/current/

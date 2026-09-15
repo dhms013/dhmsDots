@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Show or set the location used for weather reports
+# dhms:args=[--set <name> [lat,lon]] | [--clear]
 #
 # State lives in ~/.local/state/dhms/settings/weather.json as
 # {"name": ..., "latitude": ..., "longitude": ...}. A missing file means the

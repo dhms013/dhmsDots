@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# dhms:summary=Show the Docker service status and turn it on or off
+# dhms:group=system
+# dhms:args=[on|off]
+# dhms:requires-sudo=true
+
+# Without an argument, offers an interactive gum menu to pick on/off.
+
 status=$(systemctl is-active docker)
 
 gum style --border normal --padding "1 2" "Docker is $status"

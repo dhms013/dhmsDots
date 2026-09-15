@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# dhms:summary=Adjust screen brightness, auto-detecting backlight or DDC/CI control
+# dhms:args=[get|up|down|mid]
+
+# Uses brightnessctl on machines with a battery (built-in panel) and ddcutil
+# otherwise (external monitor over DDC/CI); `get` prints a waybar-style JSON
+# percentage, the other actions poke the waybar module to refresh.
+
 _detect_backend() {
   for bat in /sys/class/power_supply/BAT*; do
     [ -d "$bat" ] && {

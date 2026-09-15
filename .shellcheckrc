@@ -1,0 +1,6 @@
+# dhmsDots shellcheck policy.
+#
+# SC2155 (declare and assign separately): the repo's scripting style uses
+#   `local x="$(...)"` widely for command substitution where an empty result
+#   is already handled downstream; the masked return value is not load-bearing.
+disable=SC2155

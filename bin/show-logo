@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Clear the terminal and print the dhms ASCII logo
+
 clear
 echo
 cat <~/.dhmsDots/bin/dhms.txt

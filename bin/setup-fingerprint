@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Install fingerprint packages, configure PAM, and enroll a fingerprint for sudo, polkit, and hyprlock
+# dhms:requires-sudo=true
+
 set -e
 
 check_fingerprint_hardware() {

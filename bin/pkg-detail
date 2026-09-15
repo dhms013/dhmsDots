@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Show detailed info for each named package, paged through bat
+# dhms:args=<packages...>
+
 for pkg in "$@"; do
   if ! pacman -Q "$pkg" &>/dev/null; then
     gum log --level error "$pkg is not installed"

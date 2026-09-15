@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Toggle microphone mute. Drives the hardware mic-mute LED on laptops that expose one.
+# dhms:group=audio
 
 wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle >/dev/null
 

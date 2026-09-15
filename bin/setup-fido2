@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# dhms:summary=Register a FIDO2 security key for sudo and polkit authentication, or remove that setup
+# dhms:args=[--remove]
+# dhms:requires-sudo=true
+
 set -e
 
 GREEN='\033[0;32m'

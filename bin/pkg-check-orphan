@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Remove all orphaned packages from the system
+# dhms:requires-sudo=true
+
 orphans=$(pacman -Qtdq || true)
 if [[ -n $orphans ]]; then
   echo -e "\e[32m\nRemove orphan system packages\e[0m"

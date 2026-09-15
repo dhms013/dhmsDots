@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Pick packages from official repos and the AUR in one fuzzy-finder TUI and install each with the right tool
+# dhms:requires-sudo=true
+
 # Show a fuzzy-finder TUI for picking new Arch repo OR AUR packages to install.
 
 aur_pkg_list() {

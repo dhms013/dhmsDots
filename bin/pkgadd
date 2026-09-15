@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Install packages with paru, first dropping any installed packages they conflict with
+# dhms:args=<packages...>
+
 resolve_conflicts() {
   local pkg=$1
   local conflicts

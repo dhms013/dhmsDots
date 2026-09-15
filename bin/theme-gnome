@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Apply the current theme's color scheme, GTK theme, and icon theme to GNOME settings
+
 # Change gnome modes
 if [[ -f ~/.config/themes/current/theme/light.mode ]]; then
   gsettings set org.gnome.desktop.interface color-scheme "defailt"

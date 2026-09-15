@@ -1,7 +1,7 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# sddm.sh — Install and configure the SDDM login theme
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Install the SDDM login theme and set it as current
+# dhms:requires-sudo=true
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 
@@ -17,8 +17,12 @@ configure_sddm() {
   echo "==> Configuring SDDM theme to '${THEME_NAME}'"
 
   if [ -f "$CONFIG_FILE" ]; then
-    echo "==> Backing up existing ${CONFIG_FILE}"
-    sudo mv -f "$CONFIG_FILE" "${CONFIG_FILE}.bak"
+    # Timestamped: a rerun must never overwrite the .bak holding the user's
+    # ORIGINAL sddm.conf with the previous run's output.
+    local ts
+    ts="$(date +%Y%m%d-%H%M%S)"
+    echo "==> Backing up existing ${CONFIG_FILE} → ${CONFIG_FILE}.bak.$ts"
+    sudo cp "$CONFIG_FILE" "${CONFIG_FILE}.bak.$ts"
   fi
 
   sudo tee "$CONFIG_FILE" >/dev/null <<EOF

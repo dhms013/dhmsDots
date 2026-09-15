@@ -22,7 +22,9 @@ local themePicker = 'theme=$(dhms-theme-switcher); [ -n "$theme" ] && theme-set 
 local screenrecord = "screenrecord --stop-recording || "
 	.. qs
 	.. ' dhms.menu \'{"menu":"trigger.capture.screenrecord"}\''
-local whatsapp = 'uwsm-app -- "/opt/WhatsApp Desktop/whatsapp-linux-desktop"'
+-- Launched via its desktop entry (gtk-launch) instead of a hardcoded
+-- /opt path, so it survives the AUR package moving its binary.
+local whatsapp = "uwsm-app -- gtk-launch whatsapp-linux-desktop"
 local muteOutput = "dhms-audio-output-volume mute-toggle"
 local muteInput = "dhms-audio-input-mute"
 local volumeDown = "dhms-audio-output-volume lower"
@@ -63,10 +65,10 @@ hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd(qs .. " dhms.network"), { descriptio
 
 -- window's management
 hl.bind("SUPER + Q", hl.dsp.window.close(), { description = "Close window" })
-hl.bind("SUPER+ T", hl.dsp.layout("togglesplit"), { description = "Toggle window split" })
-hl.bind("SUPER+ P", hl.dsp.window.pseudo(), { description = "Pseudo window" })
+hl.bind("SUPER + T", hl.dsp.layout("togglesplit"), { description = "Toggle window split" })
+hl.bind("SUPER + P", hl.dsp.window.pseudo(), { description = "Pseudo window" })
 hl.bind(
-	"SUPER+ SHIFT + P",
+	"SUPER + SHIFT + P",
 	hl.dsp.window.float({ action = "toggle" }),
 	{ description = "Toggle window floating/tiling" }
 )
@@ -94,6 +96,9 @@ hl.bind("SUPER + CTRL + SHIFT + J", hl.dsp.window.move({ direction = "d" }), { d
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Move window" })
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window" })
 -- resize window
+-- code:20 / code:21 are the evdev keycodes of the MINUS / EQUAL keys, used
+-- deliberately: raw keycodes stay correct on any keyboard layout, which a
+-- `minus`/`equal` keysym name would not.
 hl.bind(
 	"SUPER + code:20",
 	hl.dsp.window.resize({ x = -100, y = 0, relative = true }),

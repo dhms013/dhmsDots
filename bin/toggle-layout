@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Toggle the Hyprland layout between dwindle and scrolling
+
 CURRENT=$(hyprctl getoption general:layout | awk '/str:/ {print $2}')
 
 case "$CURRENT" in

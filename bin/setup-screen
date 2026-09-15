@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Turn the displays off or on via Hyprland DPMS
+# dhms:args=[off|on]
+
 action="${1:-off}"
 
 if [[ $action == "off" ]]; then

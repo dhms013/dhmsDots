@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Cache the sudo password and keep refreshing it in the background while the caller runs
+
 gum style --border normal --padding "1 2" "We trust you have received the usual lecture from the local System
 Administrator. It usually boils down to these three things:
 

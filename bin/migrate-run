@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Run pending one-shot migration scripts once per machine
+# dhms:requires-sudo=true
+
 # Where we store an empty file for each migration that has already been performed.
 STATE_DIR="$HOME/.local/state/dhms/migrations"
 mkdir -p "$STATE_DIR"
@@ -14,7 +17,7 @@ for file in ~/.dhmsDots/packages/migrations/*.sh; do
   if [[ ! -f "$STATE_DIR/$filename" && ! -f "$STATE_DIR/skipped/$filename" ]]; then
     echo -e "\033[38;2;0;204;119m\nRunning migration (${filename%.sh})\033[0m"
 
-    if bash $file; then
+    if bash "$file"; then
       touch "$STATE_DIR/$filename"
     else
       if gum confirm "Migration ${filename%.sh} failed. Skip and continue?"; then

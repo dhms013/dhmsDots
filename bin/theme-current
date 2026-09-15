@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Print the current theme name in display form (hyphens become spaces, words capitalized)
+
 THEME_NAME_PATH="$HOME/.config/themes/current/theme.name"
 
 if [[ -f $THEME_NAME_PATH ]]; then

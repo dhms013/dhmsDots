@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# dhms:summary=Generate a theme's colors.toml from its terminal config files
+# dhms:args=<theme-dir>...
+
+# Reads colors from a theme directory's alacritty.toml, kitty.conf, warp.yaml, or
+# ghostty.conf and writes them as colors.toml. A missing directory falls back to
+# a sibling omarchy-<name>-theme directory; an existing colors.toml is left alone.
+# Exits non-zero if any theme is missing required colors.
+
 set -eu
 
 usage() {

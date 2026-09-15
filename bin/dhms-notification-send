@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dhms:summary=Send an Dhms desktop notification
+# dhms:summary=Send a Dhms desktop notification
 # dhms:args=[--exec <command>] [--app-name <app-name>] [-g <glyph>] [-u <low|normal|critical>] [--image <path-or-uri>] <headline> [description] [notify-send options]
 # dhms:examples=dhms notification send "Reminder" "5 minutes are up" -g 󰢌
 

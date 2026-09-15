@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # dhms:summary=Check whether any required commands are missing
+# dhms:args=<commands...>
+# dhms:hidden=true
 
 for cmd in "$@"; do
   if ! command -v "$cmd" &>/dev/null; then

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Suspend the system, enabling idle-locking first when hypridle is not running
+
 if pgrep -x "hypridle" >/dev/null 2>&1; then
   systemctl suspend
 else

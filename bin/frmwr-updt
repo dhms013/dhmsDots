@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# dhms:summary=Refresh and apply firmware updates with fwupd, installing it first if missing
+# dhms:group=system
+# dhms:requires-sudo=true
+
 set -e
 echo -e "\033[38;2;0;204;119mFirmware Update\033[0m"
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Configure git identity and generate an ed25519 SSH key for GitHub/GitLab
+
 set -euo pipefail
 
 # ── Input ─────────────────────────────────────────────────────

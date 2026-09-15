@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Report the idle-lock state as JSON for the status bar
+
 if pgrep -x hypridle >/dev/null; then
   echo '{"text": ""}'
 else

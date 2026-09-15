@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Apply a theme by name and restart the themed apps
+# dhms:args=<theme-name>
+
 if [[ -z $1 ]]; then
   echo "Usage: theme-set <theme-name>"
   exit 1

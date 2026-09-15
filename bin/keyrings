@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# dhms:summary=Update archlinux-keyring when a newer version is available, then re-init the keyring
+# dhms:group=system
+# dhms:requires-sudo=true
+
 # Ensure we have the latest archlinux-keyring, maintainer keys might have changed
 gum log --level info "Update Arch signing keys"
 

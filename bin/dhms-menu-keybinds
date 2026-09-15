@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# dhms:summary=Display Hyprland keybindings defined in your configuration using an interactive search menu.
+# dhms:summary=Display Hyprland keybindings defined in your configuration using an interactive search menu
+# dhms:group=menu
+# dhms:args=[--print]
 
 # Hyprland's Lua config provider currently reports Lua binds as dispatcher
 # __lua in `hyprctl binds`. Keep a lightweight source-derived cache so the

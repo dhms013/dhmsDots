@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Pick installed packages in a fuzzy-finder TUI and remove them with paru
+# dhms:requires-sudo=true
+
 # Show a fuzzy-finder TUI for picking packages installed on the system to be removed.
 
 fzf_args=(

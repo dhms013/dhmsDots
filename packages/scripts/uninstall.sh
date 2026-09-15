@@ -1,7 +1,7 @@
 #!/bin/bash
-# ─────────────────────────────────────────────────────────────────────────────
-# uninstall.sh — Remove unused or conflicting packages
-# ─────────────────────────────────────────────────────────────────────────────
+
+# dhms:summary=Remove unused or conflicting packages
+# dhms:requires-sudo=true
 
 UNUSED_PKGS=(
   htop    # replaced by btop

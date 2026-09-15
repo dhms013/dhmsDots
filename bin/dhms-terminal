@@ -1,4 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Run a command in a dedicated dhms terminal window
+# dhms:args=<command...>
+
 cmd="$*"
 exec setsid uwsm-app -- xdg-terminal-exec --app-id=dhms.terminal --title=dhms.$cmd -e bash -c "$cmd"

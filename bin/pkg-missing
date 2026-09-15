@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Exit 0 if any of the named packages are missing from the system, 1 if all are present
+# dhms:args=<packages...>
+
 # Returns true if any of the commands passed in as arguments are missing on the system.
 
 for pkg in "$@"; do

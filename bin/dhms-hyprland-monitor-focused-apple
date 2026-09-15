@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# dhms:summary=Return success if the focused or named Hyprland monitor is an Apple display.
+# dhms:summary=Return success if the focused or named Hyprland monitor is an Apple display
+# dhms:group=monitor
 # dhms:args=[monitor]
 
 monitor="${1:-}"

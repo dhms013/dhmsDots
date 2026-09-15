@@ -137,7 +137,7 @@ This repo manages configs for:
 - nvim
 - shell — the dhms desktop shell (Quickshell, adapted from [Omarchy](https://omarchy.org/)) — [docs](./shell/.config/shell/README.md)
 - sddm theme
-- starship
+- starship — rendered by the theme engine into `~/.config/themes/current/theme/starship.toml` (not stowed directly)
 - themes
 - uwsm (yes, I use uwsm because it's just easier 🤣)
 - yazi

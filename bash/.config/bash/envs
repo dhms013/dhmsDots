@@ -3,8 +3,13 @@ export SUDO_EDITOR="$EDITOR"
 export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers --line-range :500 {}'"
 export BAT_THEME=ansi
 export MANPAGER="sh -c 'col -bx | bat --theme=default -l man -p'"
-export JAVA_HOME="/usr/lib/jvm/java-26-openjdk"
-export PATH=$JAVA_HOME/bin:$PATH
+# Pick the newest installed OpenJDK instead of a hardcoded version, so a JDK
+# upgrade (java-26 -> java-31) does not leave a dangling JAVA_HOME.
+JAVA_HOME="$(ls -d /usr/lib/jvm/java-*-openjdk 2>/dev/null | sort -V | tail -n 1)"
+if [ -n "$JAVA_HOME" ]; then
+  export JAVA_HOME
+  export PATH="$JAVA_HOME/bin:$PATH"
+fi
 export PATH="$PATH:${HOME}/.dhmsDots/bin"
 export DHMSDOTS_PATH="$HOME/.dhmsDots"
 

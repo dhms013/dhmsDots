@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# dhms:summary=Update dhmsDots (branch-aware), keyrings, packages, firmware, then run migrations
+# dhms:group=system
+# dhms:requires-sudo=true
+
 set -e
 
-CURRENT_BRANCH=$(git -C $HOME/.dhmsDots rev-parse --abbrev-ref HEAD)
+DOTFILES="$HOME/.dhmsDots"
+CURRENT_BRANCH=$(git -C "$DOTFILES" rev-parse --abbrev-ref HEAD)
 MAIN_BRANCH="main"
 RESTORE_BRANCH=false
-NVIDIA_MODULE=$(find /usr/lib/modules/$(uname -r) -name "nvidia.ko*" 2>/dev/null | head -1)
+NVIDIA_MODULE=$(find /usr/lib/modules/"$(uname -r)" -name "nvidia.ko*" 2>/dev/null | head -1)
 
 input_password() {
   if ! sudo-keep; then
@@ -22,39 +27,51 @@ git_check_branch() {
     fi
   fi
 
-  if ! git -C $HOME/.dhmsDots diff --quiet; then
-    git -C $HOME/.dhmsDots stash push -m "dhms-update"
+  local HAS_STASH=false
+  if ! git -C "$DOTFILES" diff --quiet; then
+    git -C "$DOTFILES" stash push -m "dhms-update"
     HAS_STASH=true
-  else
-    HAS_STASH=false
   fi
 
   if [ "$CURRENT_BRANCH" = "$MAIN_BRANCH" ]; then
     # Already on main: git forbids fetching into the checked-out branch,
     # so fast-forward via the remote-tracking ref instead.
-    git -C $HOME/.dhmsDots fetch origin
-    git -C $HOME/.dhmsDots merge --ff-only "origin/$MAIN_BRANCH"
+    git -C "$DOTFILES" fetch origin
+    git -C "$DOTFILES" merge --ff-only "origin/$MAIN_BRANCH"
   else
-    git -C $HOME/.dhmsDots fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
+    git -C "$DOTFILES" fetch origin "$MAIN_BRANCH":"$MAIN_BRANCH"
   fi
 
   if [ "$RESTORE_BRANCH" = true ]; then
-    git -C $HOME/.dhmsDots rebase "$MAIN_BRANCH" "$CURRENT_BRANCH"
+    # Rebase the host branch onto main; on conflict, abort cleanly and stay
+    # on main rather than leaving the repo mid-rebase for every future run
+    # to trip over.
+    if ! git -C "$DOTFILES" rebase "$MAIN_BRANCH" "$CURRENT_BRANCH"; then
+      git -C "$DOTFILES" rebase --abort
+      gum log --level warn "Rebase of $CURRENT_BRANCH onto $MAIN_BRANCH conflicted — aborted. Resolve manually with: git -C $DOTFILES rebase $MAIN_BRANCH $CURRENT_BRANCH"
+      RESTORE_BRANCH=false
+    fi
   fi
 
-  git -C $HOME/.dhmsDots checkout -q "$MAIN_BRANCH"
+  git -C "$DOTFILES" checkout -q "$MAIN_BRANCH"
   if [ "$HAS_STASH" = true ]; then
-    git -C $HOME/.dhmsDots stash pop || {
-      gum log --level warn "Stash conflict — overwriting with local changes"
-      git -C $HOME/.dhmsDots checkout stash@{0} -- .
-      git -C $HOME/.dhmsDots stash drop
-    }
+    # On conflict: leave the stash INTACT and finish. The stash holds the
+    # user's only copy of their local changes — never overwrite or drop it
+    # from a script. Manual recovery: `git stash pop` (or `git stash show -p`).
+    if ! git -C "$DOTFILES" stash pop; then
+      gum log --level warn "Stash conflict — your local changes are safe in 'git stash'. Resolve manually, then drop the stash."
+      # The failed pop leaves conflict markers and staged entries in the
+      # working tree; the tree was clean before the pop, so resetting it
+      # restores HEAD without touching the (intact) stash.
+      git -C "$DOTFILES" reset -q
+      git -C "$DOTFILES" checkout -- .
+    fi
   fi
 }
 
 git_restore() {
   if [ "$RESTORE_BRANCH" = true ]; then
-    git -C $HOME/.dhmsDots checkout "$CURRENT_BRANCH"
+    git -C "$DOTFILES" checkout "$CURRENT_BRANCH"
   fi
 }
 
@@ -95,7 +112,19 @@ show_update_log() {
 post_update() {
   show_update_log
 
-  if [ /boot/vmlinuz-linux-zen -nt /proc/1 ] ||
+  # Kernel-agnostic reboot check: any /boot/vmlinuz-* newer than boot time
+  # (no hardcoded kernel flavor — zen/mainline/lts all covered). NVIDIA
+  # module for the RUNNING kernel is checked the same way.
+  local kernel_updated=false img
+  for img in /boot/vmlinuz-*; do
+    [ -e "$img" ] || continue
+    if [ "$img" -nt /proc/1 ]; then
+      kernel_updated=true
+      break
+    fi
+  done
+
+  if [ "$kernel_updated" = true ] ||
     { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
     gum style --border normal --padding "1 2" "Kernel/GPU driver updated. Reboot now?"
     gum confirm && reboot --no-wall
@@ -116,8 +145,7 @@ keyrings
 { pkg-update; } || echo -e "\033[0;31mPackage update failed, continuing...\033[0m"
 { frmwr-updt; } || echo -e "\033[0;31mFirmware update failed, continuing...\033[0m"
 
-# { migrate-run; } || echo -e "/033[0;31mMigrate-run failed, continuing...\033[0m"
-migrate-run
+{ migrate-run; } || echo -e "\033[0;31mMigrate-run failed, continuing...\033[0m"
 pkg-check-orphan
 sudo updatedb
 

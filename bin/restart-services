@@ -1,4 +1,7 @@
 #!/bin/bash
 
+# dhms:summary=Kill a running process by name and relaunch it detached as a user app
+# dhms:args=<process-name> [args...]
+
 pkill -x $1
 setsid uwsm-app -- "$@" >/dev/null 2>&1 &

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Pick new AUR packages in a fuzzy-finder TUI and install them with paru
+# dhms:requires-sudo=true
+
 # Show a fuzzy-finder TUI for picking new AUR packages to install.
 
 fzf_args=(

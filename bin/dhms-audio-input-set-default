@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Set the default audio input and move active streams
+# dhms:group=audio
 # dhms:args=<node-id> <source-name>
 # dhms:examples=dhms audio input set default 43 alsa_input.pci-0000_00_1f.3.analog-stereo
 

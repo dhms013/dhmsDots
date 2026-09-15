@@ -1,4 +1,11 @@
 #!/bin/bash
 
+# dhms:summary=Run a command in a terminal window titled after the command
+# dhms:args=<command> [args...]
+# dhms:examples=floating-terminal htop
+
+# show-logo/show-done are shell helpers, so the command runs through an
+# interactive bash rather than a bare exec of itself.
+
 cmd="$*"
 exec uwsm-app -- xdg-terminal-exec --app-id=dhms.terminal --title="dhms.$cmd" -e bash -c "show-logo; $cmd; show-done"

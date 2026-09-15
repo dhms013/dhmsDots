@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# dhms:summary=Upgrade official-repo and AUR packages, pinning BlackArch packages out of the repo upgrade when the AUR also ships them
+# dhms:requires-sudo=true
+
 set -euo pipefail
 
 # Official > AUR > blackarch

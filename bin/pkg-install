@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Pick new official-repo packages in a fuzzy-finder TUI and install them with pacman
+# dhms:requires-sudo=true
+
 # Show a fuzzy-finder TUI for picking new Arch and OPR packages to install.
 
 fzf_args=(

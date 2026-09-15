@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Sets the specified image as the current background
+# dhms:summary=Set the given image as the current background
+# dhms:args=<path-to-image>
+# dhms:examples=background-set ~/Pictures/wall.jpg
 
 if [[ -z "$1" ]]; then
   echo "Usage: background-set <path-to-image>" >&2

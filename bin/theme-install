@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# dhms:summary=Clone a theme git repo into the theme list and apply it
+# dhms:args=[git-url]
+
 if [ -z "$1" ]; then
   REPO_URL=$(gum input --placeholder="Git repo URL for theme" --header="")
 else
