@@ -115,6 +115,10 @@ Item {
         "power-profiles": {
             "script": "current=$(powerprofilesctl get 2>/dev/null); powerprofilesctl list 2>/dev/null | grep -E '^[* ]*[a-z-]+:$' | tr -d '*:' | awk '{$1=$1};1' | while read -r p; do [[ -z $p ]] && continue; printf '%s\\t%s\\t%s\\n' \"$p\" \"$p\" \"$current\"; done",
             "icon": "\udb81\udc0b",
+            // Rows carry the active profile as the ✓ icon (see mergeProviderRows),
+            // so they must re-run on every entry — a cached list would leave the
+            // checkmark on the profile that was active when the shell started.
+            "volatile": true,
             "actionFor": function(value) {
                 return "powerprofilesctl set " + Util.shellQuote(value);
             }
@@ -139,6 +143,19 @@ Item {
         }
         if (payload.fontFamily)
             root.fontFamily = payload.fontFamily;
+
+        // Search (loadProvidersForSearch) can surface provider rows straight
+        // from the root without ever entering their submenu, so the volatile
+        // reset in setActiveMenu doesn't fire for them. Reset once per open:
+        // volatile rows carry live state (the ✓ on the active theme or power
+        // profile) that must not survive from a previous open, but per-open
+        // is also as often as they should re-read — not once per keystroke.
+        for (var id in root.items) {
+            var entry = root.items[id];
+            var spec = entry && entry.provider ? root.providers[entry.provider] : null;
+            if (spec && spec.volatile)
+                delete root.providersLoaded[id];
+        }
 
         if (payload.mode === "select" || payload.mode === "input")
             root.openDmenu(payload);
