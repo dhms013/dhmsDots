@@ -48,7 +48,7 @@ Item {
   }
 
   function runPendingPowerProfile() {
-    powerProfileProcess.command = ["powerprofilesctl", "set", pendingPowerSource]
+    powerProfileProcess.command = ["dhms-powerprofiles-set", pendingPowerSource]
     pendingPowerSource = ""
     powerProfileProcess.running = true
   }

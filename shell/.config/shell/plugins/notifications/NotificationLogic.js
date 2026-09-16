@@ -5,6 +5,17 @@ function isChromiumDerived(app, appIcon) {
          source.indexOf("opera") >= 0
 }
 
+// Brave (plain or brave-origin) escalates requireInteraction web
+// notifications to urgency=critical on D-Bus. Deliberately narrower than
+// isChromiumDerived: only Brave's criticals get their lifetime demoted in
+// Service.durationFor, so genuine critical alerts from any other sender
+// stay sticky. Word-boundary match so "Brave Origin"/"brave-browser" hit
+// but a sender merely containing the letters "brave" doesn't.
+function isBraveSender(app, appIcon) {
+  var source = (String(app || "") + "\n" + String(appIcon || "")).toLowerCase()
+  return /(^|[^a-z0-9])brave([^a-z0-9]|$)/.test(source)
+}
+
 function sanitizeBody(body, app, appIcon) {
   var text = String(body || "").replace(/<img[^>]*>/gi, "")
   if (!isChromiumDerived(app, appIcon)) return text
@@ -340,6 +351,7 @@ function historyRows(raw, liveRows, normalUrgency, limit) {
 if (typeof module !== "undefined") {
   module.exports = {
     isChromiumDerived: isChromiumDerived,
+    isBraveSender: isBraveSender,
     sanitizeBody: sanitizeBody,
     summaryStartsWithGlyph: summaryStartsWithGlyph,
     shouldBypassDnd: shouldBypassDnd,
