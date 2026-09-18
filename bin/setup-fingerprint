@@ -52,7 +52,10 @@ echo -e "\e[32mSetting up fingerprint scanner for authentication.\n\e[0m"
 # Install required packages
 echo "Installing required packages..."
 
-if pkg-present libfprint; then
+# libfprint-git satisfies pacman -Q through its Provides, so a provides-based
+# presence check is true with the git package installed — but pacman -Rdd
+# needs the literal name. Only swap out the actual repo package.
+if pacman -Qq libfprint 2>/dev/null | grep -qx libfprint; then
   sudo pacman -Rdd --noconfirm libfprint
 fi
 

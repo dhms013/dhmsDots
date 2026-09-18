@@ -161,7 +161,7 @@
   "setup.security.fingerprint": {
     "icon": "󰈷",
     "label": "Fingerprint",
-    "when": "[[ -d /usr/lib/fprintd ]]",
+    "when": "dhms-cmd-present fprintd-enroll",
     "action": "floating-terminal setup-fingerprint"
   },
   "setup.security.fido2": {

@@ -15,6 +15,10 @@ panel_bg = "black"
 # Matches -c "#{pane_current_path}" on every split, window, and session
 new_cwd = "follow"
 
+[ui.toast]
+delivery = "terminal"
+delay_seconds = 1
+
 [keys]
 prefix = "ctrl+space"
 
