@@ -13,9 +13,6 @@
     "layout": {
       "left": [
         {
-          "id": "dhms.menu"
-        },
-        {
           "id": "dhms.system-monitor"
         },
         {

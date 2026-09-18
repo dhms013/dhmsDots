@@ -3,3 +3,4 @@
 -- Add any additional keymaps here
 
 vim.keymap.set("c", "w!!", "<cmd>w !sudo tee % > /dev/null<CR>")
+vim.keymap.set("n", "<C-LeftMouse>", vim.lsp.buf.definition, { desc = "Go to definition" })
