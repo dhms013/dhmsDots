@@ -126,8 +126,10 @@ post_update() {
 
   if [ "$kernel_updated" = true ] ||
     { [ -n "$NVIDIA_MODULE" ] && [ "$NVIDIA_MODULE" -nt /proc/1 ]; }; then
-    gum style --border normal --padding "1 2" "Kernel/GPU driver updated. Reboot now?"
-    gum confirm && reboot --no-wall
+    gum style --border normal --padding "1 2" "Kernel/GPU driver updated. Rebooting in 3 minutes unless you answer No."
+    if gum confirm --default true --timeout 3m; then
+      reboot --no-wall
+    fi
   else
     notify-send "Update finished"
   fi
