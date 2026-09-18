@@ -27,6 +27,9 @@
           "id": "dhms.workspaces"
         },
         {
+          "id": "dhms.system-update"
+        },
+        {
           "id": "dhms.keyboard-layout"
         }
       ],
