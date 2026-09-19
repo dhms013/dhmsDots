@@ -17,7 +17,6 @@ omarchy-theme-install https://github.com/OldJobobo/omarchy-city-783-theme
 ## What's included
 
 - Hyprland rules and opacity tuning (`hyprland.conf`)
-- Hyprlock styling (`hyprlock.conf`)
 - Waybar theme (`waybar-theme/`)
 - Terminal palette (`colors.toml`), Warp (`warp.yaml`), and preset (`city-783.yaml`)
 - Shell/tools: Fish colors (`colors.fish`), fzf (`fzf.fish`)

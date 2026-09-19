@@ -5,7 +5,7 @@
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dhmsDots}"
 
 STOW_PKGS=(
-  bash btop fastfetch foot ghostty
+  bash btop fastfetch foot ghostty herdr
   hypr hyprland-preview-share-picker
   kitty nvim shell themes tmux
 )

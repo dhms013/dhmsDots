@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# dhms:summary=Configure dhms shell lock screen PAM authentication (password, and fingerprint when a sensor is enrolled)
+# dhms:requires-sudo=true
+# dhms:group=system
+# dhms:examples=dhms-apply-lock-pam  (elevates via sudo internally — do NOT prefix with 'sudo', secure_path can't see ~/.dhmsDots/bin)
+
+set -e
+
+# Run PLAIN, not via 'sudo dhms-apply-lock-pam': sudo's secure_path does not
+# include the dhms bin dir, and every privilege gain below goes through
+# as_root() -> sudo, matching setup-fingerprint/setup-fido2/setup-dns.
+
+# Install/upgrade callers can start this as root. Keep PATH to system dirs.
+if (( EUID == 0 )); then
+  export PATH=/usr/local/bin:/usr/bin:/bin
+fi
+
+# Honor a wrapper caller's target, otherwise infer from the sudo/pkexec
+# elevation chain so the probe checks the right user's fingerprints.
+target_user=${DHMS_APPLY_LOCK_USER:-${SUDO_USER:-}}
+if [[ -z $target_user && -n ${PKEXEC_UID:-} ]]; then
+  target_user=$(getent passwd "$PKEXEC_UID" | cut -d: -f1)
+fi
+target_user=${target_user:-$USER}
+
+as_root() {
+  if (( EUID == 0 )); then
+    "$@"
+  else
+    sudo "$@"
+  fi
+}
+
+echo "Configuring lock screen password authentication..."
+
+as_root tee /etc/pam.d/dhms-lock-password >/dev/null <<'EOF'
+#%PAM-1.0
+auth       required                    pam_faillock.so preauth silent deny=10 unlock_time=120
+-auth      [success=2 default=ignore]  pam_systemd_home.so
+auth       [success=1 default=bad]     pam_unix.so try_first_pass nullok
+auth       [default=die]               pam_faillock.so authfail deny=10 unlock_time=120
+auth       optional                    pam_permit.so
+auth       required                    pam_env.so
+auth       required                    pam_faillock.so authsucc
+account    include                     system-local-login
+EOF
+
+if [[ -x /usr/bin/fprintd-list ]] &&
+  /usr/bin/fprintd-list "$target_user" 2>/dev/null | grep -qi finger; then
+  echo "Configuring lock screen fingerprint authentication..."
+  as_root tee /etc/pam.d/dhms-lock-fingerprint >/dev/null <<'EOF'
+#%PAM-1.0
+auth       required                    pam_fprintd.so
+account    include                     system-local-login
+EOF
+else
+  echo "No enrolled fingerprint found; disabling lock screen fingerprint authentication."
+  as_root rm -f /etc/pam.d/dhms-lock-fingerprint
+fi
+
+echo "Lock screen authentication configured."

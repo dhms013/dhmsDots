@@ -31,7 +31,9 @@ link_theme_consumers() {
   rm -rf ~/.config/btop/themes/current.theme
 
   ln -snf ~/.config/themes/current/theme/btop.theme ~/.config/btop/themes/current.theme
-  ln -snf ~/.config/themes/current/theme/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
+  mkdir -p ~/.cache/dhms/nvim-live
+  cp -f ~/.config/themes/current/theme/neovim.lua ~/.cache/dhms/nvim-live/neovim.lua
+  ln -snf ~/.cache/dhms/nvim-live/neovim.lua ~/.config/nvim/lua/plugins/theme.lua
   ln -sf ~/.config/themes/current/theme/starship.toml ~/.config/starship.toml
 }
 

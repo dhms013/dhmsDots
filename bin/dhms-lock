@@ -1,14 +1,13 @@
 #!/bin/bash
 
-# dhms:summary=Kill any running hyprlock and start a fresh session lock
+# dhms:summary=Lock the desktop through the dhms shell lock plugin
+# dhms:examples=dhms-lock | SUPER+CTRL+L and hypridle lock_cmd call this
 
-lock() {
-  pkill hyprlock 2>/dev/null
-  pkill -f fprintd-stub 2>/dev/null
-  fprintd-stub &
-  hyprctl --instance 0 eval 'hl.config({ misc = { allow_session_lock_restore = true } })'
-  sleep 0.5
-  hyprctl --instance 0 dispatch 'hl.dsp.exec_cmd("hyprlock")'
-}
+# The plugin refuses to lock without its PAM config, so fail loudly here
+# instead of letting the call come back "missing-pam".
+if [[ ! -f /etc/pam.d/dhms-lock-password ]]; then
+  echo "dhms-lock: /etc/pam.d/dhms-lock-password is missing — run 'dhms-apply-lock-pam' first (plain, no sudo prefix)." >&2
+  exit 1
+fi
 
-lock
+exec dhms-shell lock lock

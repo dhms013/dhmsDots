@@ -82,11 +82,29 @@
     "disabled": "[[ -d /var/lib/dhms/vm/arch ]]",
     "action": "floating-terminal dhms-vm install arch"
   },
+  "setup.install.vm.athena": {
+    "icon": "",
+    "label": "Athena OS",
+    "disabled": "[[ -d /var/lib/dhms/vm/athena ]]",
+    "action": "floating-terminal dhms-vm install athena"
+  },
   "setup.install.vm.fedora": {
     "icon": "",
     "label": "Fedora",
     "disabled": "[[ -d /var/lib/dhms/vm/fedora ]]",
     "action": "floating-terminal dhms-vm install fedora"
+  },
+  "setup.install.vm.nixos": {
+    "icon": "",
+    "label": "NixOS",
+    "disabled": "[[ -d /var/lib/dhms/vm/nixos ]]",
+    "action": "floating-terminal dhms-vm install nixos"
+  },
+  "setup.install.vm.opensuse": {
+    "icon": "",
+    "label": "OpenSUSE (Tumbleweed)",
+    "disabled": "[[ -d /var/lib/dhms/vm/opensuse ]]",
+    "action": "floating-terminal dhms-vm install opensuse"
   },
   "setup.install.vm.ubuntu": {
     "icon": "",
@@ -125,17 +143,17 @@
     "icon": "󰍲",
     "label": "VM"
   },
-  "setup.remove.vm.windows": {
-    "icon": "󰍲",
-    "label": "Windows",
-    "when": "[[ -d /var/lib/dhms/vm/windows ]]",
-    "action": "floating-terminal dhms-vm remove windows"
-  },
   "setup.remove.vm.arch": {
     "icon": "󰌽",
     "label": "Arch",
     "when": "[[ -d /var/lib/dhms/vm/arch ]]",
     "action": "floating-terminal dhms-vm remove arch"
+  },
+  "setup.remove.vm.athena": {
+    "icon": "󰌽",
+    "label": "Athena OS",
+    "when": "[[ -d /var/lib/dhms/vm/athena ]]",
+    "action": "floating-terminal dhms-vm remove athena"
   },
   "setup.remove.vm.fedora": {
     "icon": "󰌽",
@@ -143,11 +161,29 @@
     "when": "[[ -d /var/lib/dhms/vm/fedora ]]",
     "action": "floating-terminal dhms-vm remove fedora"
   },
+  "setup.remove.vm.nixos": {
+    "icon": "󰌽",
+    "label": "NixOS",
+    "when": "[[ -d /var/lib/dhms/vm/nixos ]]",
+    "action": "floating-terminal dhms-vm remove nixos"
+  },
+  "setup.remove.vm.opensuse": {
+    "icon": "󰌽",
+    "label": "OpenSUSE",
+    "when": "[[ -d /var/lib/dhms/vm/opensuse ]]",
+    "action": "floating-terminal dhms-vm remove opensuse"
+  },
   "setup.remove.vm.ubuntu": {
     "icon": "󰌽",
     "label": "Ubuntu",
     "when": "[[ -d /var/lib/dhms/vm/ubuntu ]]",
     "action": "floating-terminal dhms-vm remove ubuntu"
+  },
+  "setup.remove.vm.windows": {
+    "icon": "󰍲",
+    "label": "Windows",
+    "when": "[[ -d /var/lib/dhms/vm/windows ]]",
+    "action": "floating-terminal dhms-vm remove windows"
   },
   "setup.timezone": {
     "icon": "\ueb22",

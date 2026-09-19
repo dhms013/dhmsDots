@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Effects
+import Quickshell
 import qs.Commons
 import qs.Ui
 
@@ -16,11 +16,18 @@ Item {
   property bool loadBackground: true
   property string passwordText: ""
   property bool syncingPasswordText: false
+  // String builders for the top-left labels: 24-hour clock and zero-padded
+  // "%A, %B %d" date.
+  readonly property string timeText: formattedTime(clock.date)
+  readonly property string dateText: formattedDate(clock.date)
 
   readonly property string placeholderText: "Enter Password"
-  readonly property int fieldWidth: 381
-  readonly property int fieldHeight: 67
+  readonly property int fieldWidth: 280
+  readonly property int fieldHeight: 50
   readonly property int outlineThickness: 3
+  // Parks the field 450px below the screen's vertical center (lock screens
+  // conventionally drop the prompt toward the lower third).
+  readonly property int fieldCenterFromScreenCenter: 450
   readonly property int fieldFontSize: Math.round(Style.font.heading * 1.125)
   readonly property int passwordDotFontSize: Math.round(Style.font.heading * 1.33)
   readonly property int passwordDotLetterSpacing: Math.round(Style.font.heading * 0.19)
@@ -52,6 +59,20 @@ Item {
     return "file://" + encoded + "?v=" + backgroundVersion
   }
 
+  function twoDigits(n) {
+    return (n < 10 ? "0" : "") + n
+  }
+
+  function formattedTime(date) {
+    return twoDigits(date.getHours()) + ":" + twoDigits(date.getMinutes())
+  }
+
+  function formattedDate(date) {
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    return days[date.getDay()] + ", " + months[date.getMonth()] + " " + twoDigits(date.getDate())
+  }
+
   function forcePasswordFocus() {
     passwordInput.forceActiveFocus()
   }
@@ -74,6 +95,17 @@ Item {
   Component.onCompleted: {
     syncPasswordText()
     if (inputEnabled) Qt.callLater(forcePasswordFocus)
+  }
+
+  // Ticks the clock/date strings. Quickshell's SystemClock is the pattern the
+  // bar's clock widget uses (plugins/panels/clock/BarWidget.qml) and the
+  // only mechanism that reliably re-evaluates these labels — a plain QML
+  // Timer's onTriggered writes never re-rendered them on the lock surface.
+  // Minutes precision keeps repaints to a minimum; HH:mm only changes once a
+  // minute anyway.
+  SystemClock {
+    id: clock
+    precision: SystemClock.Minutes
   }
 
   // Measures the masked password at full size; passwordDotScale compares this
@@ -101,17 +133,6 @@ Item {
       sourceSize.height: height
     }
 
-    MultiEffect {
-      anchors.fill: wallpaper
-      source: wallpaper
-      autoPaddingEnabled: false
-      blurEnabled: root.loadBackground && wallpaper.status === Image.Ready
-      blur: 1.0
-      blurMax: 128
-      blurMultiplier: 1.25
-      contrast: -0.08
-    }
-
     MouseArea {
       anchors.fill: parent
       hoverEnabled: true
@@ -119,14 +140,46 @@ Item {
       onPositionChanged: root.wakeRequested()
     }
 
+    // Top-left clock and date labels over the wallpaper (clock 100px at the
+    // top-left corner; date 18px, 10px from the left, 150px down). Anchored
+    // with explicit z — the pattern every other working Text on this surface
+    // uses — and fed from the SystemClock above.
+    Text {
+      id: clockText
+      anchors.top: parent.top
+      anchors.left: parent.left
+      text: root.timeText
+      font.family: Style.font.family
+      font.pixelSize: 100
+      color: Color.lock.text
+      z: 20
+    }
+
+    Text {
+      id: dateText
+      anchors.top: parent.top
+      anchors.topMargin: 150
+      anchors.left: parent.left
+      anchors.leftMargin: 10
+      text: root.dateText
+      font.family: Style.font.family
+      font.pixelSize: 18
+      color: Color.lock.text
+      z: 20
+    }
+
     BorderSurface {
       id: inputField
       width: root.fieldWidth
       height: root.fieldHeight
-      anchors.centerIn: parent
+      anchors.horizontalCenter: parent.horizontalCenter
+      // Field parks 450px below center; clamp keeps it on-screen on short
+      // outputs (the laptop).
+      y: Math.min(Math.round(parent.height / 2 + root.fieldCenterFromScreenCenter - height / 2), Math.max(0, parent.height - height))
       color: Color.lock.background
       borderSpec: root.inputBorderSpec
-      radius: Style.cornerRadius
+      // The field is square (no rounded corners).
+      radius: 0
       clip: true
 
       TextInput {
@@ -198,7 +251,7 @@ Item {
 
       // Fingerprint hint pinned inside the field's right edge when a sensor is
       // enrolled, so the user knows they can touch to unlock instead of typing.
-      // Matches hyprlock, which draws its fingerprint icon in the same spot.
+      // The icon conventionally sits on the right of the prompt.
       Text {
         id: fingerprintIcon
         objectName: "fingerprintIndicator"

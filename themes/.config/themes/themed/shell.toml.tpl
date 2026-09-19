@@ -1,4 +1,4 @@
-# Omarchy shell surfaces. Colors derive from colors.toml; sizes and the
+# dhms shell surfaces. Colors derive from colors.toml; sizes and the
 # typographic scale come from the keys below. Themes can ship
 # themes/<name>/shell.toml to replace this generated file.
 
@@ -206,14 +206,15 @@ accent           = "{{ accent }}"
 
 [lock]
 # Lock screen password input. background/background-alpha control the
-# centered input field card; border/border-active/border-error cycle
-# through idle, typing/authenticating, and wrong-password states.
-# border-alpha applies to all three border states (they are mutually
-# exclusive in time).
+# input field card; border/border-active/border-error cycle through idle,
+# typing/authenticating, and wrong-password states. border-alpha applies to
+# all three border states (they are mutually exclusive in time).
 background       = "{{ background }}"
 background-alpha = 0.8
 text             = "{{ foreground }}"
-placeholder      = "{{ foreground }}"
+# Dimmed accent placeholder, faint over the field card.
+# = rgba(accent, 0.6) blended onto the background.
+placeholder      = "{{ mix accent background 60% }}"
 text-error       = "{{ red }}"
 border           = "hyprland.active-border"
 border-active    = "hyprland.active-border"

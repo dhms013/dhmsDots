@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dhms:summary=Install, launch, stop, inspect, or remove a VM (windows, arch, fedora, ubuntu)
+# dhms:summary=Install, launch, stop, inspect, or remove a VM (arch, fedora, ubuntu, nixos, opensuse, athena, windows)
 # dhms:args=<install|remove|launch|stop|status|list> <os> [options]
 # dhms:requires-sudo=true
 
@@ -19,16 +19,20 @@
 DAEMON="dhms-vm"
 RUNTIME_ROOT="${DHMS_VM_DIR:-/var/lib/dhms/vm}"
 CRED_BASE="$HOME/.config/dhms-vm"
-CREDENTIALS_FILE="$CRED_BASE/windows/credentials"
 KRB5_CONF="$CRED_BASE/krb5.conf"
 PRIV_SRC=$(readlink -f "$0" 2>/dev/null || printf '%s' "$0")
 PRIV_DST="/usr/bin/$DAEMON"
 
 # --- OS driver table ---------------------------------------------------------
 
+# Rolling "current" ISO URLs for OSes the qemux/qemu BOOT table does not alias.
+# BOOT accepts a direct URL; these pins keep each edition stable across releases.
+ATHENA_ISO_URL="https://hub.athenaos.org/iso/athenaos-live-x86_64.iso"
+SUSE_TW_ISO_URL="https://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-DVD-x86_64-Current.iso"
+
 valid_os() {
   case "$1" in
-  windows | arch | fedora | ubuntu) return 0 ;;
+  windows | arch | fedora | ubuntu | nixos | opensuse | athena) return 0 ;;
   *) return 1 ;;
   esac
 }
@@ -39,6 +43,9 @@ os_label() {
   arch) echo Arch ;;
   fedora) echo Fedora ;;
   ubuntu) echo Ubuntu ;;
+  nixos) echo NixOS ;;
+  opensuse) echo OpenSUSE ;;
+  athena) echo Athena OS ;;
   esac
 }
 
@@ -46,13 +53,22 @@ os_image() { [[ $1 == windows ]] && echo "dockurr/windows" || echo "qemux/qemu";
 
 os_container() { echo "dhms-vm-$1"; }
 
-os_boot() { echo "$1"; }
+os_boot() {
+  case "$1" in
+  opensuse) echo "$SUSE_TW_ISO_URL" ;;
+  athena) echo "$ATHENA_ISO_URL" ;;
+  *) echo "$1" ;;
+  esac
+}
 
 valid_boot() {
-  # arch|fedora as-is; ubuntu picks ubuntu (desktop) or ubuntus (server);
-  # windows has no BOOT — dockur uses VERSION=11.
+  # arch|fedora|nixos as-is; ubuntu picks ubuntu (desktop) or ubuntus (server);
+  # opensuse/athena boot a pinned "current" ISO URL; windows has no BOOT —
+  # dockur uses VERSION=11.
   case "$1:$2" in
-  arch:arch | fedora:fedora | ubuntu:ubuntu | ubuntu:ubuntus | windows:*) return 0 ;;
+  arch:arch | fedora:fedora | ubuntu:ubuntu | ubuntu:ubuntus | windows:* | nixos:nixos) return 0 ;;
+  opensuse:*) [[ $2 == "$SUSE_TW_ISO_URL" ]] && return 0 ;;
+  athena:*) [[ $2 == "$ATHENA_ISO_URL" ]] && return 0 ;;
   esac
   return 1
 }
@@ -63,6 +79,9 @@ os_webport() {
   arch) echo 8016 ;;
   fedora) echo 8026 ;;
   ubuntu) echo 8036 ;;
+  nixos) echo 8046 ;;
+  opensuse) echo 8056 ;;
+  athena) echo 8066 ;;
   esac
 }
 
@@ -429,31 +448,40 @@ unescape() {
   printf '%s' "$v"
 }
 
-# Store the RDP credentials privately for the user (0600) so the plaintext
+# Per-OS credentials file. For windows these are the RDP login injected into
+# the unattended install; for the Linux guests (which qemux/qemu CANNOT
+# pre-seed — no cloud-init/preseed hooks in the generic image) they are the
+# credentials the user chose at install time and must create inside the guest
+# installer. Stored 0600 either way.
+credentials_file() { echo "$CRED_BASE/$1/credentials"; }
+
+# Store the guest credentials privately for the user (0600) so the plaintext
 # password is not world-readable. The password is one validated printable line
 # (no newline), so plain KEY=VALUE is safe.
 write_credentials() {
-  local username="$1" password="$2" old_umask dir
-  dir="$(dirname "$CREDENTIALS_FILE")"
+  local os="$1" username="$2" password="$3" old_umask cred dir
+  cred="$(credentials_file "$os")"
+  dir="$(dirname "$cred")"
   mkdir -p "$dir"
   old_umask=$(umask)
   umask 077
-  printf 'USERNAME=%s\nPASSWORD=%s\n' "$username" "$password" >"$CREDENTIALS_FILE"
-  chmod 600 "$CREDENTIALS_FILE" 2>/dev/null || true
+  printf 'USERNAME=%s\nPASSWORD=%s\n' "$username" "$password" >"$cred"
+  chmod 600 "$cred" 2>/dev/null || true
   umask "$old_umask"
 }
 
 # Read one field from the private credentials file; IFS on the first = keeps a
 # password that itself contains =.
 read_credential() {
-  local want="$1" key value
-  [[ -f $CREDENTIALS_FILE ]] || return 1
+  local os="$1" want="$2" key value cred
+  cred="$(credentials_file "$os")"
+  [[ -f $cred ]] || return 1
   while IFS='=' read -r key value; do
     [[ $key == "$want" ]] && {
       printf '%s' "$value"
       return 0
     }
-  done <"$CREDENTIALS_FILE"
+  done <"$cred"
   return 1
 }
 
@@ -625,7 +653,7 @@ EOF
 
   local USERNAME="" PASSWORD=""
   if [[ $os == windows ]]; then
-    # Prompt for username and password
+    # Prompt for username and password (injected into the unattended install)
     USERNAME=$(gum input --placeholder="Username (Press enter to use default: docker)" --header="Enter Windows username:")
     if [[ -z $USERNAME ]]; then
       USERNAME="docker"
@@ -648,7 +676,31 @@ EOF
       PASSWORD_DISPLAY="(default)"
     fi
   else
-    PASSWORD_DISPLAY="(none — interactive install)"
+    # qemux/qemu cannot pre-seed a Linux user (no cloud-init/preseed hooks),
+    # so these are REMEMBERED, not injected: create this exact account during
+    # the guest installer. They are stored 0600 and shown by status/launch.
+    USERNAME=$(gum input --placeholder="Username (Press enter to use default: ${USER:-$(id -un)})" --header="Enter $(os_label "$os") username (create it in the guest installer):")
+    if [[ -z $USERNAME ]]; then
+      USERNAME="${USER:-$(id -un)}"
+    fi
+    if ! valid_username "$USERNAME"; then
+      echo "Invalid username (use letters, digits, - or _, up to 20 chars). Using default: dhms"
+      USERNAME="dhms"
+    fi
+
+    PASSWORD=$(gum input --placeholder="Password (Press enter to use default: admin)" --password --header="Enter $(os_label "$os") password:")
+    if [[ -z $PASSWORD ]]; then
+      PASSWORD="admin"
+      PASSWORD_DISPLAY="(default)"
+    else
+      PASSWORD_DISPLAY="(user-defined)"
+    fi
+    if ! valid_password "$PASSWORD"; then
+      echo "Invalid password (printable characters, up to 64). Using default: admin"
+      PASSWORD="admin"
+      PASSWORD_DISPLAY="(default)"
+    fi
+    PASSWORD_DISPLAY+=" — create it during install"
   fi
 
   # Display configuration summary
@@ -686,9 +738,7 @@ EOF
     echo "❌ Failed to write the $(os_label "$os") VM configuration."
     exit 1
   }
-  if [[ $os == windows ]]; then
-    write_credentials "$USERNAME" "$PASSWORD"
-  fi
+  write_credentials "$os" "$USERNAME" "$PASSWORD"
 
   echo ""
   echo "Starting the $(os_label "$os") VM..."
@@ -720,6 +770,14 @@ EOF
   if [[ $os == windows ]]; then
     echo ""
     echo "Once finished, launch '$DAEMON launch $os' or use the '$(os_label "$os") (VM)' app entry."
+  else
+    echo ""
+    echo "During the install, create the user '$USERNAME' with the password you"
+    echo "chose (saved privately in ~/.config/dhms-vm/$os/credentials)."
+    echo "Note: the guest starts on the live ISO, which auto-logins as root"
+    echo "(empty password) — no user login exists until the guest's own"
+    echo "installer (archinstall etc.) completes."
+    echo "'$DAEMON status $os' shows the username and whether the install finished."
   fi
   echo ""
   echo "To stop the VM: $DAEMON stop $os"
@@ -778,8 +836,8 @@ launch_vm() {
     # compose only when it is readable (sudoless mode), reversing the writer's
     # escaping.
     local WIN_USER WIN_PASS
-    WIN_USER=$(read_credential USERNAME) || WIN_USER=""
-    WIN_PASS=$(read_credential PASSWORD) || WIN_PASS=""
+    WIN_USER=$(read_credential windows USERNAME) || WIN_USER=""
+    WIN_PASS=$(read_credential windows PASSWORD) || WIN_PASS=""
     if [[ -z $WIN_USER || -z $WIN_PASS ]] && [[ -r $(compose_file "$os") ]]; then
       [[ -z $WIN_USER ]] && WIN_USER=$(unescape "$(read_compose_value USERNAME "$(compose_file "$os")")")
       [[ -z $WIN_PASS ]] && WIN_PASS=$(unescape "$(read_compose_value PASSWORD "$(compose_file "$os")")")
@@ -865,10 +923,14 @@ To stop: $DAEMON stop windows"
       dhms-notification-send -u critical "$(os_label "$os") VM" "Failed to start $(os_label "$os") VM"
       exit 1
     fi
+    local VM_USER
+    VM_USER=$(read_credential "$os" USERNAME) || VM_USER=""
     echo ""
     echo "Opening the web viewer at http://127.0.0.1:$(os_webport "$os")..."
     sleep 3
     xdg-open "http://127.0.0.1:$(os_webport "$os")"
+    local LOGIN_LINE=""
+    [[ -n $VM_USER ]] && LOGIN_LINE="Guest user: $VM_USER (password in ~/.config/dhms-vm/$os/credentials)"
     gum style \
       --border normal \
       --padding "1 2" \
@@ -877,6 +939,7 @@ To stop: $DAEMON stop windows"
       "$(os_label "$os") VM is running" \
       "" \
       "Web viewer: http://127.0.0.1:$(os_webport "$os")" \
+      ${LOGIN_LINE:+"$LOGIN_LINE"} \
       "" \
       "To stop: $DAEMON stop $os"
   fi
@@ -905,6 +968,26 @@ status_os() {
     return 0
   fi
 
+  # qemux/qemu Linux guests: an (almost) unallocated data.img means the guest
+  # disk was never written — the VM is booting the live ISO and NO user login
+  # exists yet (the live ISO auto-logins as root with an empty password on
+  # tty1). Catch the "login incorrect with remembered credentials" trap here
+  # instead of letting the user debug it in the viewer.
+  if [[ $os != windows ]]; then
+    local data alloc
+    # dockur nests the disks under a subdirectory of the storage mount
+    # (e.g. ~/.arch-vm/arch/data.img) — locate it instead of hardcoding.
+    data=$(find "$HOME/.$os-vm" -maxdepth 2 -name data.img 2>/dev/null | head -n1)
+    if [[ -n $data ]]; then
+      alloc=$(du -B1M "$data" 2>/dev/null | cut -f1) || alloc=""
+      if [[ -n $alloc ]] && ((alloc < 1024)); then
+        echo "$(os_label "$os"): guest disk ${alloc}M allocated — install NOT completed (still the live ISO)"
+        echo "               open http://127.0.0.1:$(os_webport "$os"), log in as root (empty password), run the guest installer (archinstall etc.)"
+        return 0
+      fi
+    fi
+  fi
+
   if ! status=$(priv status "$os" 2>/dev/null); then
     echo "$(os_label "$os"): could not query (authorization declined?)"
     return 1
@@ -914,7 +997,13 @@ status_os() {
     echo "$(os_label "$os"): container not found"
   elif [[ $status == "running" ]]; then
     echo "$(os_label "$os"): RUNNING — http://127.0.0.1:$(os_webport "$os")"
-    [[ $os == windows ]] && echo "               RDP: 127.0.0.1:$(os_rdpport "$os")"
+    if [[ $os == windows ]]; then
+      echo "               RDP: 127.0.0.1:$(os_rdpport "$os")"
+    else
+      local vmuser
+      vmuser=$(read_credential "$os" USERNAME 2>/dev/null) || vmuser=""
+      [[ -n $vmuser ]] && echo "               guest user: $vmuser"
+    fi
   else
     echo "$(os_label "$os"): stopped ($status)"
   fi
@@ -922,7 +1011,7 @@ status_os() {
 
 status_all() {
   local os
-  for os in windows arch fedora ubuntu; do
+  for os in arch athena fedora nixos opensuse ubuntu windows; do
     status_os "$os"
   done
 }
@@ -931,7 +1020,7 @@ show_usage() {
   echo "Usage: $DAEMON <command> <os> [options]"
   echo ""
   echo "Commands:"
-  echo "  install <os>           Install and configure a VM (os: windows, arch, fedora, ubuntu)"
+  echo "  install <os>           Install and configure a VM (os: athena, arch, fedora, nixos, opensuse, ubuntu, windows)"
   echo "  remove <os>            Remove a VM and optionally its data"
   echo "  launch <os> [options]  Start the VM (if needed) and connect"
   echo "                         Options:"

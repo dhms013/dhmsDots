@@ -12,6 +12,3 @@ if [ -n "$JAVA_HOME" ]; then
 fi
 export PATH="$PATH:${HOME}/.dhmsDots/bin"
 export DHMSDOTS_PATH="$HOME/.dhmsDots"
-
-# Added by cua-driver-rs installer — see https://github.com/trycua/cua
-export PATH="/home/dhms/.local/bin:$PATH"

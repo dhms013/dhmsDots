@@ -16,7 +16,7 @@ omarchy-theme-install https://github.com/OldJobobo/omarchy-sakura-mochi-theme
 
 ## What's Included
 
-- Rounded Hyprland, Hyprlock, Waybar, Mako, Walker, and SwayOSD styling built around the theme's pink-and-green glass shell.
+- Rounded Hyprland, Waybar, Mako, Walker, and SwayOSD styling built around the theme's pink-and-green glass shell.
 - A standalone [Vencord theme](vencord.theme.css) with its own layered Discord treatment instead of a thin palette pass-through.
 - A custom [Neovim theme override](neovim.lua) for `bjarneo/aether.nvim` with Sakura Mochi-specific highlight tuning.
 

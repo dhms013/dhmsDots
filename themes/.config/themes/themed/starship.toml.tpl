@@ -19,7 +19,7 @@ vicmd_symbol = '[❮](fg:{{ accent }})'
 [directory]
 # truncation_length = 2
 # truncation_symbol = "…/"
-repo_root_style = "bold fg:#00cc77"
+repo_root_style = "bold fg:{{ green }}"
 repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 style = "fg:{{ accent }}"
 format = "[$path]($style)"
@@ -78,7 +78,7 @@ symbol = " "
 
 [docker_context]
 symbol = "󰡨 "
-style = "bg:#ccffee fg:#000000"
+style = "bg:{{ cyan }} fg:{{ background }}"
 format = '[ $symbol $context ]($style)'
          
 [elixir]
@@ -92,7 +92,7 @@ symbol = " "
 
 [golang]
 symbol = "󰟓 "
-style = "bg:#383838 fg:#00ff99"
+style = "bg:{{ darker_background }} fg:{{ bright_foreground }}"
 format = '[ $symbol ($version) ]($style)'
 
 [guix_shell]
@@ -106,7 +106,7 @@ symbol = " "
 
 [java]
 symbol = "󰸭 "
-style = "bg:#383838 fg:#00ff99"
+style = "bg:{{ darker_background }} fg:{{ bright_foreground }}"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
@@ -120,7 +120,7 @@ symbol = " "
 
 [nodejs]
 symbol = "󰌞󰛦"
-style = "bg:#383838 fg:#00ff99"
+style = "bg:{{ darker_background }} fg:{{ bright_foreground }}"
 format = '[ $symbol ($version) ]($style)'
 
 [ocaml]
@@ -138,7 +138,7 @@ symbol = " "
 [python]
 version_format = "${raw}"
 symbol = " 🐍 "
-style = "bg:#383838 fg:#00ff99"
+style = "bg:{{ darker_background }} fg:{{ bright_foreground }}"
 format = '[${symbol}${version} 󰌠($virtualenv)󰌠 ]($style)'
 
 [rlang]
@@ -149,7 +149,7 @@ symbol = " "
 
 [rust]
 symbol = "󱘗"
-style = "bg:#383838 fg:#00ff99"
+style = "bg:{{ darker_background }} fg:{{ bright_foreground }}"
 format = '[ $symbol ($version) ]($style)'
 
 [scala]

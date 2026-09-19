@@ -96,8 +96,17 @@ you install a VM and is never a required package (remove it again when the last
 VM goes away).
 
 - **Windows 11** — `dockurr/windows`, hands-free install, connect over RDP.
-- **Arch / Fedora / Ubuntu** — `qemux/qemu`, interactive install through a web
-  viewer; Ubuntu asks desktop vs server first.
+- **Arch / Fedora / Ubuntu / NixOS** — `qemux/qemu`, interactive install through
+  a web viewer; Ubuntu asks desktop vs server first.
+- **OpenSUSE (Tumbleweed)** / **Athena OS** — `qemux/qemu` booted from a pinned
+  "current" ISO URL (Tumbleweed DVD / Athena live), interactive install through
+  the web viewer.
+
+Every install asks for a username/password up front. Windows injects them into
+its unattended install; the Linux guests cannot be pre-seeded (the generic
+image has no cloud-init/preseed hooks), so the answer is remembered in
+`~/.config/dhms-vm/<os>/credentials` (0600) and shown by `dhms-vm status` /
+`launch` — create that same user during the guest installer.
 
 Install from the shell menu (`Setup > Install > VM`) or:
 

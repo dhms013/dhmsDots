@@ -27,3 +27,4 @@ restart_apps
 hyprctl reload
 theme-gnome
 theme-browser
+hermes-theme-set
