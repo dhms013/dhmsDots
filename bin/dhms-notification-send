@@ -117,7 +117,7 @@ if [[ -n $exec_command ]]; then
 fi
 
 if [[ -n $description ]]; then
-  notify-send "${args[@]}" "$headline" "$description"
+  notify-send "${args[@]}" "$headline" "$description" && canberra-gtk-play --id=complete
 else
-  notify-send "${args[@]}" "$headline"
+  notify-send "${args[@]}" "$headline" && canberra-gtk-play --id=complete
 fi

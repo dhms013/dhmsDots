@@ -11,4 +11,5 @@ if [ -n "$JAVA_HOME" ]; then
   export PATH="$JAVA_HOME/bin:$PATH"
 fi
 export PATH="$PATH:${HOME}/.dhmsDots/bin"
+export PATH="$PATH:${HOME}/.local/bin"
 export DHMSDOTS_PATH="$HOME/.dhmsDots"

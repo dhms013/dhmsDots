@@ -30,7 +30,3 @@ alias c='opencode'
 alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
 alias anime="ani-cli"
 alias pipes=pipes-rs
-
-notify() {
-  notify-send "$1" "$2" && canberra-gtk-play --id=complete
-}
