@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Render a theme's colors.toml + generated shell.toml for live preview (no disk mutation of current/)
+# dhms:hidden=true
 # dhms:args=<theme-name>
 # dhms:examples=dhms-theme-render catppuccin
 

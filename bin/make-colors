@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Generate a theme's colors.toml from its terminal config files
+# dhms:hidden=true
 # dhms:args=<theme-dir>...
 
 # Reads colors from a theme directory's alacritty.toml, kitty.conf, warp.yaml, or

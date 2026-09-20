@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Print CPU and memory stats for the shell
+# dhms:hidden=true
 # dhms:group=system
 # dhms:args=[--bar-widget]
 

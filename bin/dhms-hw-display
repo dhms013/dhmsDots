@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Print the most likely display backlight device
+# dhms:hidden=true
 # dhms:examples=dhms-hw-display
 
 backlight_path="${DHMS_BACKLIGHT_PATH:-/sys/class/backlight}"

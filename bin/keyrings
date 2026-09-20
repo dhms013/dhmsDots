@@ -1,8 +1,38 @@
 #!/bin/bash
 
-# dhms:summary=Update archlinux-keyring when a newer version is available, then re-init the keyring
+# dhms:summary=Update archlinux-keyring when a newer version is available, then re-init the keyring. Also trust the omarchy repo key and keep omarchy-keyring current.
 # dhms:group=system
+# dhms:name=keyrings
 # dhms:requires-sudo=true
+
+set -euo pipefail
+
+OMARCHY_KEY=40DFB630FF42BCFFB047046CF0134EE680CAC571
+
+# The mirror publishes no omarchy.db.sig. A per-repo SigLevel that demands a
+# DB signature (e.g. `SigLevel = Required`) makes `pacman -Sy` fail for EVERY
+# repo, not just omarchy. Strip any per-repo SigLevel so the section inherits
+# the global "Required DatabaseOptional" (packages signed+trusted, DB may be
+# unsigned) — the same rule omarchy's own 1787589206 migration enforces.
+normalize_omarchy_siglevel() {
+  local conf=/etc/pacman.conf
+  [[ -f $conf ]] || return 0
+  if sed -n '/^\[omarchy\]/,/^\[/p' "$conf" 2>/dev/null | grep -q '^SigLevel = '; then
+    gum log --level warn "Removing per-repo SigLevel from [omarchy] (mirror has no omarchy.db.sig)"
+    sudo cp "$conf" "$conf.bak.$(date +%Y%m%d-%H%M%S)"
+    sudo sed -i '/^\[omarchy\]/,/^\[/{/^SigLevel = /d}' "$conf"
+  fi
+}
+
+# The omarchy repo is SigLevel-required, so its packages refuse to verify
+# until this key is trusted. Trust it BEFORE pacman -Sy below, or a slow
+# keyserver would abort the whole sync for one untrusted database.
+if ! sudo pacman-key --list-keys "$OMARCHY_KEY" &>/dev/null; then
+  gum log --level info "Trusting the omarchy repository signing key"
+  sudo pacman-key --recv-keys "$OMARCHY_KEY" --keyserver keys.openpgp.org
+fi
+sudo pacman-key --lsign-key "$OMARCHY_KEY" >/dev/null 2>&1 || true
+normalize_omarchy_siglevel
 
 # Ensure we have the latest archlinux-keyring, maintainer keys might have changed
 gum log --level info "Update Arch signing keys"
@@ -17,6 +47,17 @@ if [[ -z "$installed" ]] || { [[ -n "$available" ]] && [[ "$(vercmp "$available"
   sudo pacman -S --noconfirm archlinux-keyring
   sudo pacman-key --init
   sudo pacman-key --populate archlinux
+  # --init/--populate replaced the gpg keyring, so (re)trust the omarchy key.
+  sudo pacman-key --lsign-key "$OMARCHY_KEY" >/dev/null 2>&1 || true
 else
   gum log --level info "archlinux-keyring is up to date"
 fi
+
+# Keep omarchy-keyring current (their key set rotates like archlinux-keyring).
+if pacman -Slq omarchy &>/dev/null && pkg-missing omarchy-keyring; then
+  gum log --level info "Installing omarchy-keyring"
+  sudo pacman -S --noconfirm omarchy-keyring
+fi
+
+sudo pacman-key --list-keys "$OMARCHY_KEY" >/dev/null
+gum log --level info "archlinux-keyring and omarchy keyring are correct"

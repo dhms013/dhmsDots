@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Materialize the pending theme: copy its configs, render color templates, set the background, and push the theme to the shell and nvim
+# dhms:hidden=true
 
 USER_TEMPLATES_DIR="$HOME/.config/themes/themed"
 NEXT_THEME_PATH="$HOME/.config/themes/current/next-theme"

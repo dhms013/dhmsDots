@@ -2,6 +2,7 @@
 
 # dhms:summary=Remove the Hermes desktop app along with the Hermes runtime it installed.
 # dhms:requires-sudo=true
+# dhms:examples=dhms hermes remove
 
 # -u so an unset HOME is an error rather than a set of rm -rf paths rooted at /.
 set -euo pipefail

@@ -24,6 +24,9 @@
       ],
       "center": [
         {
+          "id": "dhms.media"
+        },
+        {
           "id": "dhms.workspaces"
         },
         {

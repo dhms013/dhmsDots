@@ -2,6 +2,7 @@
 
 # dhms:summary=Update dhmsDots (branch-aware), keyrings, packages, firmware, then run migrations
 # dhms:group=system
+# dhms:name=update
 # dhms:requires-sudo=true
 
 set -e

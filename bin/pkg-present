@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Exit 0 if all of the named packages are installed on the system, 1 if any are missing
+# dhms:hidden=true
 # dhms:args=<packages...>
 
 # Returns true if all the commands passed in as arguments exit on the system.

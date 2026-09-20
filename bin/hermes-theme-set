@@ -2,6 +2,7 @@
 
 # dhms:summary=Sync the generated dhms theme to Hermes as a skin
 # dhms:args=[--activate] [--wait]
+# dhms:examples=dhms hermes theme set | dhms hermes theme set --activate
 # dhms:hidden=true
 
 # A skin is Hermes' one theme unit for the desktop app, the TUI and the CLI;

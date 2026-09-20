@@ -2,7 +2,7 @@
 
 # dhms:summary=Install the Hermes CLI as a mise-backed wrapper in ~/.local/bin
 # dhms:args=[--check|--now|--owns|--remove]
-# dhms:examples=hermes install cli | hermes install cli --now
+# dhms:examples=dhms hermes install cli | dhms hermes install cli --now
 
 # Hermes pins every one of its dependencies exactly and declares
 # Requires-Python >=3.11,<3.14, so it can neither be built against Arch's
@@ -38,6 +38,19 @@ marker='# Written by hermes-install-cli.'
 # ever run, and that is exactly when we must not start building a second copy.
 desktop_owns_hermes() {
   pkg-present hermes-desktop
+}
+
+# Hermes is built through mise's pipx backend. dhms does not require mise for
+# anything else, so fetch it on demand rather than assuming a machine has it and
+# bailing from the stub with a bare "command not found".
+ensure_mise() {
+  if ! command -v mise >/dev/null 2>&1; then
+    echo "mise is not installed; installing it with pkgadd..." >&2
+    if ! sudo-keep; then
+      exit 1
+    fi
+    pkgadd mise
+  fi
 }
 
 # The venv appears at the python-deps stage, several stages before the one that
@@ -231,6 +244,10 @@ fi
 mkdir -p "$HOME/.local/bin"
 rm -f "$HOME/.local/bin/hermes"
 
+ensure_mise
+
+echo "Installing the Hermes CLI as a mise-backed wrapper in ~/.local/bin..."
+
 cat >"$HOME/.local/bin/hermes" <<EOF
 #!/bin/bash
 
@@ -243,6 +260,19 @@ export UV_PYTHON="$python"
 # and mise's cooldown would otherwise hold a new release back for days.
 export MISE_MINIMUM_RELEASE_AGE=0
 
+# dhms installs mise on demand; without it this wrapper is dead on arrival, so
+# fetch it here too rather than failing mid-install later. pkgadd prompts for
+# sudo, so this stays foreground and stoppable.
+if ! command -v mise >/dev/null 2>&1; then
+  if command -v dhms >/dev/null 2>&1 && command -v pkgadd >/dev/null 2>&1; then
+    echo "mise is not installed; installing it with pkgadd..." >&2
+    pkgadd mise
+  else
+    echo "mise is not installed. Run 'dhms hermes install cli' to set it up." >&2
+    exit 1
+  fi
+fi
+
 # mise up -- which dhms-update runs -- reinstalls without that pin, so this
 # asks which interpreter is actually there rather than whether anything is.
 if ! [[ -d "\$(mise where '$tool' 2>/dev/null)/hermes-agent/lib/python$python" ]]; then
@@ -252,10 +282,10 @@ if ! [[ -d "\$(mise where '$tool' 2>/dev/null)/hermes-agent/lib/python$python" ]
   # It is fetched here rather than when this stub was written, so setting up a
   # machine that never runs Hermes costs nothing.
   if dhms-cmd-missing uv && ! mise where uv >/dev/null 2>&1; then
-    mise use -g --quiet uv@latest || exit 1
+    mise use -g uv@latest || exit 1
   fi
 
-  mise use -g --quiet --force '$tool' || exit 1
+  mise use -g --force '$tool' || exit 1
 fi
 
 # The pin belongs to building Hermes, not to everything Hermes then runs.
@@ -267,6 +297,8 @@ EOF
 
 chmod +x "$HOME/.local/bin/hermes"
 
+echo "Hermes CLI installed. Run 'hermes' to install Hermes on first use (takes a minute), or 'dhms hermes install cli --now' to pre-build it."
+
 # The desktop app resolves a hermes on PATH by running `hermes --version` with
 # a 15 second budget, then falls back to cloning its own copy when that times
 # out. A first-run mise install does not fit in 15 seconds, so anything that
@@ -277,4 +309,5 @@ if [[ $mode == "--now" ]]; then
     echo "Hermes installed without the interactive seeded sessions dhms needs." >&2
     exit 1
   fi
+  echo "Hermes CLI is ready."
 fi

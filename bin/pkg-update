@@ -1,26 +1,35 @@
 #!/bin/bash
 
-# dhms:summary=Upgrade official-repo and AUR packages, pinning BlackArch packages out of the repo upgrade when the AUR also ships them
+# dhms:summary=Upgrade official-repo and AUR packages, pinning blackarch/omarchy packages out of the repo upgrade when the AUR also ships them (hermes stays on omarchy)
 # dhms:requires-sudo=true
 
 set -euo pipefail
 
-# Official > AUR > blackarch
-# BlackArch may only upgrade packages that no other source provides. Anything
-# BlackArch ships that also exists in the AUR is pinned out of the repo upgrade
-# and updated by the AUR phase instead.
+# Official > AUR > omarchy > blackarch. A package that an extra repo
+# (blackarch/omarchy) ships AND the AUR also ships is pinned out of the repo
+# upgrade (`--ignore`) and updated by the AUR phase instead. Repo placement in
+# /etc/pacman.conf resolves omarchy vs blackarch for the rest.
+#
+# Hermes is the exception: it is pinned to the omarchy repository. Even though
+# the AUR names a `hermes-desktop` too (an unrelated app), hermes is never
+# AUR-managed — the repo upgrade always provides it from omarchy.
 
 echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
 PIN=""
 AUR_OK=1
 
-if pacman -Slq blackarch &>/dev/null; then
-  readarray -t cands < <(comm -12 \
-    <(pacman -Slq blackarch | sort) \
-    <(pacman -Qq | sort))
+EXTRA_REPOS=(blackarch omarchy)
+readarray -t cands < <({
+  for repo in "${EXTRA_REPOS[@]}"; do
+    pacman -Slq "$repo" 2>/dev/null || true
+  done
+} | sort -u | comm -12 - <(pacman -Qq | sort))
 
-  if [ "${#cands[@]}" -gt 0 ]; then
+# Hermes never pinned out of the repo upgrade.
+readarray -t cands < <(printf '%s\n' "${cands[@]}" 2>/dev/null | grep -vE '^hermes' || true)
+
+if [ "${#cands[@]}" -gt 0 ]; then
     in_aur=""
     for ((i = 0; i < ${#cands[@]}; i += 200)); do
       batch=("${cands[@]:i:200}")
@@ -40,7 +49,6 @@ if pacman -Slq blackarch &>/dev/null; then
         <(printf '%s\n' "${cands[@]}" | sort) \
         <(printf '%s\n' "$in_aur" | sort) | paste -sd, -)
     fi
-  fi
 fi
 
 if [ -n "$PIN" ]; then

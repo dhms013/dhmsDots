@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Returns a weather condition icon, adjusted for live sunrise and sunset.
+# dhms:hidden=true
 
 # Only consult the helper when a location is stored. Its dynamic fallback would
 # cost an extra wttr.in request when nothing is set; the bare j1 fetch already

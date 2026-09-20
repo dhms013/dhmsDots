@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Print monitor panel state for the shell
+# dhms:hidden=true
 # dhms:group=monitor
 
 monitors_json=$(hyprctl monitors all -j)

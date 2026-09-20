@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Clear the terminal and print the dhms ASCII logo
+# dhms:hidden=true
 
 clear
 echo

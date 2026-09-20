@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Return success if the focused or named Hyprland monitor is an Apple display
+# dhms:hidden=true
 # dhms:group=monitor
 # dhms:args=[monitor]
 

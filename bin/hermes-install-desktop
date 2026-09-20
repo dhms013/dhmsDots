@@ -2,12 +2,28 @@
 
 # dhms:summary=Install the Hermes desktop app
 # dhms:requires-sudo=true
+# dhms:examples=dhms hermes install desktop
 
 set -e
 
-if (( EUID == 0 )); then
+if ((EUID == 0)); then
   echo "Run this command as your desktop user, without sudo." >&2
   exit 1
+fi
+
+# Hermes is pinned to the omarchy repository. The AUR names an unrelated
+# `hermes-desktop` (speech-to-text); refuse to install unless the omarchy repo
+# actually provides the package, so pkgadd can never fall through to it.
+if ! pacman -Slq omarchy 2>/dev/null | grep -qx 'hermes-desktop'; then
+  echo "hermes-desktop is not available from the omarchy repository." >&2
+  echo "Install it first: run the migration (dhms-update) and 'dhms system keyrings'." >&2
+  exit 1
+fi
+
+if pkg-missing hermes-desktop; then
+  if ! sudo-keep; then
+    exit 1
+  fi
 fi
 
 echo "Installing Hermes Desktop..."

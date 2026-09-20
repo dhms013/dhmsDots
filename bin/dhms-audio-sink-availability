@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Print PulseAudio sink availability for the shell
+# dhms:hidden=true
 # dhms:group=audio
 
 # A speaker tuning is a virtual sink in front of the real speakers. Both exist

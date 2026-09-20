@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # dhms:summary=Stub reminder source that always reports an empty reminder list
+# dhms:hidden=true
 #
 # Stub until a reminder daemon exists. The bar indicator polls
 # `dhms-reminder show --json`; report an empty list so it stays inactive.
