@@ -5,10 +5,14 @@
 
 set -euo pipefail
 
-# Official > AUR > omarchy > blackarch. A package that an extra repo
-# (blackarch/omarchy) ships AND the AUR also ships is pinned out of the repo
-# upgrade (`--ignore`) and updated by the AUR phase instead. Repo placement in
-# /etc/pacman.conf resolves omarchy vs blackarch for the rest.
+# Official > AUR > omarchy > blackarch. Pinning only makes sense for packages
+# actually managed by the AUR helper — i.e. foreign (AUR-installed) packages
+# that an extra repo (blackarch/omarchy) also ships. Those are pinned out of
+# the repo upgrade only when the AUR version is strictly newer than installed,
+# so the AUR phase updates them. When the AUR cannot deliver an upgrade
+# (version lags, or only the repo bumped with an epoch-only rebuild), the repo
+# upgrade updates them so nothing gets stranded. Repo-installed packages are
+# never pinned — they always update from their repo.
 #
 # Hermes is the exception: it is pinned to the omarchy repository. Even though
 # the AUR names a `hermes-desktop` too (an unrelated app), hermes is never
@@ -20,34 +24,68 @@ PIN=""
 AUR_OK=1
 
 EXTRA_REPOS=(blackarch omarchy)
+# Candidates are foreign (AUR-installed) packages that an extra repo also
+# ships. Only those have an AUR-managed upgrade path to win out over the repo.
 readarray -t cands < <({
   for repo in "${EXTRA_REPOS[@]}"; do
     pacman -Slq "$repo" 2>/dev/null || true
   done
-} | sort -u | comm -12 - <(pacman -Qq | sort))
+} | sort -u | comm -12 - <(pacman -Qm | awk '{print $1}' | sort))
 
-# Hermes never pinned out of the repo upgrade.
-readarray -t cands < <(printf '%s\n' "${cands[@]}" 2>/dev/null | grep -vE '^hermes' || true)
+# Hermes never pinned out of the repo upgrade — desktop and CLI always come
+# from the omarchy repository, so keep it out of the candidate set entirely
+# (this also protects it from the "AUR unreachable → pin everything" fallback).
+# Guarded so an empty candidate set doesn't have printf inject a lone blank
+# line that readarray would turn into a phantom "" entry.
+if [ "${#cands[@]}" -gt 0 ]; then
+  readarray -t cands < <(printf '%s\n' "${cands[@]}" | grep -vE '^hermes' || true)
+fi
+
+# /usr/bin/vercmp here prints "-1|0|1" to stdout (and exits 0), unlike the
+# stock silent/exit-code variant. Strictly-greater check for $1 > $2.
+is_newer() {
+  [ "$(vercmp "$1" "$2" 2>/dev/null)" = "1" ]
+}
 
 if [ "${#cands[@]}" -gt 0 ]; then
-    in_aur=""
+    declare -A aur_ver=()
     for ((i = 0; i < ${#cands[@]}; i += 200)); do
       batch=("${cands[@]:i:200}")
       url="https://aur.archlinux.org/rpc/v5/info?$(printf 'arg[]=%s&' "${batch[@]}")"
-      if out=$(curl -fsS --connect-timeout 5 --max-time 15 "$url" | jq -r '.results[]?.Name' 2>/dev/null); then
-        in_aur+="${out}"$'\n'
+      if out=$(curl -fsS --connect-timeout 5 --max-time 15 "$url"); then
+        while read -r name version; do
+          [ -n "$name" ] && aur_ver["$name"]=$version
+        done < <(jq -r '.results[]? | [.Name, .Version] | @tsv' <<<"$out")
       else
         AUR_OK=0
         break
       fi
     done
 
+    local_version() {
+      pacman -Q "$1" 2>/dev/null | awk '{print $2}' || true
+    }
+
     if [ "$AUR_OK" -eq 0 ]; then
-      PIN=$(printf '%s\n' "${cands[@]}" | paste -sd, -) # AUR unreachable → pin everything
+      # AUR unreachable → pin everything so a stale repo never overrides an
+      # AUR-managed package (official > AUR > omarchy > blackarch priority).
+      PIN=$(printf '%s\n' "${cands[@]}" | paste -sd, -)
     else
-      PIN=$(comm -12 \
-        <(printf '%s\n' "${cands[@]}" | sort) \
-        <(printf '%s\n' "$in_aur" | sort) | paste -sd, -)
+      # Version-aware pinning: pin out of the repo upgrade only when the AUR
+      # version is strictly newer than the installed one (i.e. the AUR phase
+      # can actually deliver the upgrade). If the AUR lags or only the repo
+      # bumped (e.g. epoch-only rebuild like omarchy's libfprint-git), leave
+      # the package to the repo upgrade so it isn't stranded.
+      pinned=()
+      for cand in "${cands[@]}"; do
+        installed=$(local_version "$cand")
+        if [ -n "${aur_ver[$cand]:-}" ] && is_newer "${aur_ver[$cand]}" "$installed"; then
+          pinned+=("$cand")
+        fi
+      done
+      if [ "${#pinned[@]}" -gt 0 ]; then
+        PIN=$(IFS=,; echo "${pinned[*]}")
+      fi
     fi
 fi
 
