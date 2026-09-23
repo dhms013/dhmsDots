@@ -109,7 +109,11 @@ if [[ $runtime_commit == "$release_commit" ]]; then
   # the packaged release, with enough history for its first fast-forward.
   check_main
   if [[ $(git -C "$runtime" rev-parse --is-shallow-repository) == "true" ]]; then
-    git -C "$runtime" fetch --unshallow origin main
+    # Full-history fetch can be throttled by GitHub; the install is already
+    # complete, so surface the message but do not fail the repairable run.
+    if ! git -C "$runtime" fetch --unshallow origin main; then
+      echo "Could not fetch Hermes history (GitHub throttled). The updater will fetch it on a later run." >&2
+    fi
   fi
   git -C "$runtime" switch -C main "$release_commit"
 

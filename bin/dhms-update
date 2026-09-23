@@ -132,7 +132,8 @@ post_update() {
       reboot --no-wall
     fi
   else
-    notify-send "Update finished"
+    dhms-shell -q dhms.system-update refresh
+    dhms-notification-send "Update finished"
   fi
 }
 
