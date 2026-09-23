@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import qs.Commons
 
@@ -40,6 +41,12 @@ Item {
   // Corner radius is shared with the menu and shell panels.
   // It mirrors Hyprland's current decoration:rounding value.
   readonly property int cornerRadius: Style.cornerRadius
+  // The output holding the focused window (and its active workspace) — the
+  // only place popups render. Hyprland's monitor focus follows the focused
+  // window, not the cursor, so this stays correct regardless of the
+  // focus_on_mouse / cursor_follows_focus settings.
+  readonly property string focusedScreenName: Hyprland.focusedMonitor ? String(Hyprland.focusedMonitor.name || "") : ""
+
   // Toasts are fixed to the top-right corner. They only clear the dhms bar
   // when the bar occupies the top or right edge, so left/bottom bars do not
   // pull notification popups away from the expected top-right location.
@@ -966,7 +973,11 @@ Item {
       id: popupWindow
       required property var modelData
       screen: modelData
-      visible: popupModel.count > 0
+      // Only the focused output hosts the toast stack. Before Hyprland reports
+      // a focused monitor (the first moments of a session) the name is "" and
+      // every screen matches, preserving all-monitor behavior until focus lands.
+      readonly property bool onFocusedScreen: service.focusedScreenName === "" || String(modelData.name || "") === service.focusedScreenName
+      visible: popupModel.count > 0 && popupWindow.onFocusedScreen
 
       WlrLayershell.namespace: "dhms-notifications"
       WlrLayershell.layer: WlrLayer.Overlay

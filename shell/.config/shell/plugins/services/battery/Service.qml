@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
+import qs.Commons
 import "BatteryModel.js" as BatteryModel
 
 Item {
@@ -11,6 +12,15 @@ Item {
   property string dotsPath: Quickshell.env("DHMSDOTS_PATH")
 
   readonly property int batteryThreshold: 10
+  readonly property var batteryDevice: UPower.displayDevice
+  readonly property int batteryPercentagePct: root.batteryDevice && root.batteryDevice.isPresent
+    ? (root.batteryDevice.percentage > 0 && root.batteryDevice.percentage <= 1 ? Math.round(root.batteryDevice.percentage * 100) : root.batteryDevice.percentage)
+    : -1
+  readonly property bool batteryCharging: root.batteryDevice && root.batteryDevice.isPresent && root.batteryDevice.state === UPowerDeviceState.Charging
+  readonly property color batteryColor: root.batteryPercentagePct <= 10 ? Color.urgent
+    : root.batteryPercentagePct <= 20 ? Color.orange
+    : root.batteryCharging ? Color.accent
+    : Color.foreground
   property string pendingPowerSource: ""
 
   PersistentProperties {

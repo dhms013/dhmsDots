@@ -32,6 +32,16 @@ BarWidget {
   readonly property double memUsedKb: ramUsedKb + swapUsedKb
   readonly property double memTotalKb: ramTotalKb + swapTotalKb
 
+  property int loadOrangeThreshold: 70
+  property int loadRedThreshold: 90
+
+  readonly property color baseColor: root.bar ? root.bar.barForeground : Color.foreground
+  readonly property real ramFraction: memTotalKb > 0 ? memUsedKb / memTotalKb : 0
+  readonly property real peakLoad: Math.max(cpuPct, ramFraction * 100)
+  readonly property color loadColor: root.peakLoad > root.loadRedThreshold ? Color.urgent
+    : root.peakLoad > root.loadOrangeThreshold ? Color.orange
+    : root.baseColor
+
   readonly property string label: "󰻠 " + Math.round(cpuPct) + "%  󰍛 " + formatUsed(memUsedKb) + "/" + formatTotal(memTotalKb)
   readonly property string tooltipText: coreTooltip() + "\n" +
     padL("RAM", 4) + " : " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb) + "\n" +
@@ -161,10 +171,12 @@ BarWidget {
       anchors.left: parent.left
       width: parent.width
       text: root.label
-      color: root.bar ? root.bar.barForeground : Color.foreground
+      color: root.loadColor
       font.family: root.bar ? root.bar.fontFamily : Style.font.family
       font.pixelSize: Style.font.bodySmall
       opacity: 0.85
+
+      Behavior on color { ColorAnimation { duration: 250 } }
     }
   }
 

@@ -91,6 +91,9 @@ Panel {
     return root.bar ? root.bar.foreground : Color.foreground
   }
 
+  readonly property var batteryService: root.bar && root.bar.shell ? root.bar.shell.firstPartyServiceFor("dhms.battery") : null
+  readonly property color batteryStateColor: root.batteryService && root.batteryService.batteryColor ? root.batteryService.batteryColor : root.batteryFillColor
+
   // Cute agent-flavored phrases shown in the hero status line, rotated on a
   // timer so the panel feels alive when current is flowing (either direction).
   readonly property var chargingPhrases: [
@@ -277,6 +280,7 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
+    foreground: root.batteryStateColor
     text: root.showPercentage && !vertical
       ? Math.round(root.batteryFraction * 100) + "% " + root.batteryIcon()
       : root.batteryIcon()
@@ -326,7 +330,7 @@ Panel {
           Text {
             id: heroIcon
             text: root.batteryIcon()
-            color: root.bar.foreground
+            color: root.batteryStateColor
             font.family: root.bar.fontFamily
             font.pixelSize: Style.font.display
             anchors.left: parent.left
@@ -370,7 +374,7 @@ Panel {
           Text {
             id: heroPercent
             text: root.batteryInfo.percentage || "—"
-            color: root.bar.foreground
+            color: root.batteryStateColor
             font.family: root.bar.fontFamily
             font.pixelSize: Style.font.displayLarge
             font.bold: true
@@ -399,7 +403,7 @@ Panel {
             anchors.verticalCenter: barTrack.verticalCenter
             height: barTrack.height
             radius: barTrack.radius
-            color: root.batteryFillColor
+            color: root.batteryStateColor
             width: Math.max(barTrack.height, barTrack.width * root.batteryFraction)
 
             Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }

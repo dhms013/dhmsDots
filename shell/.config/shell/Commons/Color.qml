@@ -19,6 +19,7 @@ QtObject {
     property color background: "#101315"
     property color accent: "#cacccc"
     property color urgent: "#a55555"
+    property color orange: "#eb927b"
     property color muted: "#707880"
     // Flat dictionary of "section.key" -> raw string from shell.toml.
     // Reassigning this whole property is what makes surface bindings below
@@ -257,6 +258,8 @@ QtObject {
                 color8Value = match[2];
             else if (match[1] === "red" || match[1] === "color1")
                 urgent = match[2];
+            else if (match[1] === "orange" || match[1] === "color9")
+                orange = match[2];
         }
         if (!loadedBackground && color0Value.length > 0)
             background = color0Value;
