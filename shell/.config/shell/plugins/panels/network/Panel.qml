@@ -147,8 +147,8 @@ Panel {
     // `selectedIndex`). Mouse hover and keyboard nav both mutate this state
     // at the root; items never read containsMouse for visuals. See
     // CursorSurface for the shared chrome shared by rows and pills.
-    readonly property color hoverFill: bar ? Style.hoverFillFor(bar.foreground, Color.accent) : "transparent"
-    readonly property color selectedFill: bar ? Style.selectedFillFor(bar.foreground, Color.accent) : "transparent"
+    readonly property color hoverFill: bar ? Style.hoverFillFor(bar.foreground, Colors.accent) : "transparent"
+    readonly property color selectedFill: bar ? Style.selectedFillFor(bar.foreground, Colors.accent) : "transparent"
     // scannerEnabled lives on the shared WifiDevice, which has no reference
     // counting, and a bar widget is instantiated once per monitor. Tracking the
     // device this instance turned scanning on for keeps the release correct when
@@ -2260,7 +2260,7 @@ Panel {
                 anchors.verticalCenter: parent.verticalCenter
                 height: Style.spacing.controlHeight
                 color: Style.normalFillFor(root.bar.foreground)
-                borderSpec: Border.controlSpec("normal", root.bar.foreground, Color.accent)
+                borderSpec: Border.controlSpec("normal", root.bar.foreground, Colors.accent)
                 radius: Style.cornerRadius
 
                 Text {

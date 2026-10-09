@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dhms:summary=Apply the current theme color to Chromium, Chrome, Edge, and Brave
+# dhms:summary=Apply the current theme color to Chromium, Chrome, Edge, Brave, and Helium
 # dhms:args=
 # dhms:examples=theme-browser
 
@@ -33,6 +33,9 @@ refresh_running_browser() {
 
 set_browser_policy /etc/chromium/policies/managed
 refresh_running_browser chromium chromium
+# Helium consumes the stock Chromium policy root (/etc/chromium/policies), so
+# it shares the write above; only the live refresh differs (process "helium").
+refresh_running_browser helium helium-browser
 
 set_browser_policy /etc/opt/chrome/policies/managed
 refresh_running_browser chrome google-chrome-stable || refresh_running_browser chrome google-chrome

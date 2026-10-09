@@ -109,9 +109,9 @@ Item {
   function durationFor(urgency, expireTimeout, app, appIcon) {
     // Chromium escalates web requireInteraction notifications to
     // urgency=critical on D-Bus, which would render as a never-expiring
-    // toast. Only Brave does this for routine chat pings — demote those to
-    // the normal lifetime; every other sender's critical stays sticky.
-    if (urgency === NotificationUrgency.Critical && NotificationLogic.isBraveSender(app, appIcon))
+    // toast. Brave and Helium do this for routine web pings — demote those
+    // to the normal lifetime; every other sender's critical stays sticky.
+    if (urgency === NotificationUrgency.Critical && NotificationLogic.isRequireInteractionEscalator(app, appIcon))
       urgency = NotificationUrgency.Normal
     switch (urgency) {
     case NotificationUrgency.Critical:

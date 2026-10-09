@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# dhms:summary=Control the ThinkPad cooling fan (auto or disengaged/full-speed)
+# dhms:group=fan
+# dhms:name=
+# dhms:requires-sudo=true
+# dhms:args=[auto|disengaged|toggle|status]
+# dhms:examples=dhms fan | dhms fan disengaged | dhms fan auto | dhms fan toggle | dhms fan status
+
+set -euo pipefail
+
+FAN=/proc/acpi/ibm/fan
+
+fan_level() {
+  awk -F': *' '/^level:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$FAN"
+}
+
+fan_speed() {
+  awk -F': *' '/^speed:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$FAN"
+}
+
+set_mode() {
+  local mode=$1
+
+  if ! echo "level $mode" | sudo tee "$FAN" >/dev/null; then
+    echo "dhms-fan: could not write to $FAN (sudo failed)" >&2
+    return 1
+  fi
+
+  local actual
+  actual=$(fan_level)
+  if [[ $actual != "$mode" ]]; then
+    echo "dhms-fan: level is still '$actual', not '$mode' — is thinkpad_acpi fan_control=1 set (see /etc/modprobe.d/thinkpad-fan.conf)?" >&2
+    return 1
+  fi
+}
+
+do_status() {
+  printf 'level: %s\nspeed: %s\n' "$(fan_level)" "$(fan_speed)"
+}
+
+do_menu() {
+  local current speed choice mode
+
+  current=$(fan_level)
+  speed=$(fan_speed)
+  choice=$(printf 'Auto\nDisengaged\n' | gum choose \
+    --header="Fan level — current: $current · $speed RPM" \
+    --selected="$([[ $current == auto ]] && echo Auto || echo Disengaged)") || true
+  [[ -n $choice ]] || return 0
+
+  case "$choice" in
+  Auto) mode=auto ;;
+  Disengaged) mode=disengaged ;;
+  *) return 0 ;;
+  esac
+
+  set_mode "$mode"
+  notify-send -u low "󰈐  Fan: $mode" "speed: $(fan_speed) RPM"
+}
+
+case "${1:-}" in
+auto)
+  set_mode auto
+  notify-send -u low "󰈐  Fan: auto" "EC temperature control"
+  ;;
+disengaged)
+  set_mode disengaged
+  notify-send -u low "󰈐  Fan: disengaged" "full speed ≈ $(fan_speed) RPM"
+  ;;
+toggle)
+  if [[ $(fan_level) == auto ]]; then
+    set_mode disengaged
+    notify-send -u low "󰈐  Fan: disengaged" "full speed ≈ $(fan_speed) RPM"
+  else
+    set_mode auto
+    notify-send -u low "󰈐  Fan: auto" "EC temperature control"
+  fi
+  ;;
+status)
+  do_status
+  ;;
+"")
+  do_menu
+  ;;
+*)
+  echo "Usage: dhms fan [auto|disengaged|toggle|status]" >&2
+  exit 1
+  ;;
+esac

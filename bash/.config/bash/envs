@@ -13,3 +13,6 @@ fi
 export PATH="$PATH:${HOME}/.dhmsDots/bin"
 export PATH="$PATH:${HOME}/.local/bin"
 export DHMSDOTS_PATH="$HOME/.dhmsDots"
+
+# Hermes Agent command
+case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac

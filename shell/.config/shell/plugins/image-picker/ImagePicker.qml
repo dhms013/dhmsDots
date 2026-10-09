@@ -32,14 +32,14 @@ Item {
     property string doneFile: ""
     property string filterText: ""
     property var doneFilesToRelease: []
-    // Bound to the central [image-picker] section in shell.toml via Color.qml.
+    // Bound to the central [image-picker] section in shell.toml via Colors.qml.
     // `dimColor` tints unselected slices and text outlines on top of the scrim;
     // it intentionally tracks the foundational background, not a surface role.
-    property color dimColor: Color.background
-    property color foreground: Color.imagePicker.text
-    property color scrim: Color.imagePicker.scrim
-    property color selectedBorder: Color.imagePicker.selectedBorder
-    property color unselectedBorder: Color.imagePicker.unselectedBorder
+    property color dimColor: Colors.background
+    property color foreground: Colors.imagePicker.text
+    property color scrim: Colors.imagePicker.scrim
+    property color selectedBorder: Colors.imagePicker.selectedBorder
+    property color unselectedBorder: Colors.imagePicker.unselectedBorder
     property int expandedWidth: 768
     property int expandedHeight: 475
     property int sliceWidth: 108
@@ -523,8 +523,10 @@ Item {
     // previous preview has already written the file.
     Component.onCompleted: {
         var committed = home + "/.config/themes/current/theme/neovim.lua";
-        if (!Util.exists(nvimLivePath))
-            queuePreview(["bash", "-c", "cp " + Util.shellQuote(committed) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
+        // Quickshell has no synchronous file-station API, so the existence
+        // test folds into the bash job: the guarded cp is idempotent — a
+        // no-op once set_theme or a previous preview wrote the live file.
+        queuePreview(["bash", "-c", "[[ -e " + Util.shellQuote(nvimLivePath) + " ]] || cp " + Util.shellQuote(committed) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
     }
 
     Process {

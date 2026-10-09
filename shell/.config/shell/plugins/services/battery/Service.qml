@@ -17,10 +17,10 @@ Item {
     ? (root.batteryDevice.percentage > 0 && root.batteryDevice.percentage <= 1 ? Math.round(root.batteryDevice.percentage * 100) : root.batteryDevice.percentage)
     : -1
   readonly property bool batteryCharging: root.batteryDevice && root.batteryDevice.isPresent && root.batteryDevice.state === UPowerDeviceState.Charging
-  readonly property color batteryColor: root.batteryPercentagePct <= 10 ? Color.urgent
-    : root.batteryPercentagePct <= 20 ? Color.orange
-    : root.batteryCharging ? Color.accent
-    : Color.foreground
+  readonly property color batteryColor: root.batteryPercentagePct <= 10 ? Colors.urgent
+    : root.batteryPercentagePct <= 20 ? Colors.orange
+    : root.batteryCharging ? Colors.accent
+    : Colors.foreground
   property string pendingPowerSource: ""
 
   PersistentProperties {

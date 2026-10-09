@@ -15,6 +15,7 @@ hl.monitor({
 	mode = "highrr",
 	position = "0x-1080",
 	scale = "1",
+	-- mirror = "eDP-1",
 })
 
 hl.monitor({

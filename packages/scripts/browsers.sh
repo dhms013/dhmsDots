@@ -31,16 +31,20 @@ MANAGED_POLICY_DIRS=(
 )
 
 # Chromium-based browser flag files, one per product name.
+# Note: Helium (net.imput.helium) reads `${XDG_CONFIG_HOME}/helium-browser-flags.conf`
+# (verified via strings on /usr/bin/helium-browser) — not helium-flags.conf.
 BROWSER_FLAG_FILES=(
   chromium-flags.conf
   chrome-flags.conf
   brave-flags.conf
   brave-origin-flags.conf
+  helium-browser-flags.conf
   microsoft-edge-stable-flags.conf
 )
 
 # Profile roots that use the NativeMessagingHosts layout. Brave-Origin is
-# included so its extension hosts work too.
+# included so its extension hosts work too; Helium's real config/profile root
+# is ~/.config/net.imput.helium (not ~/.config/helium).
 BROWSER_DIRS=(
   "$HOME/.config/chromium"
   "$HOME/.config/google-chrome"
@@ -52,6 +56,7 @@ BROWSER_DIRS=(
   "$HOME/.config/BraveSoftware/Brave-Origin"
   "$HOME/.config/microsoft-edge"
   "$HOME/.config/microsoft-edge-dev"
+  "$HOME/.config/net.imput.helium"
 )
 
 create_policy_dirs() {

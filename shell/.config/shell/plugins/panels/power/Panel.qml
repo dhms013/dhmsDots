@@ -88,7 +88,7 @@ Panel {
   }
 
   readonly property color batteryFillColor: {
-    return root.bar ? root.bar.foreground : Color.foreground
+    return root.bar ? root.bar.foreground : Colors.foreground
   }
 
   readonly property var batteryService: root.bar && root.bar.shell ? root.bar.shell.firstPartyServiceFor("dhms.battery") : null

@@ -13,11 +13,12 @@ xdg-mime default imv.desktop image/webp
 xdg-mime default imv.desktop image/bmp
 xdg-mime default imv.desktop image/tiff
 
-# Use Brave as the default browser
-xdg-settings set default-web-browser brave-origin.desktop
-xdg-mime default brave-origin.desktop x-scheme-handler/http
-xdg-mime default brave-origin.desktop x-scheme-handler/https
-xdg-mime default brave-origin.desktop text/html
+# Use Helium as the default browser (and email/mailto handler)
+xdg-settings set default-web-browser helium.desktop
+xdg-mime default helium.desktop x-scheme-handler/http
+xdg-mime default helium.desktop x-scheme-handler/https
+xdg-mime default helium.desktop x-scheme-handler/mailto
+xdg-mime default helium.desktop text/html
 
 # Open video files with mpv
 xdg-mime default mpv.desktop video/mp4

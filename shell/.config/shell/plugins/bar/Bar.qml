@@ -70,16 +70,16 @@ Item {
     // to "monospace"), so changing the system font (via `dhms-font-set`)
     // updates the bar without a reload.
     property string fontFamily: Style.font.family
-    // Bound to the central Color singleton so the bar tracks shell.toml's
+    // Bound to the central Colors singleton so the bar tracks shell.toml's
     // [bar] section. Property names kept for the rest of this file's bindings.
-    property color themeForeground: Color.bar.text
-    property color themeContrastForeground: Color.background
-    property color transparentForeground: Color.bar.text
+    property color themeForeground: Colors.bar.text
+    property color themeContrastForeground: Colors.background
+    property color transparentForeground: Colors.bar.text
     property color foreground: themeForeground
     property color barForeground: useTransparentForeground ? transparentForeground : themeForeground
     property bool foregroundAnimationEnabled: true
-    property color background: Color.bar.background
-    property color urgent: Color.bar.active
+    property color background: Colors.bar.background
+    property color urgent: Colors.bar.active
     property var tooltipTarget: null
     property var pendingTooltipTarget: null
     property string tooltipText: ""
@@ -1283,8 +1283,8 @@ Item {
 
                 implicitWidth: tooltipLabel.implicitWidth + 20
                 implicitHeight: tooltipLabel.implicitHeight + 14
-                color: Color.tooltip.background
-                borderSpec: Border.surfaceSpec("tooltip", "border", Color.tooltip.border, 1)
+                color: Colors.tooltip.background
+                borderSpec: Border.surfaceSpec("tooltip", "border", Colors.tooltip.border, 1)
                 radius: Style.cornerRadius
 
                 Text {
@@ -1299,7 +1299,7 @@ Item {
                     anchors.topMargin: 7
                     anchors.bottomMargin: 7
                     text: root.tooltipText
-                    color: Color.tooltip.text
+                    color: Colors.tooltip.text
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.body
                     horizontalAlignment: Text.AlignLeft
@@ -1423,7 +1423,7 @@ Item {
             y: targetRect ? Math.round(targetRect.y) : 0
             width: targetRect ? targetRect.width : 0
             height: targetRect ? targetRect.height : 0
-            color: Color.accent
+            color: Colors.accent
             radius: Math.min(width, height) / 2
         }
 
@@ -1903,7 +1903,7 @@ Item {
 
             visible: opacity > 0
             opacity: slot.panelOpen && !slot.dragSource ? 0.9 : 0
-            color: Color.accent
+            color: Colors.accent
             radius: Math.min(width, height) / 2
             width: root.vertical ? Style.space(2) : slot.panelIndicatorExtent
             height: root.vertical ? slot.panelIndicatorExtent : Style.space(2)

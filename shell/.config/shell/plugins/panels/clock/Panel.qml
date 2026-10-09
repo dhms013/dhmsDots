@@ -62,7 +62,7 @@ Panel {
     readonly property var weeks: Model.monthGrid(viewYear, viewMonth, weekStart, todayKey)
     // Guarded so the widget renders before the bar is injected (the bar-widget
     // contract instantiates it bare).
-    readonly property color contentForeground: bar ? bar.foreground : Color.foreground
+    readonly property color contentForeground: bar ? bar.foreground : Colors.foreground
     readonly property string contentFontFamily: bar ? bar.fontFamily : Style.font.family
     readonly property int cellWidth: Style.space(52)
     readonly property int cellHeight: Style.space(34)
@@ -341,7 +341,7 @@ Panel {
                                 // sitting visibly low against the digits.
                                 anchors.baseline: heroDate.baseline
                                 text: "󰃭"
-                                color: heroMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Color.accent) : root.contentForeground
+                                color: heroMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Colors.accent) : root.contentForeground
                                 font.family: root.contentFontFamily
                                 // Decorative, and deliberately outside the Style.font.*
                                 // scale. Sized so the glyph reads at the cap height of the
@@ -354,7 +354,7 @@ Panel {
 
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: Qt.formatDate(root.today, "MMMM d")
-                                color: heroMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Color.accent) : root.contentForeground
+                                color: heroMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Colors.accent) : root.contentForeground
                                 font.family: root.contentFontFamily
                                 font.pixelSize: 52
                                 font.bold: true
@@ -502,7 +502,7 @@ Panel {
                                     width: Math.round(parent.width * root.yearDone)
                                     height: parent.height
                                     radius: parent.radius
-                                    color: Style.selectedStateColor(root.contentForeground, Color.accent)
+                                    color: Style.selectedStateColor(root.contentForeground, Colors.accent)
 
                                     Behavior on width {
                                         NumberAnimation {
@@ -572,7 +572,7 @@ Panel {
                                     width: Math.round(parent.width * root.lifeDone)
                                     height: parent.height
                                     radius: parent.radius
-                                    color: Style.selectedStateColor(root.contentForeground, Color.accent)
+                                    color: Style.selectedStateColor(root.contentForeground, Colors.accent)
 
                                     Behavior on width {
                                         NumberAnimation {
@@ -649,12 +649,12 @@ Panel {
                                     width: root.weekColumnWidth
                                     height: Style.space(16)
                                     radius: Style.cornerRadius
-                                    color: weekStartMouse.containsMouse ? Style.hoverFillFor(root.contentForeground, Color.accent) : "transparent"
+                                    color: weekStartMouse.containsMouse ? Style.hoverFillFor(root.contentForeground, Colors.accent) : "transparent"
 
                                     Text {
                                         anchors.centerIn: parent
                                         text: "W"
-                                        color: weekStartMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Color.accent) : Qt.darker(root.contentForeground, 1.9)
+                                        color: weekStartMouse.containsMouse ? Style.hoverStateColor(root.contentForeground, Colors.accent) : Qt.darker(root.contentForeground, 1.9)
                                         font.family: root.contentFontFamily
                                         font.pixelSize: Style.font.caption
                                         font.letterSpacing: 1
@@ -742,7 +742,7 @@ Panel {
                                             // over a grid this quiet.
                                             color: "transparent"
                                             border.width: modelData.today ? Style.spacing.hairline : 0
-                                            border.color: Style.normalBorderFor(root.contentForeground, Color.accent)
+                                            border.color: Style.normalBorderFor(root.contentForeground, Colors.accent)
 
                                             Text {
                                                 anchors.centerIn: parent

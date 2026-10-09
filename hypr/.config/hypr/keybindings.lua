@@ -8,7 +8,7 @@ local terminal = "uwsm-app -- ghostty"
 local subTerminal = terminal .. " -e herdr"
 local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
-local browser = "uwsm-app -- brave-origin"
+local browser = "uwsm-app -- helium-browser"
 local subBrowser = "uwsm-app -- zen-browser"
 local qs = "dhms-shell shell toggle"
 local apps = qs .. ' dhms.menu \'{"menu":"apps"}\''

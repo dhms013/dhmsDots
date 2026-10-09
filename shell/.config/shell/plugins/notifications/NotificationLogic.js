@@ -1,19 +1,21 @@
 function isChromiumDerived(app, appIcon) {
   var source = (String(app || "") + "\n" + String(appIcon || "")).toLowerCase()
   return source.indexOf("chrom") >= 0 || source.indexOf("brave") >= 0 ||
-         source.indexOf("vivaldi") >= 0 || source.indexOf("microsoft-edge") >= 0 ||
-         source.indexOf("opera") >= 0
+         source.indexOf("helium") >= 0 || source.indexOf("vivaldi") >= 0 ||
+         source.indexOf("microsoft-edge") >= 0 || source.indexOf("opera") >= 0
 }
 
-// Brave (plain or brave-origin) escalates requireInteraction web
-// notifications to urgency=critical on D-Bus. Deliberately narrower than
-// isChromiumDerived: only Brave's criticals get their lifetime demoted in
+// Brave and Helium escalate requireInteraction web notifications to
+// urgency=critical on D-Bus. Deliberately narrower than isChromiumDerived:
+// only these browsers' criticals get their lifetime demoted in
 // Service.durationFor, so genuine critical alerts from any other sender
-// stay sticky. Word-boundary match so "Brave Origin"/"brave-browser" hit
-// but a sender merely containing the letters "brave" doesn't.
-function isBraveSender(app, appIcon) {
+// stay sticky. Word-boundary match so "Brave Origin"/"brave-browser" and
+// "Helium"/"helium-browser" hit but a sender merely containing the letters
+// "brave" or "helium" doesn't.
+function isRequireInteractionEscalator(app, appIcon) {
   var source = (String(app || "") + "\n" + String(appIcon || "")).toLowerCase()
-  return /(^|[^a-z0-9])brave([^a-z0-9]|$)/.test(source)
+  return /(^|[^a-z0-9])brave([^a-z0-9]|$)/.test(source) ||
+         /(^|[^a-z0-9])helium([^a-z0-9]|$)/.test(source)
 }
 
 function sanitizeBody(body, app, appIcon) {
@@ -351,7 +353,7 @@ function historyRows(raw, liveRows, normalUrgency, limit) {
 if (typeof module !== "undefined") {
   module.exports = {
     isChromiumDerived: isChromiumDerived,
-    isBraveSender: isBraveSender,
+    isRequireInteractionEscalator: isRequireInteractionEscalator,
     sanitizeBody: sanitizeBody,
     summaryStartsWithGlyph: summaryStartsWithGlyph,
     shouldBypassDnd: shouldBypassDnd,

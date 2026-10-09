@@ -75,10 +75,10 @@ Item {
     // pending; the latest theme payload should still apply.
     if (pendingThemeVersion < 0) return
     pendingThemeFallbackTimer.stop()
-    Color.loadColors(pendingColorsRaw)
-    // Color.loadShell also refreshes Style so the type scale flips with the
+    Colors.loadColors(pendingColorsRaw)
+    // Colors.loadShell also refreshes Style so the type scale flips with the
     // background reveal instead of waiting for a separate reload path.
-    Color.loadShell(pendingShellRaw)
+    Colors.loadShell(pendingShellRaw)
     Style.scheduleRefresh()
     pendingThemeVersion = -1
     pendingColorsRaw = ""

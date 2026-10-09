@@ -9,6 +9,7 @@ bluetui
 bluez
 bluez-utils
 brightnessctl
+browserpass
 btop
 cava
 cmatrix
@@ -23,6 +24,7 @@ foot
 fzf
 ghostty
 gnome-disk-utility
+gopass
 gpu-screen-recorder
 grim
 gum
@@ -49,6 +51,7 @@ npm
 nyancat
 ookla-speedtest-bin
 opencode
+pass-import
 pipes-rs
 plocate
 power-profiles-daemon

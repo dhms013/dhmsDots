@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 pragma Singleton
 
-// Color surfaces for the shell. Foundational palette (foreground, background,
+// Colors surfaces for the shell. Foundational palette (foreground, background,
 // accent, urgent) comes from theme/colors.toml. Per-surface roles come from
 // theme/shell.toml — generated per theme from default/themed/shell.toml.tpl,
 // or shipped directly by a theme to replace the generated file. Surfaces that
@@ -275,7 +275,7 @@ QtObject {
 
     }
 
-    // Single TOML walker for shell.toml. Both Color (surface roles) and Style
+    // Single TOML walker for shell.toml. Both Colors (surface roles) and Style
     // (typography, spacing, bar, control states) consume the resulting dict.
     // Accepts quoted strings, bare numeric values, bare width lists, and bare
     // role names; tolerates inline comments. Numbers are kept as strings here —

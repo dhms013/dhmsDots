@@ -131,7 +131,7 @@ BarWidget {
       anchors.left: parent.left
       width: parent.width
       text: root.label
-      color: root.bar ? root.bar.barForeground : Color.foreground
+      color: root.bar ? root.bar.barForeground : Colors.foreground
       font.family: root.bar ? root.bar.fontFamily : Style.font.family
       font.pixelSize: Style.font.bodySmall
       opacity: 0.85

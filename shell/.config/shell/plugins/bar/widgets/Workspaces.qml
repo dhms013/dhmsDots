@@ -85,7 +85,7 @@ BarWidget {
                     width: focused ? parent.labelWidth + 6 : 0
                     height: 0.85
                     radius: 99
-                    color: Color.accent
+                    color: Colors.accent
 
                     Behavior on width {
                         SmoothedAnimation {
