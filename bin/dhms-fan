@@ -1,90 +1,335 @@
 #!/bin/bash
 
-# dhms:summary=Control the ThinkPad cooling fan (auto or disengaged/full-speed)
+# dhms:summary=Control the fan (ThinkPad EC levels 0-7/auto/disengaged; desktop hwmon PWM)
 # dhms:group=fan
 # dhms:name=
 # dhms:requires-sudo=true
-# dhms:args=[auto|disengaged|toggle|status]
-# dhms:examples=dhms fan | dhms fan disengaged | dhms fan auto | dhms fan toggle | dhms fan status
+# dhms:args=[auto|disengaged|toggle|status|<level>]
+# dhms:examples=dhms fan | dhms fan disengaged | dhms fan auto | dhms fan toggle | dhms fan status | dhms fan 3 | dhms fan 50
 
 set -euo pipefail
 
-FAN=/proc/acpi/ibm/fan
+STATE_DIR="$HOME/.local/state/dhms"
+TOGGLE_STATE="$STATE_DIR/fan-toggle"
 
-fan_level() {
-  awk -F': *' '/^level:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$FAN"
+# Backend: ThinkPad EC (/proc/acpi/ibm/fan) when present, otherwise a generic
+# hwmon PWM controller (pwm1_enable + pwm1) — e.g. a desktop motherboard.
+if [[ -r /proc/acpi/ibm/fan ]]; then
+  BACKEND=thinkpad
+else
+  BACKEND=hwmon
+fi
+
+notify() {
+  notify-send -u low "󰈐  Fan: $1" "$2"
 }
 
-fan_speed() {
-  awk -F': *' '/^speed:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$FAN"
+# Safety: confirm interactive low-fan states. Scripted/non-TTY runs skip the
+# prompt (the caller chose a low state deliberately).
+confirm_low() {
+  if [[ -t 0 ]]; then
+    gum confirm "This sets the fan to $1 — overheating risk. Apply anyway?" || {
+      echo "dhms-fan: cancelled" >&2
+      return 1
+    }
+  fi
 }
 
-set_mode() {
-  local mode=$1
+# Equal-for-equal toggle: remember the last non-max state so toggle can return
+# to it (auto<->disengaged, level 3<->disengaged, 50%<->max, ...).
+remember_ordinary() {
+  mkdir -p "$STATE_DIR"
+  printf '%s\n' "$1" > "$TOGGLE_STATE"
+}
 
-  if ! echo "level $mode" | sudo tee "$FAN" >/dev/null; then
-    echo "dhms-fan: could not write to $FAN (sudo failed)" >&2
+stored_ordinary() {
+  if [[ -f "$TOGGLE_STATE" && -s "$TOGGLE_STATE" ]]; then
+    cat "$TOGGLE_STATE"
+  else
+    echo auto
+  fi
+}
+
+# ────────────────────────── ThinkPad EC backend ──────────────────────────
+TP_FAN=/proc/acpi/ibm/fan
+
+tp_level() {
+  awk -F': *' '/^level:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$TP_FAN"
+}
+
+tp_speed() {
+  awk -F': *' '/^speed:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}' "$TP_FAN"
+}
+
+tp_set() {
+  local level=$1
+
+  if ! echo "level $level" | sudo tee "$TP_FAN" >/dev/null; then
+    echo "dhms-fan: could not write to $TP_FAN (sudo failed)" >&2
     return 1
   fi
 
   local actual
-  actual=$(fan_level)
-  if [[ $actual != "$mode" ]]; then
-    echo "dhms-fan: level is still '$actual', not '$mode' — is thinkpad_acpi fan_control=1 set (see /etc/modprobe.d/thinkpad-fan.conf)?" >&2
+  actual=$(tp_level)
+  if [[ $actual != "$level" ]]; then
+    echo "dhms-fan: level is still '$actual', not '$level' — is thinkpad_acpi fan_control=1 set (see /etc/modprobe.d/thinkpad-fan.conf)?" >&2
     return 1
   fi
 }
 
+tp_apply() {
+  local mode=$1
+
+  case "$mode" in
+  auto)
+    tp_set auto
+    remember_ordinary auto
+    notify auto "EC temperature control"
+    ;;
+  disengaged|max|full-speed)
+    tp_set disengaged
+    notify disengaged "set to full speed"
+    ;;
+  [0-7])
+    if (( mode <= 2 )); then
+      confirm_low "level $mode (fan nearly off)"
+    fi
+    tp_set "$mode"
+    remember_ordinary "$mode"
+    notify "level $mode" "set to level $mode"
+    ;;
+  *)
+    return 2
+    ;;
+  esac
+}
+
+# ────────────────────────── hwmon PWM backend ──────────────────────────
+hwmon_device() {
+  # Prefer DHMS_FAN_HWMON (e.g. "hwmon6" or a full path), else the first
+  # controller exposing pwm1 — favouring one that also reports fan1_input.
+  if [[ -n ${DHMS_FAN_HWMON:-} ]]; then
+    local p=$DHMS_FAN_HWMON
+    [[ $p == /* ]] || p="/sys/class/hwmon/$p"
+    printf '%s\n' "$p"
+    return
+  fi
+
+  local h fallback=""
+  for h in /sys/class/hwmon/hwmon*; do
+    [[ -e "$h/pwm1" && -e "$h/pwm1_enable" ]] || continue
+    if [[ -e "$h/fan1_input" ]]; then
+      printf '%s\n' "$h"
+      return
+    fi
+    [[ -z $fallback ]] && fallback=$h
+  done
+  printf '%s\n' "$fallback"
+}
+
+HWMON="$(hwmon_device)"
+if [[ -z $HWMON || ! -e "$HWMON/pwm1" ]]; then
+  echo "dhms-fan: no hwmon PWM device found — set DHMS_FAN_HWMON to override" >&2
+  exit 1
+fi
+
+hw_read() {
+  cat "$HWMON/$1" 2>/dev/null | tr -d ' '
+}
+
+hw_write() {
+  local attr=$1 value=$2
+  if ! echo "$value" | sudo tee "$HWMON/$attr" >/dev/null; then
+    echo "dhms-fan: could not write $HWMON/$attr (sudo failed)" >&2
+    return 1
+  fi
+}
+
+# pwm1_enable: 0 = full speed, 1 = manual duty, 2 = board/EC automatic (chip-dependent)
+hw_apply() {
+  local mode=$1
+
+  case "$mode" in
+  auto)
+    hw_write pwm1_enable 2
+    remember_ordinary auto
+    notify auto "board temperature control"
+    ;;
+  max|disengaged|full-speed)
+    hw_write pwm1_enable 1
+    hw_write pwm1 255
+    notify max "set to 100% duty (max)"
+    ;;
+  *)
+    if [[ $mode =~ ^[0-9]+$ && $mode -ge 0 && $mode -le 100 ]]; then
+      if (( mode <= 25 )); then
+        confirm_low "${mode}% duty (fan off/low)"
+      fi
+      local duty=$(( mode * 255 / 100 ))
+      hw_write pwm1_enable 1
+      hw_write pwm1 "$duty"
+      remember_ordinary "$mode"
+      if (( mode == 0 )); then
+        notify "0%" "set to 0% — fan off"
+      else
+        notify "${mode}%" "set to ${mode}% duty (pwm $duty/255)"
+      fi
+    else
+      return 2
+    fi
+    ;;
+  esac
+}
+
+# ────────────────────────── shared commands ──────────────────────────
+valid_for_backend() {
+  local v=$1
+  if [[ $BACKEND == thinkpad ]]; then
+    case "$v" in
+    auto|disengaged|max|full-speed) return 0 ;;
+    *) [[ $v =~ ^[0-7]$ ]] ;;
+    esac
+  else
+    case "$v" in
+    auto|disengaged|max|full-speed) return 0 ;;
+    *) [[ $v =~ ^([0-9]|[1-9][0-9]|100)$ ]] ;;
+    esac
+  fi
+}
+
+apply() {
+  if [[ $BACKEND == thinkpad ]]; then
+    tp_apply "$1"
+  else
+    hw_apply "$1"
+  fi
+}
+
 do_status() {
-  printf 'level: %s\nspeed: %s\n' "$(fan_level)" "$(fan_speed)"
+  if [[ $BACKEND == thinkpad ]]; then
+    printf 'level: %s\nspeed: %s\n' "$(tp_level)" "$(tp_speed)"
+  else
+    local mode duty rpm
+    mode=$(hw_read pwm1_enable)
+    duty=$(hw_read pwm1)
+    rpm=$(hw_read fan1_input)
+    printf 'mode: %s (0=full 1=manual 2=auto)\npwm: %s/255\nspeed: %s\n' "$mode" "$duty" "${rpm:-n/a}"
+  fi
+}
+
+do_toggle() {
+  local ordinary
+  if [[ $BACKEND == thinkpad ]]; then
+    if [[ $(tp_level) == disengaged ]]; then
+      apply "$(stored_ordinary)"
+    else
+      remember_ordinary "$(tp_level)"
+      apply disengaged
+    fi
+  else
+    local mode duty pct
+    mode=$(hw_read pwm1_enable)
+    duty=$(hw_read pwm1)
+    pct=$(( duty * 100 / 255 ))
+    if [[ $mode == 1 && $pct -ge 100 ]]; then
+      apply "$(stored_ordinary)"
+    else
+      if [[ $mode == 2 ]]; then ordinary=auto; else ordinary=$pct; fi
+      remember_ordinary "$ordinary"
+      apply max
+    fi
+  fi
 }
 
 do_menu() {
-  local current speed choice mode
+  local current speed choice sel
+  if [[ $BACKEND == thinkpad ]]; then
+    current=$(tp_level)
+    speed=$(tp_speed)
+    case "$current" in
+    auto) sel=Auto ;;
+    disengaged) sel=Disengaged ;;
+    0) sel="0 (off)" ;;
+    *) sel=$current ;;
+    esac
+    choice=$(printf 'Auto\nDisengaged\n0 (off)\n1\n2\n3\n4\n5\n6\n7\n' | gum choose \
+      --header="Fan level — current: $current · $speed RPM" \
+      --selected="$sel") || true
+    [[ -n $choice ]] || return 0
+    case "$choice" in
+    Auto) apply auto ;;
+    Disengaged) apply disengaged ;;
+    "0 (off)") apply 0 ;;
+    *) apply "$choice" ;;
+    esac
+  else
+    local duty pct mode
+    mode=$(hw_read pwm1_enable)
+    duty=$(hw_read pwm1)
+    if [[ $mode == 2 ]]; then
+      pct=auto
+      sel=Auto
+    else
+      pct=$(( duty * 100 / 255 ))
+      if (( pct >= 88 )); then sel="100% max"
+      elif (( pct >= 63 )); then sel="75%"
+      elif (( pct >= 38 )); then sel="50%"
+      elif (( pct >= 13 )); then sel="25%"
+      else sel="0% off"
+      fi
+    fi
+    choice=$(printf 'Auto\n100%% max\n75%%\n50%%\n25%%\n0%% off\n' | gum choose \
+      --header="Fan — current: $pct · pwm $duty/255" \
+      --selected="$sel") || true
+    [[ -n $choice ]] || return 0
+    case "$choice" in
+    Auto) apply auto ;;
+    "100% max") apply max ;;
+    "0% off") apply 0 ;;
+    *) apply "${choice//%/}" ;;
+    esac
+  fi
+}
 
-  current=$(fan_level)
-  speed=$(fan_speed)
-  choice=$(printf 'Auto\nDisengaged\n' | gum choose \
-    --header="Fan level — current: $current · $speed RPM" \
-    --selected="$([[ $current == auto ]] && echo Auto || echo Disengaged)") || true
-  [[ -n $choice ]] || return 0
+usage() {
+  if [[ $BACKEND == thinkpad ]]; then
+    echo "Usage: dhms fan [auto|disengaged|toggle|status|0-7]" >&2
+  else
+    echo "Usage: dhms fan [auto|max|toggle|status|0-100]" >&2
+  fi
+  echo "       dhms fan            interactive fan menu" >&2
+}
 
-  case "$choice" in
-  Auto) mode=auto ;;
-  Disengaged) mode=disengaged ;;
-  *) return 0 ;;
+do_command() {
+  local arg=$1
+  case "$arg" in
+  status) do_status ;;
+  toggle) do_toggle ;;
+  *)
+    if ! valid_for_backend "$arg"; then
+      usage
+      return 1
+    fi
+    apply "$arg"
+    ;;
   esac
-
-  set_mode "$mode"
-  notify-send -u low "󰈐  Fan: $mode" "speed: $(fan_speed) RPM"
 }
 
 case "${1:-}" in
-auto)
-  set_mode auto
-  notify-send -u low "󰈐  Fan: auto" "EC temperature control"
-  ;;
-disengaged)
-  set_mode disengaged
-  notify-send -u low "󰈐  Fan: disengaged" "full speed ≈ $(fan_speed) RPM"
-  ;;
-toggle)
-  if [[ $(fan_level) == auto ]]; then
-    set_mode disengaged
-    notify-send -u low "󰈐  Fan: disengaged" "full speed ≈ $(fan_speed) RPM"
-  else
-    set_mode auto
-    notify-send -u low "󰈐  Fan: auto" "EC temperature control"
-  fi
-  ;;
-status)
-  do_status
-  ;;
 "")
   do_menu
   ;;
+status|toggle|auto|disengaged|max|full-speed)
+  do_command "$1"
+  ;;
 *)
-  echo "Usage: dhms fan [auto|disengaged|toggle|status]" >&2
-  exit 1
+  v="${1:-}"
+  [[ $v == *% ]] && v="${v%\%}"
+  if [[ $v =~ ^[0-9]+$ ]]; then
+    do_command "$v"
+  else
+    usage
+    exit 1
+  fi
   ;;
 esac
