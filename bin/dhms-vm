@@ -184,7 +184,7 @@ valid_password() { [[ $1 =~ ^[[:print:]]{1,64}$ ]]; }
 # too, so a path like ../../etc/evil can never reach a privileged action.
 valid_priv_action() {
   case "$1" in
-  write_compose | up | up_wait | down | status | remove)
+  write_compose | up | up_wait | provision | down | status | remove)
     valid_os "$2"
     ;;
   bootstrap)
@@ -408,6 +408,56 @@ __priv_up_wait() {
 # (authorization declined) rather than "no such container".
 __priv_status() { docker inspect --format='{{.State.Status}}' "$(os_container "$1")" 2>/dev/null || true; }
 
+# Append the guest provisioning (auto-boot time unavailable: sshpass + a
+# keyed curl for Arch) — everything under a single elevation so the legacy
+# "--arch-provision" wait loop cannot prompt on every iteration.
+__priv_provision() {
+  local os="$1"
+  [[ $os == arch ]] || {
+    echo "auto-provision only supports arch" >&2
+    return 1
+  }
+
+  # The guest's SSH service is served by the container's internal docker
+  # bridge (172.30.0.2) — publishable to the host via docker exec nc.
+  local ip tries=0
+  if ! docker info >/dev/null 2>&1; then
+    echo "Docker daemon is not running (e.g. after a reboot). Start it with:" >&2
+    echo "  sudo systemctl start docker" >&2
+    return 1
+  fi
+  if ! docker inspect -f '{{.State.Running}}' "$(os_container "$os")" >/dev/null 2>&1; then
+    echo "The Arch VM container is not running. Start it first with:" >&2
+    echo "  $DAEMON launch arch" >&2
+    return 1
+  fi
+  ip=$(docker exec "$(os_container "$os")" sh -c "awk '/^172\./ && \$6==\"docker\"{print \$1}' /proc/net/arp 2>/dev/null | head -n1" 2>/dev/null)
+  [[ -n $ip ]] || ip="172.30.0.2"
+
+  # Wait for the guest sshd up to ~90s (fresh boot).
+  while ! docker exec -i "$(os_container "$os")" nc -z -w2 "$ip" 22 < /dev/null >/dev/null 2>&1; do
+    ((++tries > 90)) && {
+      echo "guest sshd not reachable at $ip:22 after 90s" >&2
+      return 1
+    }
+    sleep 1
+  done
+
+  local share
+  share=$(get_mount_source "$os" /shared) || share="$HOME/$(os_label "$os")"
+  local script="$share/setup-arch.sh"
+  [[ -f $script ]] || {
+    echo "missing guest setup script: $script" >&2
+    return 1
+  }
+
+  # Default prebuilt-image account: arch/arch (the image it ships).
+  # shellcheck disable=SC2016
+  sshpass -p arch ssh -tt -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 \
+    -o ProxyCommand="docker exec -i $(os_container "$os") nc $ip 22" \
+    "arch@$ip" "sudo mkdir -p /mnt/shared && sudo mount -t 9p -o trans=virtio shared /mnt/shared && sudo bash /mnt/shared/setup-arch.sh"
+}
+
 # Remove a VM. The QEMU image is shared by arch/fedora/ubuntu, so it is only
 # removed when no other installed VM still references it.
 __priv_remove() {
@@ -549,7 +599,7 @@ install_vm() {
   local boot=""
   if [[ $os == ubuntu ]]; then
     local variant
-    variant=$(printf 'Desktop\nServer\n' | gum choose --header="Ubuntu variant?" --header.help="Desktop is the default GUI build; Server is the smaller non-GUI LTS")
+    variant=$(printf 'Desktop\nServer\n' | gum choose --header="Ubuntu variant? (Desktop is the default GUI build; Server is the smaller non-GUI LTS)")
     [[ -n $variant ]] || exit 1
     boot="ubuntu"
     [[ $variant == Server ]] && boot="ubuntus"
@@ -558,8 +608,19 @@ install_vm() {
   fi
   valid_boot "$os" "$boot" || { echo "unsupported OS: $os" >&2; exit 1; }
 
+  # Arch boots a prebuilt cloud image, so the guest is provisioned by the
+  # staged setup-arch.sh instead of a manual installer — pick the desktop set
+  # it should install. Other Linux guests hand-create their account in their
+  # own installer and have no profile here.
+  local profile=""
+  if [[ $os == arch ]]; then
+    profile=$(printf 'Hyprland\nKDE\nGNOME\nMinimal\n' | gum choose --header="Which desktop profile should the Arch guest provision? (Minimal is a headless box: SSH only)")
+    [[ -n $profile ]] || exit 1
+  fi
+
   local pkgs="gum"
   [[ $os == windows ]] && pkgs="freerdp openbsd-netcat $pkgs"
+  [[ $os == arch ]] && pkgs="sshpass $pkgs"
   pkgadd $pkgs
   ensure_docker_runtime
 
@@ -704,6 +765,8 @@ EOF
   fi
 
   # Display configuration summary
+  local profile_line=""
+  [[ -n $profile ]] && profile_line="Profile:    $profile"
   gum style \
     --border normal \
     --padding "1 2" \
@@ -715,6 +778,7 @@ EOF
     "RAM:       $SELECTED_RAM" \
     "CPU:       $SELECTED_CORES cores" \
     "Disk:      $SELECTED_DISK" \
+    ${profile_line:+"$profile_line"} \
     "Username:  $USERNAME" \
     "Password:  $PASSWORD_DISPLAY"
 
@@ -740,10 +804,26 @@ EOF
   }
   write_credentials "$os" "$USERNAME" "$PASSWORD"
 
+  # Arch uses a prebuilt cloud image: wipe/replace stale artifacts, fetch a
+  # verified boot.qcow2, and stage the in-guest setup script before the
+  # container ever starts. A staging failure aborts so we never boot stale or
+  # half-downloaded media.
+  if [[ $os == arch ]]; then
+    local profile_ok
+    profile_ok=$(command dhms-vm-arch-prepare "$storage" "$shared" \
+      "$USERNAME" "$PASSWORD" "$USERNAME" "${profile,,}" "$tz") || {
+      echo "❌ Failed to stage the Arch VM image or guest provisioning."
+      exit 1
+    }
+    printf '%s\n' "$profile_ok"
+  fi
+
   echo ""
   echo "Starting the $(os_label "$os") VM..."
   if [[ $os == windows ]]; then
     echo "This will download a Windows 11 image (may take 10-15 minutes)."
+  elif [[ $os == arch ]]; then
+    echo "The prebuilt Arch image is already staged; dockur detects boot.qcow2 and boots it directly."
   else
     echo "This will download the $(os_label "$os") image (size depends on the build)."
   fi
@@ -765,11 +845,36 @@ EOF
   xdg-open "http://127.0.0.1:$(os_webport "$os")"
 
   echo ""
-  echo "Installation is running in the background."
-  echo "Monitor progress at: http://127.0.0.1:$(os_webport "$os")"
+  if [[ $os == windows ]]; then
+    echo "Installation is running in the background."
+    echo "Monitor progress at: http://127.0.0.1:$(os_webport "$os")"
+  else
+    echo "Monitor the console at: http://127.0.0.1:$(os_webport "$os")"
+  fi
   if [[ $os == windows ]]; then
     echo ""
     echo "Once finished, launch '$DAEMON launch $os' or use the '$(os_label "$os") (VM)' app entry."
+  elif [[ $os == arch ]]; then
+    echo ""
+    echo "Waiting for the Arch guest to boot, then auto-provisioning it"
+    echo "($USERNAME / $profile set) — this installs packages inside the guest"
+    echo "and can take a few minutes. The viewer opens while it runs."
+    ( priv provision arch )
+    local rc=$?
+    if (( rc == 0 )); then
+      echo ""
+      echo "✅ Arch guest provisioned: user '$USERNAME' created and armoured."
+      echo "   Log in at the viewer as '$USERNAME' (password saved in ~/.config/dhms-vm/$os/credentials)."
+    else
+      echo ""
+      echo "⚠️  Auto-provisioning did not finish cleanly (rc=$rc)."
+      echo "   The VM is still running — finish it by hand in the viewer:"
+      echo "   log in as arch/arch, then:"
+      echo "       sudo mkdir -p /mnt/shared"
+      echo "       sudo mount -t 9p -o trans=virtio shared /mnt/shared"
+      echo "       sudo bash /mnt/shared/setup-arch.sh"
+      echo "   (setups are idempotent; re-running the whole install also works.)"
+    fi
   else
     echo ""
     echo "During the install, create the user '$USERNAME' with the password you"
@@ -972,8 +1077,10 @@ status_os() {
   # disk was never written — the VM is booting the live ISO and NO user login
   # exists yet (the live ISO auto-logins as root with an empty password on
   # tty1). Catch the "login incorrect with remembered credentials" trap here
-  # instead of letting the user debug it in the viewer.
-  if [[ $os != windows ]]; then
+  # instead of letting the user debug it in the viewer. Arch is the exception:
+  # it boots a prebuilt cloud image whose account is provisioned in-guest via
+  # setup-arch.sh, so an unallocated data.img is expected — never "broken".
+  if [[ $os != windows && $os != arch ]]; then
     local data alloc
     # dockur nests the disks under a subdirectory of the storage mount
     # (e.g. ~/.arch-vm/arch/data.img) — locate it instead of hardcoding.
@@ -1002,7 +1109,19 @@ status_os() {
     else
       local vmuser
       vmuser=$(read_credential "$os" USERNAME 2>/dev/null) || vmuser=""
-      [[ -n $vmuser ]] && echo "               guest user: $vmuser"
+      if [[ $os == arch ]]; then
+        # setup-arch.sh writes ~/Arch/.provisioned-<user> through the 9p
+        # shared dir once it has created the chosen account.
+        local marker="$HOME/$(os_label "$os")/.provisioned-$vmuser"
+        if [[ -n $vmuser && -f $marker ]]; then
+          echo "               guest user: $vmuser (provisioned — log in with that password)"
+        else
+          echo "               guest user: arch (default; arch/arch until provisioned)"
+          echo "               tip: run '$DAEMON install $os' to finish guest setup"
+        fi
+      else
+        [[ -n $vmuser ]] && echo "               guest user: $vmuser"
+      fi
     fi
   else
     echo "$(os_label "$os"): stopped ($status)"
@@ -1021,6 +1140,7 @@ show_usage() {
   echo ""
   echo "Commands:"
   echo "  install <os>           Install and configure a VM (os: athena, arch, fedora, nixos, opensuse, ubuntu, windows)"
+  echo "  provision <os>         Provision the guest with the saved credentials (arch only)"
   echo "  remove <os>            Remove a VM and optionally its data"
   echo "  launch <os> [options]  Start the VM (if needed) and connect"
   echo "                         Options:"
@@ -1032,6 +1152,7 @@ show_usage() {
   echo ""
   echo "Examples:"
   echo "  $DAEMON install windows            # Set up Windows 11 for the first time"
+  echo "  $DAEMON provision arch            # Finish provisioning the Arch guest with your saved credentials"
   echo "  $DAEMON install ubuntu            # Ask desktop vs server, then set up"
   echo "  $DAEMON launch windows            # Connect via RDP (auto-stop on exit)"
   echo "  $DAEMON launch arch               # Open the :8006 web viewer"
@@ -1057,6 +1178,14 @@ __priv)
 install)
   valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
   install_vm "$2"
+  ;;
+provision)
+  valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
+  if [[ $2 != arch ]]; then
+    echo "provision only supports arch" >&2
+    exit 1
+  fi
+  priv provision "$2"
   ;;
 remove)
   valid_os "$2" || { echo "Unknown OS: ${2:-<missing>}" >&2; show_usage >&2; exit 1; }
