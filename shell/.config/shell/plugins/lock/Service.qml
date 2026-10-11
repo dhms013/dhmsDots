@@ -34,7 +34,12 @@ Item {
   property bool strandedLock: false
   property bool strandedLockResolved: false
 
-  readonly property bool locked: lockRequested || sessionLock.locked || sessionLock.secure
+  // Maintained explicitly rather than bound: `sessionLock.locked` does not
+  // reliably notify when the compositor ends the lock (only `secure` does), so
+  // a property binding could evaluate while `sessionLock.locked` still read
+  // true and then freeze `locked` true after an unlock. That silently turned
+  // every later IPC lock() into a no-op. Recompute from live state instead.
+  property bool locked: false
   readonly property bool authenticating: authenticatingPassword || fingerprintAuthenticating
 
   function realScreenCount() {
@@ -52,6 +57,13 @@ Item {
   function hasRealScreen() {
     return realScreenCount() > 0
   }
+
+  function refreshLocked() {
+    var next = lockRequested || sessionLock.locked || sessionLock.secure
+    if (locked !== next) locked = next
+  }
+
+  onLockRequestedChanged: refreshLocked()
 
   function queueSessionLock() {
     pendingSessionLock = true
@@ -155,6 +167,7 @@ Item {
     resetAuthenticationState()
     idleBlankTimer.stop()
     sessionLock.locked = false
+    refreshLocked()
     logEvent("unlocked")
     runWake()
   }
@@ -234,6 +247,7 @@ Item {
 
     onSecureStateChanged: {
       root.logEvent("secure=" + secure)
+      root.refreshLocked()
       if (secure) {
         root.pendingSessionLock = false
         sessionLockStabilizeTimer.stop()
@@ -244,6 +258,7 @@ Item {
 
     onLockStateChanged: {
       root.logEvent("session-locked=" + locked)
+      root.refreshLocked()
 
       if (locked) {
         root.pendingSessionLock = false
@@ -512,7 +527,10 @@ Item {
 
     function lock(): string {
       if (!root.passwordPamConfigured) return "missing-pam"
-      if (!root.locked && !root.beginLock()) return "failed"
+      // Consult live state, not the cached `locked`, so a stale value can never
+      // swallow the request again.
+      if (root.lockRequested || sessionLock.locked || sessionLock.secure) return "ok"
+      if (!root.beginLock()) return "failed"
       return "ok"
     }
 
