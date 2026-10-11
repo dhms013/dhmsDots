@@ -28,7 +28,10 @@ stow_foot() {
   local link="$stow_dir/$package/.config/foot"
 
   # stow folds the tree, so a successful stow is a symlink to the package dir.
-  if [ -L "$target" ] && [ "$(readlink "$target")" = "$link" ]; then
+  # Compare canonical paths: stow writes a *relative* link, so a plain
+  # readlink would never equal the absolute $link and we'd back up + restow on
+  # every run.
+  if [ -L "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$link")" ]; then
     echo "==> foot is already stowed from .dhmsDots — skipping"
     return
   fi

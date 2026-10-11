@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=Foot
+GenericName=Terminal
+Comment=A wayland native terminal emulator
+Exec=foot
+Icon=foot
+Terminal=false
+Categories=System;TerminalEmulator;
+Keywords=shell;prompt;command;commandline;
+X-TerminalArgExec=-e
+X-TerminalArgTitle=--title=
+X-TerminalArgAppId=--app-id=
+X-TerminalArgDir=--working-directory=
+X-TerminalArgHold=--hold
