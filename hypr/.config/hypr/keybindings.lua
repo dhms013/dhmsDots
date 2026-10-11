@@ -4,7 +4,7 @@
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 
-local terminal = "uwsm-app -- ghostty"
+local terminal = "uwsm-app -- foot"
 local subTerminal = terminal .. " -e herdr"
 local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
