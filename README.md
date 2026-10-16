@@ -91,36 +91,29 @@ These apps are referenced directly in Hyprland keybinds.
 
 ## Virtual Machines
 
-Run OS VMs in Docker using the dockur family. Docker is enabled on demand when
-you install a VM and is never a required package (remove it again when the last
+Run a Windows VM in Docker using the dockur image. Docker is enabled on demand
+when you install the VM and is never a required package (remove it again when the
 VM goes away).
 
 - **Windows 11** — `dockurr/windows`, hands-free install, connect over RDP.
-- **Arch / Fedora / Ubuntu / NixOS** — `qemux/qemu`, interactive install through
-  a web viewer; Ubuntu asks desktop vs server first.
-- **OpenSUSE (Tumbleweed)** / **Athena OS** — `qemux/qemu` booted from a pinned
-  "current" ISO URL (Tumbleweed DVD / Athena live), interactive install through
-  the web viewer.
 
-Every install asks for a username/password up front. Windows injects them into
-its unattended install; the Linux guests cannot be pre-seeded (the generic
-image has no cloud-init/preseed hooks), so the answer is remembered in
-`~/.config/dhms-vm/<os>/credentials` (0600) and shown by `dhms-vm status` /
-`launch` — create that same user during the guest installer.
+Install asks for a username/password up front; they are injected into the
+unattended install and remembered in `~/.config/dhms-vm/windows/credentials`
+(0600), shown by `dhms-vm status` / `launch`.
 
 Install from the shell menu (`Setup > Install > VM`) or:
 
 ```bash
-dhms-vm install windows   # or arch / fedora / ubuntu
-dhms-vm status            # list every VM
-dhms-vm launch windows    # connect (RDP / web viewer)
-dhms-vm stop fedora       # shut down
-dhms-vm remove ubuntu     # delete (offers to remove Docker on the last VM)
+dhms-vm install          # set up Windows 11
+dhms-vm status           # show VM status
+dhms-vm launch           # connect over RDP
+dhms-vm stop             # shut down
+dhms-vm remove           # delete (offers to remove Docker on the last VM)
 ```
 
 Requires `/dev/kvm` and at least ~10 GB free in addition to the disk you
-allocate. Guest disks live in `~/.<os>-vm`; shared folders default to `~/<OS>`.
-The guest can only reach those paths — nothing else on the host.
+allocate. Guest disks live in `~/.windows-vm`; shared folders default to
+`~/Windows`. The guest can only reach those paths — nothing else on the host.
 
 ---
 
