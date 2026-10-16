@@ -37,15 +37,20 @@ BarWidget {
 
   readonly property color baseColor: root.bar ? root.bar.barForeground : Colors.foreground
   readonly property real ramFraction: memTotalKb > 0 ? memUsedKb / memTotalKb : 0
-  readonly property real peakLoad: Math.max(cpuPct, ramFraction * 100)
-  readonly property color loadColor: root.peakLoad > root.loadRedThreshold ? Colors.urgent
-    : root.peakLoad > root.loadOrangeThreshold ? Colors.orange
-    : root.baseColor
+  readonly property color cpuColor: colorForLoad(cpuPct)
+  readonly property color memoryColor: colorForLoad(ramFraction * 100)
 
-  readonly property string label: "󰻠 " + Math.round(cpuPct) + "%  󰍛 " + formatUsed(memUsedKb) + "/" + formatTotal(memTotalKb)
+  readonly property string cpuLabel: "󰻠 " + Math.round(cpuPct) + "%"
+  readonly property string memoryLabel: "  󰍛 " + formatUsed(memUsedKb) + "/" + formatTotal(memTotalKb)
   readonly property string tooltipText: coreTooltip() + "\n" +
     padL("RAM", 4) + " : " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb) + "\n" +
     padL("Swap", 4) + " : " + formatUsed(swapUsedKb) + "/" + formatTotal(swapTotalKb)
+
+  function colorForLoad(load) {
+    return load > loadRedThreshold ? Colors.urgent
+      : load > loadOrangeThreshold ? Colors.orange
+      : baseColor
+  }
 
   // The tooltip font is monospace, so fixed-width label/value fields keep the
   // colons and the values in exactly one column across every row (c8 vs c10,
@@ -152,7 +157,7 @@ BarWidget {
   }
 
   visible: !vertical
-  implicitWidth: visible ? labelText.implicitWidth + Style.spacing.controlPaddingX * 2 : 0
+  implicitWidth: visible ? labelRow.implicitWidth + Style.spacing.controlPaddingX * 2 : 0
   implicitHeight: barSize
 
   Behavior on implicitWidth {
@@ -165,18 +170,30 @@ BarWidget {
     anchors.rightMargin: Style.space(8)
     clip: true
 
-    Text {
-      id: labelText
+    Row {
+      id: labelRow
       anchors.verticalCenter: parent.verticalCenter
       anchors.left: parent.left
-      width: parent.width
-      text: root.label
-      color: root.loadColor
-      font.family: root.bar ? root.bar.fontFamily : Style.font.family
-      font.pixelSize: Style.font.bodySmall
-      opacity: 0.85
 
-      Behavior on color { ColorAnimation { duration: 250 } }
+      Text {
+        text: root.cpuLabel
+        color: root.cpuColor
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.bodySmall
+        opacity: 0.85
+
+        Behavior on color { ColorAnimation { duration: 250 } }
+      }
+
+      Text {
+        text: root.memoryLabel
+        color: root.memoryColor
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.bodySmall
+        opacity: 0.85
+
+        Behavior on color { ColorAnimation { duration: 250 } }
+      }
     }
   }
 
