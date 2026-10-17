@@ -12,10 +12,11 @@
 # Time limit in milliseconds for triggering modifier key shortcuts
 # ModifierOnlyKeyTimeout=250
 
-# [Hotkey/TriggerKeys]
-# 0=Control+space
-# 1=Zenkaku_Hankaku
-# 2=Hangul
+[Hotkey/TriggerKeys]
+0=Control+Shift_L
+1=Control+Shift_R
+# 2=Zenkaku_Hankaku
+# 3=Hangul
 
 # [Hotkey/ActivateKeys]
 # 0=Hangul_Hanja
