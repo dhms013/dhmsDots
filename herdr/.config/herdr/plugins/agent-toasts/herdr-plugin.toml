@@ -1,0 +1,10 @@
+id = "dhms.agent-toasts"
+name = "Agent Toasts"
+version = "0.1.0"
+min_herdr_version = "0.9.1"
+description = "Name the exact agent and session in done/blocked desktop toasts"
+platforms = ["linux"]
+
+[[events]]
+on = "pane.agent_status_changed"
+command = ["bash", "notify.sh"]

@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# dhms:summary=Open a foot window in the focused terminal's working directory
+# dhms:args=[foot args...]
+# dhms:examples=dhms-terminal-open | dhms-terminal-open -e yazi
+
+dir=""
+
+focused="$(hyprctl activewindow -j 2>/dev/null || true)"
+
+if [[ -n $focused ]]; then
+  class="$(jq -r '.class // ""' <<<"$focused" 2>/dev/null || true)"
+
+  if [[ ${class,,} == foot ]]; then
+    pid="$(jq -r '.pid // 0' <<<"$focused" 2>/dev/null || true)"
+
+    if [[ $pid =~ ^[1-9][0-9]*$ ]]; then
+      read -r child_pid child_comm < <(ps --ppid "$pid" -o pid=,comm= 2>/dev/null | head -n1)
+
+      if [[ -n ${child_pid:-} ]]; then
+        if [[ $child_comm == herdr ]]; then
+          dir="$(timeout 2 herdr pane current 2>/dev/null | jq -r '.result.pane.cwd // empty' 2>/dev/null || true)"
+        else
+          dir="$(readlink "/proc/$child_pid/cwd" 2>/dev/null || true)"
+        fi
+      fi
+    fi
+  fi
+fi
+
+if [[ -n $dir && -d $dir ]]; then
+  exec uwsm-app -- foot -D "$dir" "$@"
+fi
+
+exec uwsm-app -- foot "$@"

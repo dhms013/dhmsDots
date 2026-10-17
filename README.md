@@ -79,7 +79,7 @@ My Hyprland config uses the following defaults:
 
 | Purpose      | App          |
 |--------------|--------------|
-| Terminal     | ghostty      |
+| Terminal     | foot         |
 | Editor       | nvim         |
 | File manager | yazi         |
 | Browser      | helium-browser |

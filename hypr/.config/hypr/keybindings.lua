@@ -5,6 +5,7 @@
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 
 local terminal = "uwsm-app -- foot"
+local dhmsTerminal = "dhms-terminal-open"
 local subTerminal = terminal .. " -e herdr"
 local fileManager = terminal .. " -e yazi"
 local editor = terminal .. " --title=nvim -e nvim"
@@ -33,7 +34,7 @@ local brightUp = "dhms-brightness-display +5%"
 local brightDown = "dhms-brightness-display 5%-"
 
 -- terminal
-hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal), { description = "terminal" })
+hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(dhmsTerminal), { description = "terminal" })
 -- hl.bind(
 -- 	"SUPER + SHIFT + RETURN",
 -- 	hl.dsp.exec_cmd(terminal .. " -e tmux attach || tmux new -s dhms"),

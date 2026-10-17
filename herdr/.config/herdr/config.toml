@@ -16,7 +16,10 @@ panel_bg = "black"
 new_cwd = "follow"
 
 [ui.toast]
-delivery = "terminal"
+# Built-in popups say only "<agent-kind> finished"; the agent-toasts plugin sends
+# precise ones (agent + session title) via dhms-notification-send. Sound is
+# independent of delivery, so it still plays.
+delivery = "off"
 delay_seconds = 1
 
 [keys]
