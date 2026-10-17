@@ -6,6 +6,9 @@
 # dhms:examples=dhms system wake | dhms system wake --resume (hypridle after_sleep_cmd)
 
 dhms-brightness-display on
+display_status=$?
+# Finish the remaining resume work even when DPMS fails, then report that
+# failure to callers such as the shell lock's wake process.
 dhms-brightness-keyboard restore
 dhms-hyprland-monitor-clamshell >/dev/null 2>&1 || true
 
@@ -24,3 +27,5 @@ if [[ "${1:-}" == "--resume" ]]; then
   # left to the shell's own stranded-lock recovery.
   dhms-hyprland-session-locked && dhms-lock >/dev/null 2>&1 || true
 fi
+
+exit "$display_status"

@@ -30,47 +30,47 @@ hl.window_rule({
 	no_focus = true,
 })
 
--- -- Brave Browser
--- hl.window_rule({
--- 	name = "brave-browser",
--- 	match = { class = "^(brave-origin)$" },
--- 	opacity = "1 override",
--- })
---
--- -- Chromium
--- hl.window_rule({
--- 	name = "chromium",
--- 	match = { class = "^(chromium)$" },
--- 	opacity = "1 override",
--- })
---
--- -- Google-Chrome
--- hl.window_rule({
--- 	name = "google-chrome",
--- 	match = { class = "^(google-chrome)$" },
--- 	opacity = "1 override",
--- })
---
--- -- VS code
--- hl.window_rule({
--- 	name = "vs code",
--- 	match = { class = "^(code)$" },
--- 	opacity = "1 override",
--- })
---
--- -- Postman
--- hl.window_rule({
--- 	name = "postman",
--- 	match = { class = "^(Postman)$" },
--- 	opacity = "1 override",
--- })
---
--- -- Neovim
--- hl.window_rule({
--- 	name = "nvim",
--- 	match = { title = "^(nvim)$" },
--- 	opacity = "1 override",
--- })
+-- Brave Browser
+hl.window_rule({
+	name = "brave-browser",
+	match = { class = "^(brave-origin)$" },
+	opacity = "1 override",
+})
+
+-- Chromium
+hl.window_rule({
+	name = "chromium",
+	match = { class = "^(chromium)$" },
+	opacity = "1 override",
+})
+
+-- Google-Chrome
+hl.window_rule({
+	name = "google-chrome",
+	match = { class = "^(google-chrome)$" },
+	opacity = "1 override",
+})
+
+-- VS code
+hl.window_rule({
+	name = "vs code",
+	match = { class = "^(code)$" },
+	opacity = "1 override",
+})
+
+-- Postman
+hl.window_rule({
+	name = "postman",
+	match = { class = "^(Postman)$" },
+	opacity = "1 override",
+})
+
+-- Neovim
+hl.window_rule({
+	name = "nvim",
+	match = { title = "^(nvim)$" },
+	opacity = "1 override",
+})
 
 -- Steam
 hl.window_rule({
