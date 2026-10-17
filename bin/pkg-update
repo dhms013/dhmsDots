@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# dhms:summary=Upgrade official-repo and AUR packages, pinning blackarch/omarchy packages out of the repo upgrade when the AUR also ships them (hermes stays on omarchy)
 # dhms:requires-sudo=true
 
 set -euo pipefail
@@ -13,10 +12,6 @@ set -euo pipefail
 # (version lags, or only the repo bumped with an epoch-only rebuild), the repo
 # upgrade updates them so nothing gets stranded. Repo-installed packages are
 # never pinned — they always update from their repo.
-#
-# Hermes is the exception: it is pinned to the omarchy repository. Even though
-# the AUR names a `hermes-desktop` too (an unrelated app), hermes is never
-# AUR-managed — the repo upgrade always provides it from omarchy.
 
 echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
@@ -31,15 +26,6 @@ readarray -t cands < <({
     pacman -Slq "$repo" 2>/dev/null || true
   done
 } | sort -u | comm -12 - <(pacman -Qm | awk '{print $1}' | sort))
-
-# Hermes never pinned out of the repo upgrade — desktop and CLI always come
-# from the omarchy repository, so keep it out of the candidate set entirely
-# (this also protects it from the "AUR unreachable → pin everything" fallback).
-# Guarded so an empty candidate set doesn't have printf inject a lone blank
-# line that readarray would turn into a phantom "" entry.
-if [ "${#cands[@]}" -gt 0 ]; then
-  readarray -t cands < <(printf '%s\n' "${cands[@]}" | grep -vE '^hermes' || true)
-fi
 
 # /usr/bin/vercmp here prints "-1|0|1" to stdout (and exits 0), unlike the
 # stock silent/exit-code variant. Strictly-greater check for $1 > $2.

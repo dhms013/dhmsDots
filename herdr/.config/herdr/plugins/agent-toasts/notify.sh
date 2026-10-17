@@ -41,12 +41,17 @@ if [[ $current != "$status" ]]; then
   exit 0
 fi
 
-# Skip when the agent's tab is the active tab of the focused workspace.
+# Skip when the user is actually looking at it: the foot window hosting herdr
+# must be Hyprland's active window, AND the agent's tab must be herdr's active
+# tab in the focused workspace. Otherwise (another app focused, another tab
+# open) always notify.
 workspace_id=$(jq -r '.workspace_id' <<<"$pane")
 tab_id=$(jq -r '.tab_id' <<<"$pane")
 workspace=$("$herdr_bin" workspace list |
   jq -r --arg w "$workspace_id" '.result.workspaces[] | select(.workspace_id == $w)')
-if [[ $(jq -r '.focused' <<<"$workspace") == "true" ]] &&
+active_class=$(hyprctl activewindow -j 2>/dev/null | jq -r '.class // empty')
+if [[ $active_class == "foot" ]] &&
+  [[ $(jq -r '.focused' <<<"$workspace") == "true" ]] &&
   [[ $tab_id == "$(jq -r '.active_tab_id' <<<"$workspace")" ]]; then
   exit 0
 fi
