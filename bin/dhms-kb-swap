@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# dhms:summary=Toggle the Alt/Win and Caps/Escape keyboard swap (session-only)
+
+SWAP='altwin:swap_alt_win, caps:swapescape'
+CURRENT=$(hyprctl getoption input:kb_options | awk -F': ' '/^str:/ {print $2}')
+
+if [[ $CURRENT == "$SWAP" ]]; then
+  hyprctl eval "hl.config({ input = { kb_options = \"\" } })"
+  notify-send -u low "   Swap kb Options" "Keyboard swap off"
+else
+  hyprctl eval "hl.config({ input = { kb_options = \"$SWAP\" } })"
+  notify-send -u low "   Swap kb Options" "Keyboard swap on"
+fi

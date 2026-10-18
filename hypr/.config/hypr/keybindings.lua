@@ -32,6 +32,7 @@ local volumeDown = "dhms-audio-output-volume lower"
 local volumeUp = "dhms-audio-output-volume raise"
 local brightUp = "dhms-brightness-display +5%"
 local brightDown = "dhms-brightness-display 5%-"
+local kbSwap = "dhms-kb-swap"
 
 -- terminal
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(dhmsTerminal), { description = "terminal" })
@@ -40,7 +41,7 @@ hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(dhmsTerminal), { description = "termin
 -- 	hl.dsp.exec_cmd(terminal .. " -e tmux attach || tmux new -s dhms"),
 -- 	{ description = "tmux" }
 -- )
-hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(subTerminal), { description = "sub-terminal" })
+hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(subTerminal), { description = "herdr" })
 
 -- menus
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(apps), { description = "apps" })
@@ -124,6 +125,7 @@ hl.bind(
 -- toggle system
 hl.bind("SUPER + CTRL + I", hl.dsp.exec_cmd("toggle-idle"), { description = "toggle idle" })
 hl.bind("SUPER + CTRL + ALT + L", hl.dsp.exec_cmd("toggle-layout"), { description = "toggle layout" })
+hl.bind("SUPER + CTRL + S", hl.dsp.exec_cmd(kbSwap), { description = "Toggle swap button" })
 
 -- universal clipboard
 -- Send with explicit mods to the focused surface by omitting the window target,

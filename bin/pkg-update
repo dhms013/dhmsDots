@@ -1,17 +1,14 @@
 #!/bin/bash
 
+# dhms:summary=Upgrade official-repo and AUR packages, pinning blackarch/omarchy packages out of the repo upgrade when the AUR also ships them
 # dhms:requires-sudo=true
 
 set -euo pipefail
 
-# Official > AUR > omarchy > blackarch. Pinning only makes sense for packages
-# actually managed by the AUR helper — i.e. foreign (AUR-installed) packages
-# that an extra repo (blackarch/omarchy) also ships. Those are pinned out of
-# the repo upgrade only when the AUR version is strictly newer than installed,
-# so the AUR phase updates them. When the AUR cannot deliver an upgrade
-# (version lags, or only the repo bumped with an epoch-only rebuild), the repo
-# upgrade updates them so nothing gets stranded. Repo-installed packages are
-# never pinned — they always update from their repo.
+# Upgrade official-repo and AUR packages. Foreign (AUR-installed) packages that
+# blackarch/omarchy also ship are pinned out of the repo upgrade when the AUR
+# version is strictly newer, so the AUR phase updates them instead of the repo
+# trampling them.
 
 echo -e "\033[38;2;0;204;119mUpdating packages\033[0m"
 
@@ -19,8 +16,6 @@ PIN=""
 AUR_OK=1
 
 EXTRA_REPOS=(blackarch omarchy)
-# Candidates are foreign (AUR-installed) packages that an extra repo also
-# ships. Only those have an AUR-managed upgrade path to win out over the repo.
 readarray -t cands < <({
   for repo in "${EXTRA_REPOS[@]}"; do
     pacman -Slq "$repo" 2>/dev/null || true
