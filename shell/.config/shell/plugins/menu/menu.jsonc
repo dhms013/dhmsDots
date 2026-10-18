@@ -94,16 +94,6 @@
     ],
     "provider": "power-profiles"
   },
-  "setup.tailscale": {
-    "icon": "󰖂",
-    "label": "Tailscale",
-    "aliases": [
-      "tailscale",
-      "vpn"
-    ],
-    "when": "dhms-cmd-present tailscale",
-    "provider": "tailscale"
-  },
   "setup.remove": {
     "icon": "󰭌",
     "label": "Remove",
@@ -121,6 +111,16 @@
     "label": "Windows",
     "when": "[[ -d /var/lib/dhms/vm/windows ]]",
     "action": "dhms-floating-terminal dhms-vm remove windows"
+  },
+  "setup.tailscale": {
+    "icon": "󰖂",
+    "label": "Tailscale",
+    "aliases": [
+      "tailscale",
+      "vpn"
+    ],
+    "when": "dhms-cmd-present tailscale",
+    "provider": "tailscale"
   },
   "setup.timezone": {
     "icon": "\ueb22",
