@@ -29,7 +29,7 @@
     "aliases": [
       "upgrade"
     ],
-    "action": "floating-terminal dhms-update"
+    "action": "dhms-floating-terminal dhms-update"
   },
   // Setup
   "setup": {
@@ -51,12 +51,12 @@
   "setup.dns": {
     "icon": "󰇖",
     "label": "DNS",
-    "action": "floating-terminal setup-dns"
+    "action": "dhms-floating-terminal setup-dns"
   },
   "setup.docker": {
     "icon": "󰡨",
     "label": "Docker",
-    "action": "floating-terminal docker-set"
+    "action": "dhms-floating-terminal docker-set"
   },
   "setup.install": {
     "icon": "󰉉",
@@ -65,12 +65,12 @@
   "setup.install.packages": {
     "icon": "󰣇",
     "label": "Packages",
-    "action": "floating-terminal pkg-install-all"
+    "action": "dhms-floating-terminal pkg-install-all"
   },
   "setup.install.themes": {
     "icon": "󰸌",
     "label": "Themes",
-    "action": "floating-terminal theme-install"
+    "action": "dhms-floating-terminal theme-install"
   },
   "setup.install.vm": {
     "icon": "",
@@ -80,7 +80,7 @@
     "icon": "",
     "label": "Windows",
     "disabled": "[[ -d /var/lib/dhms/vm/windows ]]",
-    "action": "floating-terminal dhms-vm install windows"
+    "action": "dhms-floating-terminal dhms-vm install windows"
   },
   "setup.power-profile": {
     "icon": "\udb81\udc0b",
@@ -101,7 +101,7 @@
   "setup.remove.packages": {
     "icon": "󰣇",
     "label": "Packages",
-    "action": "floating-terminal pkg-remove"
+    "action": "dhms-floating-terminal pkg-remove"
   },
   "setup.remove.vm": {
     "icon": "󰍲",
@@ -111,12 +111,12 @@
     "icon": "󰍲",
     "label": "Windows",
     "when": "[[ -d /var/lib/dhms/vm/windows ]]",
-    "action": "floating-terminal dhms-vm remove windows"
+    "action": "dhms-floating-terminal dhms-vm remove windows"
   },
   "setup.timezone": {
     "icon": "\ueb22",
     "label": "Timezone",
-    "action": "floating-terminal setup-timezone"
+    "action": "dhms-floating-terminal setup-timezone"
   },
   "setup.security": {
     "icon": "",
@@ -126,12 +126,12 @@
     "icon": "󰈷",
     "label": "Fingerprint",
     "when": "dhms-cmd-present fprintd-enroll",
-    "action": "floating-terminal setup-fingerprint"
+    "action": "dhms-floating-terminal setup-fingerprint"
   },
   "setup.security.fido2": {
     "icon": "",
     "label": "Fido2",
-    "action": "floating-terminal setup-fido2"
+    "action": "dhms-floating-terminal setup-fido2"
   },
   // System
   "system": {

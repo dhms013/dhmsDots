@@ -2,7 +2,7 @@
 
 # dhms:summary=Run a command in a terminal window titled after the command
 # dhms:args=<command> [args...]
-# dhms:examples=floating-terminal htop
+# dhms:examples=dhms-floating-terminal htop
 
 # show-logo/show-done are shell helpers, so the command runs through an
 # interactive bash rather than a bare exec of itself.

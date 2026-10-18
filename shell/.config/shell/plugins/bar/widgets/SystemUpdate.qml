@@ -17,7 +17,7 @@ BarWidget {
   function clear() { updateAvailable = false }
 
   function runUpdate() {
-    if (root.bar) root.bar.run("floating-terminal dhms-update")
+    if (root.bar) root.bar.run("dhms-floating-terminal dhms-update")
   }
 
   visible: updateAvailable

@@ -605,7 +605,7 @@ Panel {
             console.log("setDns blocked: bar=" + !!root.bar + " provider=" + provider + " actionProc.running=" + actionProc.running);
             return ;
         }
-        var cmd = "floating-terminal setup-dns " + Util.shellQuote(provider);
+        var cmd = "dhms-floating-terminal setup-dns " + Util.shellQuote(provider);
         console.log("setDns running: " + cmd);
         root.bar.run(cmd);
         root.close();
