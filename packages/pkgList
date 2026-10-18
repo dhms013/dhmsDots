@@ -51,6 +51,7 @@ npm
 nyancat
 ookla-speedtest-bin
 opencode
+openssh
 pass-import
 pipes-rs
 plocate
@@ -67,6 +68,7 @@ satty
 slurp
 starship
 stow
+tailscale
 tmux
 trash-cli
 telegram-desktop

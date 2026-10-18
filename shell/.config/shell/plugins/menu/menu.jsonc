@@ -1,7 +1,7 @@
 {
   // dhms menu definition.
   // JSONC is used for Neovim-friendly highlighting, comments, and trailing commas.
-  // IDs are object keys. Dotted IDs imply hierarchy: setup.security.fido2 belongs
+  // IDs are object keys. Dotted IDs imply hierarchy: setup.install.windows belongs
   // under setup.security. Kind is inferred: action -> action, target -> link,
   // otherwise submenu. provider:"name" points a submenu at one of the shell's
   // providers (the providers map in plugins/menu/Menu.qml); new provider names
@@ -51,12 +51,19 @@
   "setup.dns": {
     "icon": "󰇖",
     "label": "DNS",
-    "action": "dhms-floating-terminal setup-dns"
+    "aliases": [
+      "dns",
+      "resolver"
+    ],
+    "provider": "dns"
   },
   "setup.docker": {
     "icon": "󰡨",
     "label": "Docker",
-    "action": "dhms-floating-terminal docker-set"
+    "aliases": [
+      "docker"
+    ],
+    "provider": "docker"
   },
   "setup.install": {
     "icon": "󰉉",
@@ -72,11 +79,7 @@
     "label": "Themes",
     "action": "dhms-floating-terminal theme-install"
   },
-  "setup.install.vm": {
-    "icon": "",
-    "label": "VM"
-  },
-  "setup.install.vm.windows": {
+  "setup.install.windows": {
     "icon": "",
     "label": "Windows",
     "disabled": "[[ -d /var/lib/dhms/vm/windows ]]",
@@ -91,6 +94,16 @@
     ],
     "provider": "power-profiles"
   },
+  "setup.tailscale": {
+    "icon": "󰖂",
+    "label": "Tailscale",
+    "aliases": [
+      "tailscale",
+      "vpn"
+    ],
+    "when": "dhms-cmd-present tailscale",
+    "provider": "tailscale"
+  },
   "setup.remove": {
     "icon": "󰭌",
     "label": "Remove",
@@ -103,11 +116,7 @@
     "label": "Packages",
     "action": "dhms-floating-terminal pkg-remove"
   },
-  "setup.remove.vm": {
-    "icon": "󰍲",
-    "label": "VM"
-  },
-  "setup.remove.vm.windows": {
+  "setup.remove.windows": {
     "icon": "󰍲",
     "label": "Windows",
     "when": "[[ -d /var/lib/dhms/vm/windows ]]",
@@ -120,18 +129,14 @@
   },
   "setup.security": {
     "icon": "",
-    "label": "Security"
+    "label": "Security",
+    "when": "dhms-cmd-present fprintd-enroll"
   },
   "setup.security.fingerprint": {
     "icon": "󰈷",
     "label": "Fingerprint",
     "when": "dhms-cmd-present fprintd-enroll",
     "action": "dhms-floating-terminal setup-fingerprint"
-  },
-  "setup.security.fido2": {
-    "icon": "",
-    "label": "Fido2",
-    "action": "dhms-floating-terminal setup-fido2"
   },
   // System
   "system": {

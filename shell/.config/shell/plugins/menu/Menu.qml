@@ -122,6 +122,39 @@ Item {
             "actionFor": function(value) {
                 return "powerprofilesctl set " + Util.shellQuote(value);
             }
+        },
+        "tailscale": {
+            // Two rows, On and Off, with the ✓ on whichever matches the live
+            // BackendState. `dhms-tailscale status` answers on/off so the
+            // provider script itself stays a single line.
+            "script": "current=$(dhms-tailscale status 2>/dev/null); [[ $current == on ]] || current=off; printf '%s\\t%s\\t%s\\n' On on \"$current\"; printf '%s\\t%s\\t%s\\n' Off off \"$current\"",
+            "icon": "󰖂",
+            "volatile": true,
+            "actionFor": function(value) {
+                // up/down need sudo, so run through a terminal that can prompt.
+                return "dhms-floating-terminal dhms-tailscale " + Util.shellQuote(value);
+            }
+        },
+        "dns": {
+            // setup-dns knows how to name the active provider itself, so the
+            // script just asks it once and stamps the answer onto every row.
+            // Custom prompts for servers, hence the terminal-launched action.
+            "script": "current=$(setup-dns current 2>/dev/null); for p in Cloudflare Google DHCP Custom; do printf '%s\\t%s\\t%s\\n' \"$p\" \"$p\" \"$current\"; done",
+            "icon": "󰇖",
+            "volatile": true,
+            "actionFor": function(value) {
+                return "dhms-floating-terminal setup-dns " + Util.shellQuote(value);
+            }
+        },
+        "docker": {
+            // docker-set only speaks on/off and prints its own status banner,
+            // so read the unit directly and normalize active → on.
+            "script": "current=$(systemctl is-active docker 2>/dev/null); [[ $current == active ]] && current=on || current=off; printf '%s\\t%s\\t%s\\n' On on \"$current\"; printf '%s\\t%s\\t%s\\n' Off off \"$current\"",
+            "icon": "󰡨",
+            "volatile": true,
+            "actionFor": function(value) {
+                return "dhms-floating-terminal docker-set " + Util.shellQuote(value);
+            }
         }
     })
     property var whenResults: ({

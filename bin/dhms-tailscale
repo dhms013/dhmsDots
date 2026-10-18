@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# dhms:summary=Read or change Tailscale state (on/off/toggle)
+# dhms:group=network
+# dhms:name=tailscale
+# dhms:args=<status|on|off|toggle>
+# dhms:requires-sudo=true
+# dhms:examples=dhms-tailscale status|dhms-tailscale toggle
+
+# One entry point for the menu provider and the bar indicator, so both read the
+# same state (`tailscale status --json`) and drive the same up/down commands.
+# `up`/`down` go through sudo because tailscaled's operator is not set here, so
+# callers that can prompt run this as `dhms-floating-terminal dhms-tailscale ...`
+# and the password is entered in that terminal. `status` needs no privileges.
+
+state() {
+  tailscale status --json 2>/dev/null \
+    | grep -o '"BackendState":[[:space:]]*"[^"]*"' \
+    | head -n1 \
+    | sed 's/.*"\(.*\)"$/\1/'
+}
+
+cmd=${1:-status}
+
+if ! command -v tailscale >/dev/null 2>&1; then
+  case $cmd in
+  status) echo off ;;
+  *)
+    echo "dhms-tailscale: tailscale CLI not found" >&2
+    exit 1
+    ;;
+  esac
+  exit 0
+fi
+
+case $cmd in
+status)
+  [[ $(state) == Running ]] && echo on || echo off
+  ;;
+on | up)
+  [[ $(state) == Running ]] && exit 0
+  sudo tailscale up
+  ;;
+off | down)
+  [[ $(state) == Running ]] || exit 0
+  sudo tailscale down
+  ;;
+toggle)
+  if [[ $(state) == Running ]]; then
+    sudo tailscale down
+  else
+    sudo tailscale up
+  fi
+  ;;
+*)
+  echo "dhms-tailscale: unknown command '$cmd' (status|on|off|toggle)" >&2
+  exit 2
+  ;;
+esac

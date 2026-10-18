@@ -9,7 +9,7 @@ set -e
 
 # Run PLAIN, not via 'sudo dhms-apply-lock-pam': sudo's secure_path does not
 # include the dhms bin dir, and every privilege gain below goes through
-# as_root() -> sudo, matching setup-fingerprint/setup-fido2/setup-dns.
+# as_root() -> sudo, matching setup-fingerprint/setup-dns.
 
 # Install/upgrade callers can start this as root. Keep PATH to system dirs.
 if (( EUID == 0 )); then

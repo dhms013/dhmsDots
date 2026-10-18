@@ -40,6 +40,11 @@
             "value": "StayAwake",
             "label": "Stay awake",
             "description": "Idle lock"
+          },
+          {
+            "value": "Tailscale",
+            "label": "Tailscale",
+            "description": "VPN connection state"
           }
         ]
       },
