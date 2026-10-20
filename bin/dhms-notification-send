@@ -117,7 +117,10 @@ if [[ -n $exec_command ]]; then
 fi
 
 if [[ -n $description ]]; then
-  notify-send "${args[@]}" "$headline" "$description" && canberra-gtk-play --id=complete
+  notify-send "${args[@]}" "$headline" "$description"
 else
-  notify-send "${args[@]}" "$headline" && canberra-gtk-play --id=complete
+  notify-send "${args[@]}" "$headline"
 fi
+
+# Sound is best-effort; successful delivery determines this command's status.
+canberra-gtk-play --id=complete || true

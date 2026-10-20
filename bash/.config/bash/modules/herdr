@@ -1,3 +1,13 @@
+# Codex's shared daemon inherits the first terminal's Herdr pane variables.
+# Keep each Herdr client local so its session hook registers the actual pane.
+codex() {
+  if [[ ${HERDR_ENV:-} == 1 ]]; then
+    command codex --no-daemon "$@"
+  else
+    command codex "$@"
+  fi
+}
+
 # Echo a split ratio as a float
 # Usage: _herdr_ratio <numerator> <denominator>
 _herdr_ratio() {
