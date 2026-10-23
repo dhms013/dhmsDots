@@ -37,6 +37,13 @@ hl.window_rule({
 	opacity = "1 override",
 })
 
+-- Helium
+hl.window_rule({
+	name = "helium",
+	match = { class = "^(helium)$" },
+	opacity = "1 override",
+})
+
 -- Chromium
 hl.window_rule({
 	name = "chromium",

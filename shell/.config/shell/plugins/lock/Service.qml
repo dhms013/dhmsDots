@@ -521,7 +521,7 @@ Item {
 
         property double armedAt: 0
 
-        interval: 5000
+        interval: 30000
         repeat: false
         onTriggered: {
             // A countdown frozen by suspend fires right after resume, which would
