@@ -11,9 +11,20 @@ set -euo pipefail
 
 STATE_DIR="$HOME/.local/state/dhms"
 TOGGLE_STATE="$STATE_DIR/fan-toggle"
+AUTO_MODE_STATE="$STATE_DIR/fan-auto-mode"
+# On the B650M Pro RS, pwm1 is CPU_FAN2/WP and pwm2 is CPU_FAN1, so default to
+# the CPU fan header rather than the water-pump header.
+board_name=$(cat /sys/devices/virtual/dmi/id/board_name 2>/dev/null || true)
+case "$board_name" in
+"B650M Pro RS") default_pwm=pwm2 ;;
+*) default_pwm=pwm1 ;;
+esac
+FAN_PWM="${DHMS_FAN_PWM:-$default_pwm}"
+FAN_PWM_ENABLE="${FAN_PWM}_enable"
+FAN_INPUT="${FAN_PWM/pwm/fan}_input"
 
 # Backend: ThinkPad EC (/proc/acpi/ibm/fan) when present, otherwise a generic
-# hwmon PWM controller (pwm1_enable + pwm1) — e.g. a desktop motherboard.
+# hwmon PWM controller (pwmN_enable + pwmN) — e.g. a desktop motherboard.
 if [[ -r /proc/acpi/ibm/fan ]]; then
   BACKEND=thinkpad
 else
@@ -107,7 +118,8 @@ tp_apply() {
 # ────────────────────────── hwmon PWM backend ──────────────────────────
 hwmon_device() {
   # Prefer DHMS_FAN_HWMON (e.g. "hwmon6" or a full path), else the first
-  # controller exposing pwm1 — favouring one that also reports fan1_input.
+  # controller exposing the selected PWM channel — favouring one that also
+  # reports the matching fan input.
   if [[ -n ${DHMS_FAN_HWMON:-} ]]; then
     local p=$DHMS_FAN_HWMON
     [[ $p == /* ]] || p="/sys/class/hwmon/$p"
@@ -117,8 +129,8 @@ hwmon_device() {
 
   local h fallback=""
   for h in /sys/class/hwmon/hwmon*; do
-    [[ -e "$h/pwm1" && -e "$h/pwm1_enable" ]] || continue
-    if [[ -e "$h/fan1_input" ]]; then
+    [[ -e "$h/$FAN_PWM" && -e "$h/$FAN_PWM_ENABLE" ]] || continue
+    if [[ -e "$h/$FAN_INPUT" ]]; then
       printf '%s\n' "$h"
       return
     fi
@@ -127,14 +139,38 @@ hwmon_device() {
   printf '%s\n' "$fallback"
 }
 
-HWMON="$(hwmon_device)"
-if [[ -z $HWMON || ! -e "$HWMON/pwm1" ]]; then
-  echo "dhms-fan: no hwmon PWM device found — set DHMS_FAN_HWMON to override" >&2
-  exit 1
+# ASRock/ASUS desktop Super-I/O chips are not auto-loaded; the nct6775 family
+# (NCT6799D on the B650M Pro RS) must be probed explicitly. The script already
+# needs root for writes, so load it once here instead of failing with no PWM.
+load_hwmon_driver() {
+  local mod
+  for mod in nct6775 nct6683 it87; do
+    if [[ ! -d /sys/module/$mod ]]; then
+      echo "dhms-fan: loading $mod for hwmon access" >&2
+      sudo modprobe "$mod" 2>/dev/null || true
+    fi
+    HWMON="$(hwmon_device)"
+    if [[ -n $HWMON && -e "$HWMON/$FAN_PWM" && -e "$HWMON/$FAN_PWM_ENABLE" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+if [[ $BACKEND == hwmon ]]; then
+  HWMON="$(hwmon_device)"
+  if [[ -z $HWMON || ! -e "$HWMON/$FAN_PWM" || ! -e "$HWMON/$FAN_PWM_ENABLE" ]]; then
+    load_hwmon_driver || true
+  fi
+  if [[ -z $HWMON || ! -e "$HWMON/$FAN_PWM" || ! -e "$HWMON/$FAN_PWM_ENABLE" ]]; then
+    echo "dhms-fan: no hwmon $FAN_PWM controller found — set DHMS_FAN_HWMON/DHMS_FAN_PWM to override" >&2
+    exit 1
+  fi
 fi
 
 hw_read() {
-  cat "$HWMON/$1" 2>/dev/null | tr -d ' '
+  [[ -r $HWMON/$1 ]] || return 0
+  tr -d ' ' < "$HWMON/$1" 2>/dev/null || true
 }
 
 hw_write() {
@@ -145,19 +181,66 @@ hw_write() {
   fi
 }
 
-# pwm1_enable: 0 = full speed, 1 = manual duty, 2 = board/EC automatic (chip-dependent)
+# pwmN_enable: 0 = full speed, 1 = manual, 2 = Thermal Cruise (auto),
+# 3 = Fan Speed Cruise, 4 = Smart Fan III, 5 = Smart Fan IV. Modern BIOS fan
+# curves use 5, so `auto` must restore the mode the BIOS was in rather than
+# forcing Thermal Cruise.
+mode_label() {
+  case "$1" in
+  0) echo "full speed" ;;
+  1) echo manual ;;
+  2) echo "Thermal Cruise" ;;
+  3) echo "Fan Speed Cruise" ;;
+  4) echo "Smart Fan III" ;;
+  5) echo "Smart Fan IV" ;;
+  *) echo "mode $1" ;;
+  esac
+}
+
+stored_auto_mode() {
+  if [[ -f $AUTO_MODE_STATE && -s $AUTO_MODE_STATE ]]; then
+    cat "$AUTO_MODE_STATE" 2>/dev/null || true
+  fi
+}
+
+remember_auto_mode() {
+  local mode=$1
+  [[ $mode =~ ^[0-9]+$ ]] || return 0
+  (( mode == 1 )) && return 0
+  mkdir -p "$STATE_DIR"
+  printf '%s\n' "$mode" > "$AUTO_MODE_STATE"
+}
+
+capture_auto_mode() {
+  local mode
+  mode=$(hw_read "$FAN_PWM_ENABLE")
+  [[ -n $mode ]] && remember_auto_mode "$mode"
+}
+
 hw_apply() {
   local mode=$1
 
   case "$mode" in
   auto)
-    hw_write pwm1_enable 2
+    local current saved
+    current=$(hw_read "$FAN_PWM_ENABLE")
+    saved=$(stored_auto_mode)
+    if [[ -n $saved ]]; then
+      hw_write "$FAN_PWM_ENABLE" "$saved"
+      notify auto "$(mode_label "$saved")"
+    elif [[ $current != 1 ]]; then
+      remember_auto_mode "$current"
+      notify auto "$(mode_label "$current") — already automatic"
+    else
+      hw_write "$FAN_PWM_ENABLE" 2
+      notify auto "Thermal Cruise"
+    fi
     remember_ordinary auto
-    notify auto "board temperature control"
     ;;
   max|disengaged|full-speed)
-    hw_write pwm1_enable 1
-    hw_write pwm1 255
+    capture_auto_mode
+    hw_write "$FAN_PWM_ENABLE" 1
+    hw_write "$FAN_PWM" 255
     notify max "set to 100% duty (max)"
     ;;
   *)
@@ -166,8 +249,9 @@ hw_apply() {
         confirm_low "${mode}% duty (fan off/low)"
       fi
       local duty=$(( mode * 255 / 100 ))
-      hw_write pwm1_enable 1
-      hw_write pwm1 "$duty"
+      capture_auto_mode
+      hw_write "$FAN_PWM_ENABLE" 1
+      hw_write "$FAN_PWM" "$duty"
       remember_ordinary "$mode"
       if (( mode == 0 )); then
         notify "0%" "set to 0% — fan off"
@@ -210,10 +294,12 @@ do_status() {
     printf 'level: %s\nspeed: %s\n' "$(tp_level)" "$(tp_speed)"
   else
     local mode duty rpm
-    mode=$(hw_read pwm1_enable)
-    duty=$(hw_read pwm1)
-    rpm=$(hw_read fan1_input)
-    printf 'mode: %s (0=full 1=manual 2=auto)\npwm: %s/255\nspeed: %s\n' "$mode" "$duty" "${rpm:-n/a}"
+    mode=$(hw_read "$FAN_PWM_ENABLE")
+    duty=$(hw_read "$FAN_PWM")
+    rpm=$(hw_read "$FAN_INPUT")
+    [[ $mode != 1 ]] && remember_auto_mode "$mode"
+    printf 'channel: %s\nmode: %s (%s)\npwm: %s/255\nspeed: %s\n' \
+      "$FAN_PWM" "$mode" "$(mode_label "$mode")" "$duty" "${rpm:-n/a}"
   fi
 }
 
@@ -228,13 +314,13 @@ do_toggle() {
     fi
   else
     local mode duty pct
-    mode=$(hw_read pwm1_enable)
-    duty=$(hw_read pwm1)
+    mode=$(hw_read "$FAN_PWM_ENABLE")
+    duty=$(hw_read "$FAN_PWM")
     pct=$(( duty * 100 / 255 ))
     if [[ $mode == 1 && $pct -ge 100 ]]; then
       apply "$(stored_ordinary)"
     else
-      if [[ $mode == 2 ]]; then ordinary=auto; else ordinary=$pct; fi
+      if [[ $mode == 1 ]]; then ordinary=$pct; else ordinary=auto; fi
       remember_ordinary "$ordinary"
       apply max
     fi
@@ -264,9 +350,9 @@ do_menu() {
     esac
   else
     local duty pct mode
-    mode=$(hw_read pwm1_enable)
-    duty=$(hw_read pwm1)
-    if [[ $mode == 2 ]]; then
+    mode=$(hw_read "$FAN_PWM_ENABLE")
+    duty=$(hw_read "$FAN_PWM")
+    if [[ $mode != 1 ]]; then
       pct=auto
       sel=Auto
     else
@@ -279,7 +365,7 @@ do_menu() {
       fi
     fi
     choice=$(printf 'Auto\n100%% max\n75%%\n50%%\n25%%\n0%% off\n' | gum choose \
-      --header="Fan — current: $pct · pwm $duty/255" \
+      --header="Fan $FAN_PWM — current: $pct · pwm $duty/255 · $(mode_label "$mode")" \
       --selected="$sel") || true
     [[ -n $choice ]] || return 0
     case "$choice" in
@@ -296,6 +382,7 @@ usage() {
     echo "Usage: dhms fan [auto|disengaged|toggle|status|0-7]" >&2
   else
     echo "Usage: dhms fan [auto|max|toggle|status|0-100]" >&2
+    echo "       channel: $FAN_PWM (override with DHMS_FAN_PWM=pwmN)" >&2
   fi
   echo "       dhms fan            interactive fan menu" >&2
 }
