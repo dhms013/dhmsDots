@@ -17,7 +17,8 @@ fi
 
 status=$(jq -r '.data.agent_status // empty' <<<"$event_json")
 case $status in
-idle | done) verb="finished"; kind=completion ;;
+# `done` is an unseen completion; `idle` is the same turn after it was viewed.
+done) verb="finished"; kind=completion ;;
 blocked) verb="needs attention"; kind=blocked ;;
 *) exit 0 ;;
 esac
@@ -27,8 +28,9 @@ if [[ -z $pane_id ]]; then
   exit 0
 fi
 
-# Capture the source immediately. Idle only represents a completion when its
-# completion generation matches the state generation (startup idle does not).
+# Capture the source immediately. Herdr 0.9.1 has no completion_seq field, so
+# `done` (unseen completion) is the only reliable completion event; `idle` is a
+# completion the user has already viewed, or startup idle.
 source_pane() {
   "$herdr_bin" agent list | jq -c --arg p "$pane_id" \
     '[.result.agents[] | select(.pane_id == $p)] | if length == 1 then .[0] else empty end'
@@ -38,8 +40,7 @@ generation() {
     select(.terminal_id != null and .terminal_id != "") |
     select(.state_change_seq != null) |
     select(if $kind == "completion" then
-      (.agent_status == "idle" or .agent_status == "done") and
-      .completion_seq != null and .completion_seq == .state_change_seq
+      .agent_status == "done"
     else .agent_status == "blocked" end) |
     {terminal_id, agent, session: .agent_session,
       terminal_title: (if .agent_session == null then .terminal_title_stripped else null end),
@@ -53,7 +54,8 @@ initial=$(generation "$pane") || exit 0
 sleep 1
 umask 077
 state_dir=${HERDR_PLUGIN_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/herdr/plugins/dhms.agent-toasts}
-mkdir -p -m 700 -- "$state_dir"
+mkdir -p -- "$state_dir"
+chmod 700 -- "$state_dir"
 terminal_id=$(jq -r '.terminal_id' <<<"$initial")
 key=$(printf '%s\0%s' "${HERDR_SOCKET_PATH:-}" "$terminal_id" | sha256sum)
 key=${key%% *}

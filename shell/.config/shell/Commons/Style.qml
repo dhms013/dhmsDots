@@ -1,6 +1,7 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 
 // Shared structural style tokens for the shell. Colors is the palette
@@ -347,9 +348,19 @@ QtObject {
     readonly property int statusSlot:     root.barToken("status-slot",     21)
   }
 
+  // Off with Hyprland's own animations, as `dhms toggle animations` turns
+  // them off for machines that render on the CPU. Every shell animation runs
+  // for Style.duration(ms), which is then 0, so nothing is drawn in between.
+  property bool reduceMotion: false
+
+  function duration(ms) {
+    return reduceMotion ? 0 : ms
+  }
+
   function refresh() {
     hyprctlProc.running = true
     gapsOutProc.running = true
+    animationsProc.running = true
   }
 
   function scheduleRefresh() {
@@ -457,6 +468,21 @@ QtObject {
     }
   }
 
+  property Process animationsProc: Process {
+    id: animationsProc
+    command: ["hyprctl", "-j", "getoption", "animations:enabled"]
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        try {
+          root.reduceMotion = JSON.parse(text || "{}").bool === false
+        } catch (e) {
+          // hyprctl missing / Hyprland not running — leave the previous value.
+        }
+      }
+    }
+  }
+
   // Resolve the fontconfig alias to a concrete family name. `dhms font
   // set <name>` rewrites ~/.config/fontconfig/fonts.conf and restarts the
   // shell, but rerun on file change anyway so manual edits propagate too.
@@ -506,6 +532,15 @@ QtObject {
     onFileChanged: refreshTimer.restart()
     onLoaded: refreshTimer.restart()
     onLoadFailed: refreshTimer.restart()
+  }
+
+  // A reload is when the animations toggle, a theme or the user's own config
+  // lands, and Hyprland only announces it once the new values are in effect.
+  property Connections hyprlandEvents: Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (event && String(event.name) === "configreloaded") root.refresh()
+    }
   }
 
   Component.onCompleted: {
