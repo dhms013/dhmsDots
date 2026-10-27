@@ -65,6 +65,15 @@
     ],
     "provider": "docker"
   },
+  "setup.fan": {
+    "icon": "󰈐",
+    "label": "Fan",
+    "aliases": [
+      "fan",
+      "cooling"
+    ],
+    "provider": "fan"
+  },
   "setup.install": {
     "icon": "󰉉",
     "label": "Install"

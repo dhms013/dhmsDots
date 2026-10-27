@@ -123,6 +123,15 @@ Item {
                 return "powerprofilesctl set " + Util.shellQuote(value);
             }
         },
+        "fan": {
+            "script": "dhms-fan options",
+            "icon": "󰈐",
+            "volatile": true,
+            "actionFor": function(value) {
+                // Fan writes need sudo; low speeds also require confirmation.
+                return "dhms-floating-terminal dhms-fan " + Util.shellQuote(value);
+            }
+        },
         "tailscale": {
             // Two rows, On and Off, with the ✓ on whichever matches the live
             // BackendState. `dhms-tailscale status` answers on/off so the
