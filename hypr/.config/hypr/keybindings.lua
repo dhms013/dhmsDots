@@ -225,6 +225,17 @@ for workspace = 1, 10 do
 	)
 end
 
+hl.bind(
+	"SUPER + CTRL + code:20",
+	hl.dsp.workspace.move({ monitor = "-1" }),
+	{ description = "Move workspace to previous monitor" }
+)
+hl.bind(
+	"SUPER + CTRL + code:21",
+	hl.dsp.workspace.move({ monitor = "+1" }),
+	{ description = "Move workspace to next monitor" }
+)
+
 -- audio controls
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd(muteOutput), { locked = true, repeating = true, description = "Mute" })
 hl.bind(
