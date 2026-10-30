@@ -183,6 +183,10 @@ Item {
         if (nvimSrc)
             queuePreview(["bash", "-c", "cp " + Util.shellQuote(nvimSrc) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
 
+        var zenCss = (parts[4] || "").trim();
+        if (zenCss)
+            queuePreview(["dhms-zen-theme", "publish", zenCss]);
+
     }
 
     function queuePreview(command) {
@@ -206,7 +210,8 @@ Item {
             var colors = home + "/.config/themes/current/theme/colors.toml";
             var shell = home + "/.config/themes/current/theme/shell.toml";
             var nvim = home + "/.config/themes/current/theme/neovim.lua";
-            queuePreview(["bash", "-c", "colors=$(base64 -w0 " + Util.shellQuote(colors) + " 2>/dev/null); " + "shell=$(base64 -w0 " + Util.shellQuote(shell) + " 2>/dev/null); " + "dhms-shell -q shell applyTheme \"$colors\" \"$shell\" >/dev/null 2>&1; " + "dhms-shell -q background refresh >/dev/null 2>&1; " + "cp " + Util.shellQuote(nvim) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
+            var zen = home + "/.config/themes/current/theme/zen.css";
+            queuePreview(["bash", "-c", "colors=$(base64 -w0 " + Util.shellQuote(colors) + " 2>/dev/null); " + "shell=$(base64 -w0 " + Util.shellQuote(shell) + " 2>/dev/null); " + "dhms-shell -q shell applyTheme \"$colors\" \"$shell\" >/dev/null 2>&1; " + "dhms-shell -q background refresh >/dev/null 2>&1; " + "cp " + Util.shellQuote(nvim) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null; " + "dhms-zen-theme publish " + Util.shellQuote(zen) + " >/dev/null 2>&1"]);
         } else if (previewMode === "background" && lastPreviewed) {
             // setInstant never touched the symlink, so refresh restores the commit.
             queuePreview(["dhms-shell", "-q", "background", "refresh"]);

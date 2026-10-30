@@ -5,7 +5,7 @@
 # dhms:args=<theme-name>
 # dhms:examples=dhms-theme-render catppuccin
 
-# Prints one line: colors_b64<TAB>shell_b64<TAB>bg_path<TAB>nvim_path
+# Prints one line: colors_b64<TAB>shell_b64<TAB>bg_path<TAB>nvim_path<TAB>zen_css
 # The picker feeds colors/shell to `shell applyTheme` and the background to
 # `background setInstant` — both in-memory IPC, nothing committed. The nvim
 # path is the theme's neovim.lua (if any), copied to a stable live file so
@@ -76,6 +76,13 @@ render() {
     rm "$sed_script"
   fi
 
+  # Use the committed renderer for Zen so aliases, derived palette shades, and
+  # theme mode match theme-template exactly; other preview outputs retain the
+  # existing lightweight renderer above.
+  if [[ -f $TEMPLATES_DIR/zen.css.tpl ]]; then
+    theme-template --render-dir "$THEME_PATH" "$dst"
+  fi
+
   # Copy the theme's own files (shell.toml, colors.toml, previews, configs)
   # after generated ones so theme-specific configs win, matching theme-template.
   cp -r "$THEME_PATH/"* "$dst/" 2>/dev/null || true
@@ -92,6 +99,7 @@ colors_b64=""
 shell_b64=""
 bg_path=""
 nvim_path=""
+zen_css_path=""
 if [[ -f $CACHE/$THEME_NAME/colors.toml ]]; then
   colors_b64=$(base64 -w 0 "$CACHE/$THEME_NAME/colors.toml")
 fi
@@ -106,5 +114,8 @@ fi
 if [[ -f $CACHE/$THEME_NAME/neovim.lua ]]; then
   nvim_path="$CACHE/$THEME_NAME/neovim.lua"
 fi
+if [[ -f $CACHE/$THEME_NAME/zen.css ]]; then
+  zen_css_path="$CACHE/$THEME_NAME/zen.css"
+fi
 
-printf '%s\t%s\t%s\t%s\n' "$colors_b64" "$shell_b64" "$bg_path" "$nvim_path"
+printf '%s\t%s\t%s\t%s\t%s\n' "$colors_b64" "$shell_b64" "$bg_path" "$nvim_path" "$zen_css_path"

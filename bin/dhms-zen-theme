@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# dhms:summary=Manage live Zen browser theme integration
+# dhms:group=browser
+# dhms:name=zen-theme
+# dhms:args=<install|repair|status|uninstall|publish> [css-file]
+# dhms:examples=dhms browser zen-theme install
+# dhms:alias=zen-theme
+
+set -euo pipefail
+
+APP_DIR=/opt/zen-browser-bin
+PREF_DIR="$APP_DIR/defaults/pref"
+PREF_FILE="$PREF_DIR/autoconfig.js"
+LOADER_FILE="$APP_DIR/dhms-zen-theme.cfg"
+LIVE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/dhms/zen-live"
+LIVE_FILE="$LIVE_DIR/zen.css"
+COMMITTED="${XDG_CONFIG_HOME:-$HOME/.config}/themes/current/theme/zen.css"
+SOURCE="${DHMSDOTS_PATH:-$HOME/.dhmsDots}/packages/zen/dhms-zen-theme.cfg"
+
+atomic_publish() {
+  local source="$1" tmp
+  [[ -f $source ]] || { echo "Zen theme CSS not found: $source" >&2; return 1; }
+  mkdir -p "$LIVE_DIR"
+  tmp=$(mktemp "$LIVE_DIR/.zen.css.XXXXXX")
+  if ! cp -- "$source" "$tmp"; then rm -f "$tmp"; return 1; fi
+  chmod 600 "$tmp"
+  mv -f -- "$tmp" "$LIVE_FILE"
+}
+
+status() {
+  if [[ -f $PREF_FILE && -f $LOADER_FILE ]] &&
+    grep -q 'dhms Zen theme AutoConfig' "$PREF_FILE" &&
+    grep -q 'dhms Zen live theme loader' "$LOADER_FILE"; then
+    echo "installed: $APP_DIR"
+  elif [[ -e $PREF_FILE || -e $LOADER_FILE ]]; then
+    echo "conflict or partial installation: $PREF_DIR/autoconfig.js, $LOADER_FILE" >&2
+    return 2
+  else
+    echo "not installed"
+  fi
+  [[ -f $LIVE_FILE ]] && echo "live CSS: $LIVE_FILE" || echo "live CSS: missing"
+}
+
+case "${1:-status}" in
+  publish)
+    [[ $# == 2 ]] || { echo "Usage: dhms browser zen-theme publish <css-file>" >&2; exit 2; }
+    atomic_publish "$2"
+    ;;
+  status)
+    status
+    ;;
+  install|repair)
+    [[ -d $APP_DIR && -f $APP_DIR/application.ini ]] || {
+      echo "zen-browser-bin is not installed at $APP_DIR" >&2; exit 1;
+    }
+    for pref in "$PREF_DIR"/*.js; do
+      [[ -f $pref ]] || continue
+      if grep -q 'general\.config\.filename' "$pref" && { [[ $pref != "$PREF_FILE" ]] || ! grep -q 'dhms Zen theme AutoConfig' "$pref"; }; then
+        echo "AutoConfig conflict: $pref already configures a loader" >&2
+        exit 2
+      fi
+    done
+    if [[ -e $PREF_FILE ]] && ! grep -q 'dhms Zen theme AutoConfig' "$PREF_FILE"; then
+      echo "AutoConfig conflict: refusing to replace existing $PREF_FILE" >&2; exit 2
+    fi
+    if [[ -e $LOADER_FILE ]] && ! grep -q 'dhms Zen live theme loader' "$LOADER_FILE"; then
+      echo "AutoConfig conflict: refusing to replace existing $LOADER_FILE" >&2
+      exit 2
+    fi
+    [[ -f $SOURCE ]] || { echo "Loader source missing: $SOURCE" >&2; exit 1; }
+    # Prevent an interrupted preview from becoming the next browser session's palette.
+    [[ -f $COMMITTED ]] && atomic_publish "$COMMITTED"
+    tmp=$(mktemp)
+    cat >"$tmp" <<'EOF'
+// dhms Zen theme AutoConfig. This changes only privileged chrome-loader settings.
+pref("general.config.filename", "dhms-zen-theme.cfg");
+pref("general.config.obscure_value", 0);
+pref("general.config.sandbox_enabled", false);
+EOF
+    sudo install -d -o root -g root -m 755 "$PREF_DIR"
+    sudo install -o root -g root -m 644 "$tmp" "$PREF_FILE"
+    rm -f "$tmp"
+    sudo install -o root -g root -m 644 "$SOURCE" "$LOADER_FILE"
+    echo "installed; restart Zen once to enable live theme updates"
+    ;;
+  uninstall)
+    if [[ -f $PREF_FILE ]] && grep -q 'dhms Zen theme AutoConfig' "$PREF_FILE"; then
+      sudo rm -- "$PREF_FILE"
+    elif [[ -e $PREF_FILE ]]; then
+      echo "AutoConfig conflict: preserving unrelated $PREF_FILE" >&2; exit 2
+    fi
+    if [[ -f $LOADER_FILE ]] && grep -q 'dhms Zen live theme loader' "$LOADER_FILE"; then
+      sudo rm -- "$LOADER_FILE"
+    elif [[ -e $LOADER_FILE ]]; then
+      echo "AutoConfig conflict: preserving unrelated $LOADER_FILE" >&2; exit 2
+    fi
+    echo "removed; restart Zen to return to its normal appearance"
+    ;;
+  *)
+    echo "Usage: dhms browser zen-theme <install|repair|status|uninstall|publish> [css-file]" >&2
+    exit 2
+    ;;
+esac

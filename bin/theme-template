@@ -558,6 +558,19 @@ push_shell_theme() {
   dhms-shell shell applyTheme "$colors_b64" "$shell_b64" >/dev/null 2>&1 || true
 }
 
+if [[ ${1:-} == --render-dir ]]; then
+  [[ $# == 3 && -d $2 ]] || { echo "Usage: theme-template --render-dir <theme-dir> <output-dir>" >&2; exit 2; }
+  THEME_PATH="$2"
+  NEXT_THEME_PATH=$(mktemp -d)
+  COLORS_FILE="$NEXT_THEME_PATH/colors.toml"
+  cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null || true
+  set_template
+  mkdir -p "$3"
+  cp "$NEXT_THEME_PATH/zen.css" "$3/zen.css"
+  rm -rf "$NEXT_THEME_PATH"
+  exit 0
+fi
+
 set_theme
 set_background
 push_shell_theme
@@ -578,3 +591,9 @@ push_nvim_theme() {
 }
 
 push_nvim_theme
+
+# Publish committed Zen CSS through the stable live path; the small helper uses
+# a same-directory rename so the browser watcher never reads a partial file.
+if [[ -f $CURRENT_THEME_PATH/zen.css ]]; then
+  dhms-zen-theme publish "$CURRENT_THEME_PATH/zen.css"
+fi
