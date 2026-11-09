@@ -232,20 +232,22 @@ BarWidget {
       id: horizontalTrayRoot
 
       readonly property int pinnedWidth: pinnedRow.implicitWidth
-      readonly property int drawerBlockWidth: root.allItems.length > 0 ? expandIcon.implicitWidth + root.drawerExtent : 0
+      // The closed tray needs only its expander. Grow the reserved layout width
+      // with the same animation that reveals drawer icons so the bar capsule
+      // hugs the tray while closed and expands with it while hovered.
+      readonly property real drawerBlockWidth: root.drawerCount > 0 ? expandIcon.implicitWidth + root.revealExtent : 0
 
       implicitWidth: pinnedWidth + drawerBlockWidth
       implicitHeight: root.barSize
 
-      // Mask out the empty area the collapsed drawer reserves for its slide-in,
-      // so hovering it doesn't trigger expand and clicks pass through.
+      // Limit hit testing to the visible expander, revealed drawer, and pinned
+      // icons; the collapsed drawer no longer reserves an empty slide-in area.
       containmentMask: QtObject {
         function contains(point: point): bool {
           if (point.y < 0 || point.y > horizontalTrayRoot.height) return false
-          // Drawer reveals leftward; chevron sits at the right end when collapsed
-          // and slides left as it opens. The visible region starts at the chevron.
-          var chevronX = root.drawerExtent - root.revealExtent
-          if (point.x >= chevronX && point.x <= horizontalTrayRoot.drawerBlockWidth) return true
+          // The expander and the icons revealed beside it form the actual tray
+          // width, so there is no reserved hover area beyond the visible drawer.
+          if (root.drawerCount > 0 && point.x >= 0 && point.x <= horizontalTrayRoot.drawerBlockWidth) return true
           // Pinned items, placed to the right of the drawer block.
           var pinnedStart = horizontalTrayRoot.drawerBlockWidth
           return point.x >= pinnedStart && point.x <= horizontalTrayRoot.implicitWidth
@@ -257,7 +259,7 @@ BarWidget {
         x: 0
         width: horizontalTrayRoot.drawerBlockWidth
         height: root.barSize
-        visible: root.allItems.length > 0
+        visible: root.drawerCount > 0
 
         HoverHandler {
           onHoveredChanged: root.expanded = hovered
@@ -268,7 +270,7 @@ BarWidget {
           bar: root.bar
           width: implicitWidth
           height: implicitHeight
-          x: root.drawerExtent - root.revealExtent
+          x: 0
           text: "\uf053"
           onPressed: function(button) {
             if (button === Qt.RightButton) root.managePopupOpen = !root.managePopupOpen
@@ -279,13 +281,13 @@ BarWidget {
           id: trayClip
           x: expandIcon.width
           anchors.verticalCenter: parent.verticalCenter
-          width: root.drawerExtent
+          width: root.revealExtent
           height: root.barSize
           clip: true
 
           Row {
             id: trayIcons
-            x: root.drawerExtent - root.revealExtent
+            x: 0
             anchors.verticalCenter: parent.verticalCenter
             spacing: root.trayItemGap
             layer.enabled: true

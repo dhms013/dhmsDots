@@ -108,6 +108,9 @@ Item {
     property var moduleSlots: []
     readonly property bool vertical: position === "left" || position === "right"
     readonly property int barSize: vertical ? Style.bar.sizeVertical : Style.bar.sizeHorizontal
+    // The legacy bar uses 20px inner-corner radii. Style.cornerRadius follows
+    // Hyprland window rounding and can be zero, so it is not suitable here.
+    readonly property int capsuleRadius: 20
 
     function registerClickTarget(target) {
         if (!target || clickTargets.indexOf(target) !== -1)
@@ -1192,7 +1195,9 @@ Item {
         exclusionMode: root.barHidden ? ExclusionMode.Ignore : ExclusionMode.Auto
         implicitWidth: root.vertical ? root.barSize : 0
         implicitHeight: root.vertical ? 0 : root.barSize
-        color: root.transparent ? "transparent" : root.background
+        // The three region surfaces below provide the bar background. Keep the
+        // layer surface clear so the gaps between those capsules stay visible.
+        color: "transparent"
         surfaceFormat.opaque: false
         WlrLayershell.namespace: "dhms-bar"
         WlrLayershell.layer: WlrLayer.Top
@@ -1316,17 +1321,52 @@ Item {
             Item {
                 anchors.fill: parent
 
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.left: parent.left
+                    anchors.right: leftModules.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.rightMargin: -Style.space(6)
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: 0
+                    bottomRightRadius: root.capsuleRadius
+                }
+
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.left: rightModules.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: -Style.space(6)
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: root.capsuleRadius
+                    bottomRightRadius: 0
+                }
+
                 CenterModules {
+                    id: centerModules
                     anchors.fill: parent
                 }
 
                 LeftModules {
+                    id: leftModules
                     anchors.left: parent.left
                     anchors.leftMargin: Style.space(8)
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 RightModules {
+                    id: rightModules
                     anchors.right: parent.right
                     anchors.rightMargin: Style.space(8)
                     anchors.verticalCenter: parent.verticalCenter
@@ -1342,17 +1382,54 @@ Item {
             Item {
                 anchors.fill: parent
 
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.top: topModules.top
+                    anchors.bottom: topModules.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.topMargin: -Style.space(6)
+                    anchors.bottomMargin: -Style.space(6)
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: 0
+                    bottomRightRadius: root.capsuleRadius
+                }
+
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.top: bottomModules.top
+                    anchors.bottom: bottomModules.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.topMargin: -Style.space(6)
+                    anchors.bottomMargin: -Style.space(6)
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: root.capsuleRadius
+                    bottomRightRadius: 0
+                }
+
                 CenterModules {
+                    id: centerModules
                     anchors.fill: parent
                 }
 
                 LeftModules {
+                    id: topModules
                     anchors.top: parent.top
                     anchors.topMargin: Style.space(8)
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 RightModules {
+                    id: bottomModules
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: Style.space(8)
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -1527,11 +1604,28 @@ Item {
                     anchors.fill: parent
                 }
 
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.centerIn: parent
+                    width: centerRoot.hasAnchor
+                        ? beforeAnchor.width + centerAnchorModule.width + afterAnchor.width + Style.space(12)
+                        : fullEntries.width + Style.space(12)
+                    height: parent.height
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: root.capsuleRadius
+                    bottomRightRadius: root.capsuleRadius
+                }
+
                 HoverHandler {
                     onHoveredChanged: root.setCenterSectionHovered(hovered)
                 }
 
                 ModuleList {
+                    id: fullEntries
                     visible: !centerRoot.hasAnchor
                     entries: centerRoot.entries
                     region: "center"
@@ -1539,6 +1633,7 @@ Item {
                 }
 
                 ModuleList {
+                    id: beforeAnchor
                     visible: centerRoot.hasAnchor
                     entries: root.entriesBefore(centerRoot.entries, root.centerAnchor)
                     region: "center"
@@ -1556,6 +1651,7 @@ Item {
                 }
 
                 ModuleList {
+                    id: afterAnchor
                     visible: centerRoot.hasAnchor
                     entries: root.entriesAfter(centerRoot.entries, root.centerAnchor)
                     region: "center"
@@ -1577,11 +1673,30 @@ Item {
                     anchors.fill: parent
                 }
 
+                Rectangle {
+                    visible: !root.transparent
+                    anchors.centerIn: parent
+                    width: centerRoot.hasAnchor
+                        ? Math.max(beforeAnchor.width, centerAnchorModule.width, afterAnchor.width) + Style.space(12)
+                        : fullEntries.width + Style.space(12)
+                    height: centerRoot.hasAnchor
+                        ? beforeAnchor.height + centerAnchorModule.height + afterAnchor.height + Style.space(12)
+                        : fullEntries.height + Style.space(12)
+                    color: root.background
+                    border.width: 1
+                    border.color: root.themeForeground
+                    topLeftRadius: 0
+                    topRightRadius: 0
+                    bottomLeftRadius: root.capsuleRadius
+                    bottomRightRadius: root.capsuleRadius
+                }
+
                 HoverHandler {
                     onHoveredChanged: root.setCenterSectionHovered(hovered)
                 }
 
                 ModuleList {
+                    id: fullEntries
                     visible: !centerRoot.hasAnchor
                     entries: centerRoot.entries
                     region: "center"
@@ -1589,6 +1704,7 @@ Item {
                 }
 
                 ModuleList {
+                    id: beforeAnchor
                     visible: centerRoot.hasAnchor
                     entries: root.entriesBefore(centerRoot.entries, root.centerAnchor)
                     region: "center"
@@ -1606,6 +1722,7 @@ Item {
                 }
 
                 ModuleList {
+                    id: afterAnchor
                     visible: centerRoot.hasAnchor
                     entries: root.entriesAfter(centerRoot.entries, root.centerAnchor)
                     region: "center"
