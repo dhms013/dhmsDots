@@ -9,7 +9,7 @@ name = "terminal"
 [theme.custom]
 # The active tab is drawn as panel_bg text on an accent background, so panel_bg
 # has to be dark for it to read - same colors as status-left's "#[fg=black,bg=blue]"
-panel_bg = "black"
+panel_bg = "reset"
 
 [terminal]
 # Matches -c "#{pane_current_path}" on every split, window, and session
@@ -77,7 +77,6 @@ previous_workspace = ["prefix+shift+p", "alt+up"]
 next_workspace = ["prefix+shift+n", "alt+down"]
 
 [ui]
-accent = "blue"
 
 # set -g status-position top
 tab_bar_position = "top"
@@ -104,7 +103,7 @@ tab_bar_right = [{ type = "zoom" }, { type = "hostname" }]
 # set -g set-titles on / set -g set-titles-string '#h:#W', where tmux's #W was
 # the basename of the pane cwd. This is what Hyprland shows in the group bar,
 # and it resolves on the server so remote sessions name the remote host.
-window_title = "{hostname}: {workspace}"
+window_title = "Herdr: {hostname}: {workspace}"
 
 # tmux settings with no herdr equivalent (intentionally absent):
 #   prefix2 C-b / bind C-Space send-prefix   -> herdr has a single prefix only

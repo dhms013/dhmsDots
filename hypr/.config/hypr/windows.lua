@@ -79,6 +79,13 @@ hl.window_rule({
 	opacity = "1 override",
 })
 
+-- Herdr sets a recognizable title in any terminal emulator.
+hl.window_rule({
+	name = "herdr",
+	match = { title = "^Herdr: .*" },
+	opacity = "1 override",
+})
+
 -- Steam
 hl.window_rule({
 	name = "Steam",

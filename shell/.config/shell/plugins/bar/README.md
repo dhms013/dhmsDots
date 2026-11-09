@@ -56,7 +56,7 @@ Example `shell.json` (bar subtree only shown):
 |---|---|---|
 | `dhms.menu` | dhms menu launcher | left = menu · right = terminal |
 | `dhms.active-window` | Current window title, auto-hides when empty | left = focus · middle/right = close |
-| `dhms.system-monitor` | Live CPU + RAM usage (RAM includes swap) | left = btop |
+| `dhms.system-monitor` | Live CPU + physical RAM usage (swap shown separately in tooltip) | left = btop |
 | `dhms.network-speed` | Live download/upload throughput | hover = session totals |
 | `dhms.workspaces` | Hyprland workspace switcher | left = focus workspace |
 | `dhms.keyboard-layout` | Current keyboard layout, hidden on single-layout installs | left = cycle layout |

@@ -4,7 +4,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Ui
 
-// CPU + RAM readout. RAM shows used/total with swap folded into both sides
+// CPU + RAM readout. RAM shows physical used/total without swap
 // (raw numbers come straight from the script); CPU% is computed here from
 // /proc/stat tick deltas between consecutive 1s samples, which is far
 // smoother than the instantaneous top-style reading. Hovering reveals the
@@ -29,19 +29,16 @@ BarWidget {
   // promotes a pending tooltip.
   readonly property bool tooltipHovered: visible && hover.containsMouse
 
-  readonly property double memUsedKb: ramUsedKb + swapUsedKb
-  readonly property double memTotalKb: ramTotalKb + swapTotalKb
-
   property int loadOrangeThreshold: 70
   property int loadRedThreshold: 90
 
   readonly property color baseColor: root.bar ? root.bar.barForeground : Colors.foreground
-  readonly property real ramFraction: memTotalKb > 0 ? memUsedKb / memTotalKb : 0
+  readonly property real ramFraction: ramTotalKb > 0 ? ramUsedKb / ramTotalKb : 0
   readonly property color cpuColor: colorForLoad(cpuPct)
   readonly property color memoryColor: colorForLoad(ramFraction * 100)
 
   readonly property string cpuLabel: "󰻠 " + Math.round(cpuPct) + "%"
-  readonly property string memoryLabel: "  󰍛 " + formatUsed(memUsedKb) + "/" + formatTotal(memTotalKb)
+  readonly property string memoryLabel: "  󰍛 " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb)
   readonly property string tooltipText: coreTooltip() + "\n" +
     padL("RAM", 4) + " : " + formatUsed(ramUsedKb) + "/" + formatTotal(ramTotalKb) + "\n" +
     padL("Swap", 4) + " : " + formatUsed(swapUsedKb) + "/" + formatTotal(swapTotalKb)
