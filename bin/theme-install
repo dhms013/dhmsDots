@@ -3,38 +3,81 @@
 # dhms:summary=Clone a theme git repo into the theme list and apply it
 # dhms:args=[git-url]
 
-if [ -z "$1" ]; then
-  REPO_URL=$(gum input --placeholder="Git repo URL for theme" --header="")
+set -euo pipefail
+
+if [[ -z ${1:-} ]]; then
+  REPO_URL=$(gum input --placeholder="Git repo URL for theme" --header="") || exit 1
 else
   REPO_URL="$1"
 fi
 
-if [ -z "$REPO_URL" ]; then
+if [[ -z $REPO_URL ]]; then
   exit 1
 fi
 
 THEMES_DIR="$HOME/.config/themes/themeLists"
+REPO_URL="${REPO_URL%/}"
 THEME_NAME=$(basename "$REPO_URL" .git | sed -E 's/^omarchy-//; s/-theme$//')
+# A derived name must never address the theme-list directory or its parent.
+if [[ ! $THEME_NAME =~ ^[[:alnum:]][[:alnum:]_.-]*$ ]]; then
+  echo "Error: Invalid theme repository name." >&2
+  exit 1
+fi
 THEME_PATH="$THEMES_DIR/$THEME_NAME"
 
 # Ask whether to keep or disable .git before cloning
-KEEP_GIT=$(gum choose --header="Do you want to keep git?" "Delete" "Keep")
+KEEP_GIT=$(gum choose --header="Do you want to keep git?" "Delete" "Keep") || exit 1
+[[ $KEEP_GIT == Delete || $KEEP_GIT == Keep ]] || exit 1
 
-# Remove existing theme if present
-if [[ -d $THEME_PATH ]]; then
-  rm -rf "$THEME_PATH"
-fi
+mkdir -p "$THEMES_DIR"
+# Stage outside themeLists so an incomplete clone cannot appear in the picker.
+# Keep any installed version intact if cloning/authentication fails.
+STAGING=$(mktemp -d "$THEMES_DIR/../.theme-install.XXXXXX")
+BACKUP=""
+cleanup() {
+  rm -rf -- "$STAGING"
+  if [[ -n $BACKUP && ! -e $THEME_PATH && ! -L $THEME_PATH ]]; then
+    mv -- "$BACKUP/theme" "$THEME_PATH" || return
+  fi
+  [[ -z $BACKUP ]] || rm -rf -- "$BACKUP"
+}
+trap cleanup EXIT
 
-# Clone the repo directly to ~/.config/omarchy/themes
-if ! git clone "$REPO_URL" "$THEME_PATH"; then
-  echo "Error: Failed to clone theme repo."
+clone_theme() {
+  # gh credentials are not automatically Git credentials. Use gh for GitHub
+  # HTTPS URLs when it has a saved credential; never print or embed the token.
+  # Explicit SSH URLs and other hosts keep their normal Git authentication.
+  if [[ $REPO_URL == https://github.com/* ]] && command -v gh >/dev/null 2>&1 &&
+    gh auth token --hostname github.com >/dev/null 2>&1; then
+    # Do not fetch an unrelated fork parent using a different protocol.
+    gh repo clone --no-upstream "$REPO_URL" "$STAGING"
+  else
+    git clone -- "$REPO_URL" "$STAGING"
+  fi
+}
+
+if ! clone_theme; then
+  echo "Error: Failed to clone theme repo; any existing theme was preserved." >&2
   exit 1
 fi
 
 # Remove .git if user chose Delete
-if [ "$KEEP_GIT" = "Delete" ]; then
-  rm -rf "$THEME_PATH/.git"
+if [[ $KEEP_GIT == Delete ]]; then
+  rm -rf -- "$STAGING/.git"
+fi
+
+if [[ -e $THEME_PATH || -L $THEME_PATH ]]; then
+  BACKUP=$(mktemp -d "$THEMES_DIR/../.theme-backup.XXXXXX")
+  mv -- "$THEME_PATH" "$BACKUP/theme"
+fi
+mv -- "$STAGING" "$THEME_PATH"
+
+# Refresh before applying: installation should be discoverable even if a later
+# application hook fails. This rebuilds previews and thumbnails without a UI.
+if ! dhms-theme-switcher --refresh-cache; then
+  echo "Error: Theme installed, but picker cache refresh failed. Run 'dhms-theme-switcher --refresh-cache' to retry." >&2
+  exit 1
 fi
 
 # Apply the new theme with theme-set
-theme-set $THEME_NAME
+theme-set "$THEME_NAME"

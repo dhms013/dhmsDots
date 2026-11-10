@@ -121,7 +121,7 @@ cache_key=$(printf '%s' "$image_dirs_env" | md5sum | cut -d ' ' -f 1)
 rows_cache_file="$cache_dir/$cache_key.rows"
 rows_signature_file="$cache_dir/$cache_key.signature"
 rows_fast_signature_file="$cache_dir/$cache_key.fast-signature"
-rows_signature="v3"$'\n'
+rows_signature="v4"$'\n'
 rows_fast_signature="v2"$'\n'
 rows_cacheable=true
 rows_cache_hit=false
@@ -136,6 +136,11 @@ for dir in "${image_dirs[@]}"; do
     \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
     -print0 2>/dev/null | sort -z)
 done
+
+# Include the discovered files and their metadata in the row-cache identity.
+# A version-only signature would keep returning old rows after images/themes
+# were installed, removed, or changed.
+rows_signature+="$rows_fast_signature"
 
 generate_thumbnail() {
   local image="$1"

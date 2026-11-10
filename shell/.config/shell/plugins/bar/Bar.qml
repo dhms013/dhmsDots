@@ -1606,7 +1606,9 @@ Item {
 
                 Rectangle {
                     visible: !root.transparent
-                    anchors.centerIn: parent
+                    x: centerRoot.hasAnchor
+                        ? centerAnchorModule.x - beforeAnchor.width - Style.space(6)
+                        : fullEntries.x - Style.space(6)
                     width: centerRoot.hasAnchor
                         ? beforeAnchor.width + centerAnchorModule.width + afterAnchor.width + Style.space(12)
                         : fullEntries.width + Style.space(12)
@@ -1675,7 +1677,12 @@ Item {
 
                 Rectangle {
                     visible: !root.transparent
-                    anchors.centerIn: parent
+                    x: centerRoot.hasAnchor
+                        ? centerAnchorModule.x + centerAnchorModule.width / 2 - width / 2
+                        : fullEntries.x - Style.space(6)
+                    y: centerRoot.hasAnchor
+                        ? centerAnchorModule.y - beforeAnchor.height - Style.space(6)
+                        : fullEntries.y - Style.space(6)
                     width: centerRoot.hasAnchor
                         ? Math.max(beforeAnchor.width, centerAnchorModule.width, afterAnchor.width) + Style.space(12)
                         : fullEntries.width + Style.space(12)

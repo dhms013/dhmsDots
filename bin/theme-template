@@ -537,7 +537,12 @@ set_theme() {
 # Change background with theme
 set_background() {
   local bg_target
-  bg_target="$(find "$BG_DIR" -type f | sort | head -n 1)"
+  # Match the image picker/preview renderer. Theme bundles can contain paired
+  # videos and stills; choosing an MP4 leaves QtQuick Image unable to display
+  # either the installed wallpaper or the committed wallpaper after cancel.
+  bg_target="$(find -L "$BG_DIR" -maxdepth 1 -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
+    -print 2>/dev/null | sort | head -n 1)"
   [[ -n $bg_target ]] || return 0
 
   # Point the symlink at the resolved image, then push the RESOLVED path over
