@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# dhms:summary=Update dhmsDots (branch-aware), keyrings, packages, firmware, then run migrations
+# dhms:summary=Update dhmsDots (branch-aware), keyrings, packages, firmware, then run migrations; `log` lists last run's packages
 # dhms:group=system
 # dhms:name=update
+# dhms:args=[log]
+# dhms:examples=dhms-update log
 # dhms:requires-sudo=true
 
 set -e
@@ -136,6 +138,11 @@ post_update() {
     dhms-notification-send "Update finished"
   fi
 }
+
+if [[ "${1:-}" == "log" ]]; then
+  show_update_log
+  exit 0
+fi
 
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
