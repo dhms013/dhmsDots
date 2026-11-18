@@ -3,7 +3,7 @@
 # dhms:summary=Materialize the pending theme: copy its configs, render color templates, set the background, and push the theme to the shell and nvim
 # dhms:hidden=true
 
-USER_TEMPLATES_DIR="$HOME/.config/themes/themed"
+USER_TEMPLATES_DIR="${DHMS_THEME_TEMPLATES_DIR:-$HOME/.config/themes/themed}"
 NEXT_THEME_PATH="$HOME/.config/themes/current/next-theme"
 COLORS_FILE="$NEXT_THEME_PATH/colors.toml"
 
@@ -211,6 +211,7 @@ resolve_theme_colors() {
   [[ ${THEME_COLORS[bright_magenta]} ]] || THEME_COLORS[bright_magenta]=$(mix_color "${THEME_COLORS[magenta]}" "#ffffff" 20%)
   alias_theme_color purple magenta
   alias_theme_color bright_purple bright_magenta
+  alias_theme_color accent blue
 
   # Keep semantic themes compatible with consumers that still reference the
   # legacy ANSI names directly.
@@ -498,8 +499,31 @@ set_template() {
       output_path="$NEXT_THEME_PATH/$filename"
 
       # Don't overwrite configs already exists in the output directory (copied from theme specific folder)
-      if [[ ! -f $output_path ]]; then
-        sed -f "$sed_script" "$tpl" >"$output_path"
+      case "$filename" in
+        # The live palette is a data-only interface, never an imported override.
+        dhms-palette.json)
+          if ! rm -f -- "$output_path"; then
+            rm -f -- "$sed_script"
+            return 1
+          fi
+          ;;
+        zen.css)
+          # Use our color-only CSS while hovering rather than importing rules
+          # that might hide or reposition browser chrome.
+          if [[ ${PALETTE_PREVIEW:-} == 1 ]]; then
+            if ! rm -f -- "$output_path"; then
+              rm -f -- "$sed_script"
+              return 1
+            fi
+          else
+            [[ ! -f $output_path ]] || continue
+          fi
+          ;;
+        *) [[ ! -f $output_path ]] || continue ;;
+      esac
+      if ! sed -f "$sed_script" "$tpl" >"$output_path"; then
+        rm -f -- "$sed_script" "$output_path"
+        return 1
       fi
     done
 
@@ -524,11 +548,14 @@ set_theme() {
   cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null
 
   # Generate dynamic configs
-  set_template
+  set_template || return 1
+  if [[ -f $NEXT_THEME_PATH/dhms-palette.json ]]; then
+    dhms-theme-live check "$NEXT_THEME_PATH" || return 1
+  fi
 
   # Swap next theme in as current
   rm -rf "$CURRENT_THEME_PATH"
-  mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH"
+  mv "$NEXT_THEME_PATH" "$CURRENT_THEME_PATH" || return 1
 
   # Store theme name for reference
   echo "$THEME_NAME" >"$HOME/.config/themes/current/theme.name"
@@ -549,7 +576,7 @@ set_background() {
   # IPC. Pushing the symlink path itself would string-match as "unchanged" on
   # every switch after the first and leave only the ~1s watcher to repaint.
   ln -nsf "$bg_target" "$LINKED_BG"
-  dhms-shell -q background set "$bg_target"
+  if command -v qs >/dev/null; then dhms-shell -q background set "$bg_target"; fi
 }
 
 # Re-theme the running shell (bar, menus, popups) without a restart. Mirrors
@@ -558,6 +585,7 @@ set_background() {
 # treats them as "keep current".
 push_shell_theme() {
   local colors_b64="" shell_b64=""
+  command -v qs >/dev/null || return 0
   [[ -f $CURRENT_THEME_PATH/colors.toml ]] && colors_b64=$(base64 -w 0 "$CURRENT_THEME_PATH/colors.toml")
   [[ -f $CURRENT_THEME_PATH/shell.toml ]] && shell_b64=$(base64 -w 0 "$CURRENT_THEME_PATH/shell.toml")
   dhms-shell shell applyTheme "$colors_b64" "$shell_b64" >/dev/null 2>&1 || true
@@ -566,17 +594,18 @@ push_shell_theme() {
 if [[ ${1:-} == --render-dir ]]; then
   [[ $# == 3 && -d $2 ]] || { echo "Usage: theme-template --render-dir <theme-dir> <output-dir>" >&2; exit 2; }
   THEME_PATH="$2"
-  NEXT_THEME_PATH=$(mktemp -d)
+  NEXT_THEME_PATH="$3"
+  mkdir -p -- "$NEXT_THEME_PATH" || exit 1
   COLORS_FILE="$NEXT_THEME_PATH/colors.toml"
-  cp -r "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null || true
+  # Preview inputs are read-only. Link instead of copying wallpapers/videos
+  # on every highlight; resolved wallpaper paths outlive the scratch dir.
+  THEME_PATH=$(realpath -- "$THEME_PATH") || exit 1
+  cp -as -- "$THEME_PATH/"* "$NEXT_THEME_PATH/" 2>/dev/null || true
   set_template
-  mkdir -p "$3"
-  cp "$NEXT_THEME_PATH/zen.css" "$3/zen.css"
-  rm -rf "$NEXT_THEME_PATH"
-  exit 0
+  exit $?
 fi
 
-set_theme
+set_theme || exit 1
 set_background
 push_shell_theme
 
@@ -589,7 +618,7 @@ push_shell_theme
 push_nvim_theme() {
   local nvim_src="$CURRENT_THEME_PATH/neovim.lua"
   local live_dst="$HOME/.cache/dhms/nvim-live/neovim.lua"
-  if [[ -f $nvim_src ]]; then
+  if command -v nvim >/dev/null && [[ -f $nvim_src ]]; then
     mkdir -p "$(dirname "$live_dst")"
     cp "$nvim_src" "$live_dst"
   fi

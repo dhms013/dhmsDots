@@ -328,6 +328,20 @@ QtObject {
         mergeShell();
     }
 
+    function previewShell(raw) {
+        var candidate = parseShell(raw);
+        var merged = {};
+        for (var key in themeShellValues) merged[key] = themeShellValues[key];
+        // Only literal colors are eligible, even in imported themes.
+        for (var token in candidate) {
+            if (/^#[\da-f]{6}$/i.test(candidate[token]))
+                merged[token] = candidate[token];
+        }
+        for (var userKey in userShellValues) merged[userKey] = userShellValues[userKey];
+        shellValues = merged;
+        Style.applyShellValues(merged);
+    }
+
     function loadUserShell(raw) {
         userShellValues = parseShell(raw);
         mergeShell();

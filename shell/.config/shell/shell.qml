@@ -935,6 +935,20 @@ ShellRoot {
       shell.reloadPlugins()
     }
 
+    function previewTheme(colorsB64: string, shellB64: string): string {
+      Colors.loadColors(Qt.atob(colorsB64))
+      Colors.previewShell(Qt.atob(shellB64))
+      Style.scheduleRefresh()
+      return "ok"
+    }
+
+    function clearThemePreview(colorsB64: string): string {
+      Colors.loadColors(Qt.atob(colorsB64))
+      Colors.mergeShell()
+      Style.scheduleRefresh()
+      return "ok"
+    }
+
     function reloadConfig(): string {
       userConfigFile.reload()
       return "ok"

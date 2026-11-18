@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dhms:summary=Apply a theme by name and restart the themed apps
+# dhms:summary=Apply a theme by name and refresh running apps
 # dhms:args=<theme-name>
 
 if [[ -z $1 ]]; then
@@ -11,20 +11,17 @@ fi
 export THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 restart_apps() {
-  if pgrep -x kitty; then
-    killall -SIGUSR1 kitty
+  if command -v btop >/dev/null; then
+    pkill -u "$UID" -SIGUSR2 -x btop || true
   fi
-
-  if pgrep -x ghostty; then
-    killall -SIGUSR2 ghostty
-  fi
-
-  pkill -SIGUSR2 btop
 }
 
-theme-template
+theme-template || exit 1
 restart_apps
-hyprctl reload
-theme-gnome
+if command -v hyprctl >/dev/null; then hyprctl reload; fi
+dhms-theme-live commit
+if command -v gsettings >/dev/null; then theme-gnome; fi
 theme-browser
-hermes-theme-set
+if command -v hermes >/dev/null || [[ -x $HOME/.local/bin/hermes ]] || pacman -Qq hermes-desktop >/dev/null 2>&1; then
+  hermes-theme-set
+fi

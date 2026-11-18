@@ -45,6 +45,7 @@ status() {
 case "${1:-status}" in
   publish)
     [[ $# == 2 ]] || { echo "Usage: dhms browser zen-theme publish <css-file>" >&2; exit 2; }
+    command -v zen-browser >/dev/null || exit 0
     atomic_publish "$2"
     ;;
   status)

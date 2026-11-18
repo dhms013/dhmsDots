@@ -1,0 +1,23 @@
+{
+  "mode": "{{ mode }}",
+  "background": "{{ background }}",
+  "foreground": "{{ foreground }}",
+  "surface": "{{ mix background foreground 8% }}",
+  "raised": "{{ mix background foreground 14% }}",
+  "border": "{{ mix background foreground 33% }}",
+  "muted": "{{ muted }}",
+  "accent": "{{ accent }}",
+  "cursor": "{{ cursor }}",
+  "selection": "{{ selection_background }}",
+  "selectionText": "{{ selection_foreground }}",
+  "red": "{{ red }}",
+  "green": "{{ green }}",
+  "yellow": "{{ yellow }}",
+  "blue": "{{ blue }}",
+  "magenta": "{{ magenta }}",
+  "cyan": "{{ cyan }}",
+  "orange": "{{ orange }}",
+  "addBg": "{{ mix background green 18% }}",
+  "removeBg": "{{ mix background red 18% }}",
+  "ansi": ["{{ color0 }}", "{{ color1 }}", "{{ color2 }}", "{{ color3 }}", "{{ color4 }}", "{{ color5 }}", "{{ color6 }}", "{{ color7 }}", "{{ color8 }}", "{{ color9 }}", "{{ color10 }}", "{{ color11 }}", "{{ color12 }}", "{{ color13 }}", "{{ color14 }}", "{{ color15 }}"]
+}

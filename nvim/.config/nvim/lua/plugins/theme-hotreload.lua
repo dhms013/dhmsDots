@@ -6,6 +6,69 @@ return {
     priority = 1000,
     config = function()
       local transparency_file = vim.fn.stdpath("config") .. "/plugin/after/transparency.lua"
+      local preview_path = vim.fn.expand("~/.cache/dhms/nvim-live/preview.json")
+      local unmodified, last_raw = {}, nil
+      local preview = {
+        Normal = { fg = "foreground", bg = "background" },
+        NormalNC = { fg = "foreground", bg = "background" },
+        NormalFloat = { fg = "foreground", bg = "surface" },
+        WinSeparator = { fg = "border" }, FloatBorder = { fg = "border" },
+        LineNr = { fg = "muted" }, CursorLine = { bg = "surface" },
+        Visual = { fg = "selectionText", bg = "selection" },
+        Comment = { fg = "muted" }, String = { fg = "green" },
+        Constant = { fg = "orange" }, Function = { fg = "blue" },
+        Identifier = { fg = "foreground" }, Statement = { fg = "magenta" },
+        Type = { fg = "cyan" }, Special = { fg = "yellow" },
+        DiffAdd = { bg = "addBg" }, DiffDelete = { bg = "removeBg" },
+        DiagnosticError = { fg = "red" }, DiagnosticWarn = { fg = "yellow" },
+        DiagnosticInfo = { fg = "blue" }, DiagnosticHint = { fg = "cyan" },
+      }
+
+      local function restore_preview()
+        for name, original in pairs(unmodified) do
+          vim.api.nvim_set_hl(0, name, original)
+        end
+        unmodified = {}
+      end
+
+      local function update_preview()
+        local raw = ""
+        local file = io.open(preview_path, "r")
+        if file then
+          raw = file:read("*a") or ""
+          file:close()
+        end
+        if raw == last_raw then return end
+        last_raw = raw
+        if raw == "" then
+          restore_preview()
+          return
+        end
+        local ok, palette = pcall(vim.json.decode, raw)
+        if not ok or type(palette) ~= "table" then return end
+        for name, colors in pairs(preview) do
+          if not unmodified[name] then
+            unmodified[name] = vim.api.nvim_get_hl(0, { name = name, create = false })
+          end
+          local current = vim.api.nvim_get_hl(0, { name = name, link = false, create = false })
+          for attr, token in pairs(colors) do
+            -- Keep unset backgrounds transparent and keep typography flags.
+            if current[attr] or attr ~= "bg" then
+              current[attr] = palette[token]
+            end
+          end
+          vim.api.nvim_set_hl(0, name, current)
+        end
+      end
+
+      local timer = vim.uv.new_timer()
+      if timer then
+        timer:start(0, 250, vim.schedule_wrap(update_preview))
+        vim.api.nvim_create_autocmd("VimLeavePre", { callback = function() timer:close() end })
+      end
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = function()
+        unmodified, last_raw = {}, nil
+      end })
 
       vim.api.nvim_create_autocmd("User", {
         pattern = "LazyReload",

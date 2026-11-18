@@ -49,24 +49,21 @@ Item {
     property int bottomChromeHeight: showLabels ? (filterable ? 104 : 74) : (filterable ? 60 : 30)
     // Live-preview mode for the surrounding desktop: "background" re-points the
     // wallpaper (in-memory, via `dhms-shell background setInstant`), "theme" also
-    // repaints shell colors/surfaces (via `dhms-shell shell applyTheme`), "none"
+    // repaints shell and app colors (via `dhms-theme-live`), "none"
     // disables the hooks. Nothing here commits — the committed theme and the
     // current-background symlink are untouched until apply/select.
     property string previewMode: "background"
     // Last path (background mode) or theme name (theme mode) already previewed,
     // so repeated selections don't re-apply; cleared when the picker closes.
     property string lastPreviewed: ""
-    // Let the live wallpaper show through the scrim while browsing; keep the
-    // scrim opaque for preview-less pickers.
-    readonly property real scrimOpacity: previewMode === "none" ? 1 : 0.6
+    // Use [image-picker] scrim-alpha while browsing; keep preview-less pickers opaque.
+    readonly property real scrimOpacity: previewMode === "none" ? 1 : scrim.a
     // Preview IPC runs through one serial queue so the restore, enqueued on
     // cancel/close, is guaranteed to land AFTER any in-flight preview writes.
     property var previewQueue: []
-    property string pendingRenderTheme: ""
     // Stable path for the lazy.nvim theme spec — lazy's 2s reloader watches
-    // this via the symlinked plugins/theme.lua and fires LazyReload on content
-    // change. Preview writes the previewed theme's neovim.lua here; restore
-    // and select write the committed one back.
+    // this via the symlinked plugins/theme.lua and fires LazyReload on commit.
+    // Hover previews use a separate highlight overlay.
     readonly property string nvimLivePath: home + "/.cache/dhms/nvim-live/neovim.lua"
     // Carried open() args while the committed-background symlink is resolved.
     property string pendingOpenDirs: ""
@@ -148,9 +145,8 @@ Item {
                 return ;
 
             lastPreviewed = theme;
-            pendingRenderTheme = theme;
-            themeRenderProc.command = ["dhms-theme-render", theme];
-            themeRenderProc.running = true;
+            dropQueuedThemePreviews();
+            queuePreview(["dhms-theme-live", "preview", theme]);
         } else if (previewMode === "background") {
             if (path === lastPreviewed)
                 return ;
@@ -160,33 +156,8 @@ Item {
         }
     }
 
-    function applyRenderedTheme(output) {
-        // Ignore renders that finish after the picker closed or after the user
-        // moved on to another theme; restorePreview restores the committed state.
-        if (!opened || pendingRenderTheme !== currentThemeName())
-            return ;
-
-        var parts = String(output || "").trim().split("\t");
-        if (parts.length < 2)
-            return ;
-
-        var colors = (parts[0] || "").trim();
-        var shell = (parts[1] || "").trim();
-        if (colors || shell)
-            queuePreview(["dhms-shell", "-q", "shell", "applyTheme", colors, shell]);
-
-        var bg = (parts[2] || "").trim();
-        if (bg)
-            queuePreview(["dhms-shell", "-q", "background", "setInstant", bg]);
-
-        var nvimSrc = (parts[3] || "").trim();
-        if (nvimSrc)
-            queuePreview(["bash", "-c", "cp " + Util.shellQuote(nvimSrc) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
-
-        var zenCss = (parts[4] || "").trim();
-        if (zenCss)
-            queuePreview(["dhms-zen-theme", "publish", zenCss]);
-
+    function dropQueuedThemePreviews() {
+        previewQueue = previewQueue.filter(command => !(command[0] === "dhms-theme-live" && command[1] === "preview"));
     }
 
     function queuePreview(command) {
@@ -204,14 +175,9 @@ Item {
 
     function restorePreview() {
         if (previewMode === "theme") {
-            // Re-apply the committed theme's palette in-memory and reset the
-            // wallpaper from the current-background link. Both stay in-memory, so a
-            // crash anywhere still boots back to the committed theme.
-            var colors = home + "/.config/themes/current/theme/colors.toml";
-            var shell = home + "/.config/themes/current/theme/shell.toml";
-            var nvim = home + "/.config/themes/current/theme/neovim.lua";
-            var zen = home + "/.config/themes/current/theme/zen.css";
-            queuePreview(["bash", "-c", "colors=$(base64 -w0 " + Util.shellQuote(colors) + " 2>/dev/null); " + "shell=$(base64 -w0 " + Util.shellQuote(shell) + " 2>/dev/null); " + "dhms-shell -q shell applyTheme \"$colors\" \"$shell\" >/dev/null 2>&1; " + "dhms-shell -q background refresh >/dev/null 2>&1; " + "cp " + Util.shellQuote(nvim) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null; " + "dhms-zen-theme publish " + Util.shellQuote(zen) + " >/dev/null 2>&1"]);
+            previewTimer.stop();
+            dropQueuedThemePreviews();
+            queuePreview(["dhms-theme-live", "recover"]);
         } else if (previewMode === "background" && lastPreviewed) {
             // setInstant never touched the symlink, so refresh restores the commit.
             queuePreview(["dhms-shell", "-q", "background", "refresh"]);
@@ -314,8 +280,15 @@ Item {
         requestActive = false;
         selectionFile = "";
         doneFile = "";
-        applyProc.command = ["bash", "-c", "printf '%s\\n' " + Util.shellQuote(path) + " > " + Util.shellQuote(activeSelectionFile) + "; : > " + Util.shellQuote(activeDoneFile)];
-        applyProc.running = true;
+        var command = ["bash", "-c", "printf '%s\\n' \"$1\" > \"$2\"; : > \"$3\"", "picker", path, activeSelectionFile, activeDoneFile];
+        if (previewMode === "theme") {
+            opened = false;
+            restorePreview();
+            queuePreview(command);
+        } else {
+            applyProc.command = command;
+            applyProc.running = true;
+        }
     }
 
     function cancel() {
@@ -358,6 +331,8 @@ Item {
     }
 
     function openSelector(nextImageDirs, nextImageRows, nextSelectedImage, nextSelectionFile, nextDoneFile, nextShowLabels, nextFilterable, nextPreviewMode) {
+        if (opened && previewMode === "theme")
+            restorePreview();
         if (requestActive && doneFile && doneFile !== nextDoneFile)
             finishDoneFile(doneFile);
 
@@ -372,7 +347,6 @@ Item {
         filterable = nextFilterable === true || nextFilterable === "true";
         previewMode = String(nextPreviewMode || "background");
         lastPreviewed = "";
-        pendingRenderTheme = "";
         filterText = "";
         layoutSettled = false;
         if (imageRows && imageRows === loadedImageRows && imageArray.length > 0) {
@@ -527,11 +501,12 @@ Item {
     // always has a valid plugins/theme.lua spec. No-op once set_theme or a
     // previous preview has already written the file.
     Component.onCompleted: {
+        queuePreview(["dhms-theme-live", "recover"]);
         var committed = home + "/.config/themes/current/theme/neovim.lua";
         // Quickshell has no synchronous file-station API, so the existence
         // test folds into the bash job: the guarded cp is idempotent — a
         // no-op once set_theme or a previous preview wrote the live file.
-        queuePreview(["bash", "-c", "[[ -e " + Util.shellQuote(nvimLivePath) + " ]] || cp " + Util.shellQuote(committed) + " " + Util.shellQuote(nvimLivePath) + " 2>/dev/null"]);
+        queuePreview(["bash", "-c", "if command -v nvim >/dev/null && [[ ! -e $2 && -f $1 ]]; then mkdir -p -- \"${2%/*}\" && cp -- \"$1\" \"$2\"; fi", "nvim-live", committed, nvimLivePath]);
     }
 
     Process {
@@ -579,24 +554,6 @@ Item {
         interval: 90
         repeat: false
         onTriggered: root.previewSelected()
-    }
-
-    Process {
-        id: themeRenderProc
-
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: root.applyRenderedTheme(String(text || "").trim())
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (String(text || "").trim()) {
-                    console.warn("ImagePicker theme render:", String(text).trim());
-                }
-            }
-        }
-
     }
 
     Process {

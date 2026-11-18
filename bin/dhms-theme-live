@@ -1,0 +1,534 @@
+#!/bin/bash
+
+# shellcheck shell=bash
+# vim: set filetype=sh:
+
+# dhms:summary=Publish the DHMS color palette to running apps or restore the committed colors
+# dhms:hidden=true
+# dhms:args=<preview theme-name|restore|recover|commit|check theme-dir>
+
+set -o pipefail
+
+config=${XDG_CONFIG_HOME:-$HOME/.config}
+cache=${XDG_CACHE_HOME:-$HOME/.cache}
+state=$cache/dhms/theme-live
+current=$HOME/.config/themes/current/theme
+yazi_config=${YAZI_CONFIG_HOME:-$config/yazi}/theme.toml
+policy=/etc/chromium/policies/managed/color.json
+marker='# Managed by dhms-theme-live'
+scratch=''
+declare -A palette=() processes=() terminals=()
+declare -a ansi=()
+
+load_palette() {
+  local key value resolved
+  resolved=$(jq -er '
+    def rgb: type == "string" and test("\\A#[0-9a-fA-F]{6}\\z");
+    . as $p |
+    ["background","foreground","surface","raised","border","muted","accent","cursor",
+     "selection","selectionText","red","green","yellow","blue","magenta","cyan","orange","addBg","removeBg"] as $keys |
+    select((.mode == "light" or .mode == "dark") and (.ansi | type == "array" and length == 16)
+      and all(($keys[] | $p[.]), .ansi[]; rgb)) |
+    (["mode", .mode] | @tsv), ($keys[] | [., $p[.]] | @tsv),
+    (.ansi | to_entries[] | [(.key | tostring), .value] | @tsv)
+  ' "$1/dhms-palette.json") || return 1
+  while IFS=$'\t' read -r key value; do
+    if [[ $key =~ ^[0-9]+$ ]]; then
+      ansi[key]=$value
+    else
+      palette[$key]=$value
+    fi
+  done <<<"$resolved"
+}
+
+# Publish watcher inputs by rename so readers never see a partial file.
+publish() {
+  local path=$1 tmp
+  mkdir -p -- "${path%/*}" || return 1
+  tmp=$(mktemp "${path%/*}/.${path##*/}.XXXXXX") || return 1
+  if ! cat >"$tmp"; then
+    rm -f -- "$tmp"
+    return 1
+  fi
+  if [[ -f $path ]]; then
+    if cmp -s -- "$tmp" "$path"; then
+      rm -f -- "$tmp"
+      return
+    fi
+    chmod --reference="$path" "$tmp" || {
+      rm -f -- "$tmp"
+      return 1
+    }
+  fi
+  mv -fT -- "$tmp" "$path" || {
+    rm -f -- "$tmp"
+    return 1
+  }
+}
+
+opencode_tokens() {
+  cat <<'TOKENS'
+accent accent borderActive primary markdownHeading markdownListItem markdownListEnumeration syntaxKeyword
+cyan secondary markdownLinkText markdownEmph syntaxType syntaxOperator
+blue info markdownLink markdownImage markdownImageText syntaxFunction diffHunkHeader
+red error diffRemoved diffHighlightRemoved
+green success diffAdded diffHighlightAdded markdownCode markdownCodeBlock syntaxString
+yellow warning markdownStrong syntaxNumber
+foreground text markdownText syntaxVariable syntaxPunctuation
+muted textMuted syntaxComment markdownBlockQuote diffLineNumber diffContext
+background background diffContextBg
+surface backgroundPanel
+raised backgroundElement backgroundMenu borderSubtle
+border border markdownHorizontalRule
+addBg diffAddedBg diffAddedLineNumberBg
+removeBg diffRemovedBg diffRemovedLineNumberBg
+TOKENS
+}
+
+claude_tokens() {
+  cat <<'TOKENS'
+foreground text
+background inverseText
+accent claude promptBorder
+muted inactive
+border subtle
+cyan planMode ide
+blue suggestion permission
+yellow warning
+green success
+red error
+surface userMessageBackground bashMessageBackgroundColor memoryBackgroundColor
+raised userMessageBackgroundHover composerSidebarBackground
+selection selectionBg
+addBg diffAdded diffAddedDimmed
+removeBg diffRemoved diffRemovedDimmed
+TOKENS
+}
+
+# Token names are defined above; all colors have passed strict hex validation.
+color_map() {
+  local key token sep=''
+  local -a tokens
+  printf '{'
+  while read -r -a tokens; do
+    key=${tokens[0]:-}
+    [[ -n $key ]] || continue
+    for token in "${tokens[@]:1}"; do
+      printf '%s"%s":"%s"' "$sep" "$token" "${palette[$key]}"
+      sep=,
+    done
+  done
+  printf '}'
+}
+
+opencode_theme() {
+  printf '{"theme":'
+  opencode_tokens | color_map || return 1
+  printf '}\n'
+}
+
+claude_theme() {
+  printf '{"name":"DHMS Current","base":"%s","overrides":' "${palette[mode]}"
+  claude_tokens | color_map || return 1
+  printf '}\n'
+}
+
+codex_theme() {
+  local attribute color scope
+  printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+    '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' \
+    '<plist version="1.0"><dict><key>name</key><string>DHMS Current</string><key>settings</key><array>'
+  printf '<dict><key>settings</key><dict><key>foreground</key><string>%s</string><key>background</key><string>%s</string></dict></dict>\n' \
+    "${palette[foreground]}" "${palette[background]}"
+  while read -r attribute color scope; do
+    printf '<dict><key>scope</key><string>%s</string><key>settings</key><dict><key>%s</key><string>%s</string></dict></dict>\n' \
+      "$scope" "$attribute" "${palette[$color]}"
+  done <<'SCOPES'
+foreground muted comment
+foreground magenta keyword, storage
+foreground green string
+foreground orange constant.numeric, constant.language
+foreground blue entity.name.function
+foreground cyan entity.name.type, support.type
+foreground foreground variable
+background addBg markup.inserted
+background removeBg markup.deleted
+SCOPES
+  printf '%s\n' '</array></dict></plist>'
+}
+
+yazi_theme() {
+  local section
+  printf '%s\n' "$marker"
+  cat <<TOML
+[mgr]
+cwd = { fg = "${palette[cyan]}" }
+border_style = { fg = "${palette[border]}" }
+[status]
+perm_sep = { fg = "${palette[muted]}" }
+perm_type = { fg = "${palette[green]}" }
+perm_read = { fg = "${palette[yellow]}" }
+perm_write = { fg = "${palette[red]}" }
+perm_exec = { fg = "${palette[cyan]}" }
+[notify]
+title_info = { fg = "${palette[green]}" }
+title_warn = { fg = "${palette[yellow]}" }
+title_error = { fg = "${palette[red]}" }
+TOML
+  for section in which confirm spot pick input cmp tasks help; do
+    printf '[%s]\nborder = { fg = "%s" }\n' "$section" "${palette[accent]}"
+  done
+}
+
+discover_processes() {
+  local proc name info key index mount_ns
+  processes=()
+  terminals=()
+  mount_ns=$(readlink /proc/self/ns/mnt) || return 1
+  for proc in /proc/[0-9]*; do
+    [[ -O $proc ]] || continue
+    { read -r name <"$proc/comm"; } 2>/dev/null || continue
+    case "$name" in
+    opencode | herdr | yazi | helium | chromium) processes[${proc##*/}]=$name ;;
+    foot | kitty | ghostty)
+      command -v "$name" >/dev/null || continue
+      [[ $(readlink "$proc/ns/mnt" 2>/dev/null) == "$mount_ns" ]] || continue
+      for info in "$proc"/fdinfo/[0-9]*; do
+        while read -r key index _; do
+          if [[ $key == tty-index: && $index =~ ^[0-9]+$ ]]; then
+            terminals[$index]=$name
+            break
+          fi
+        done 2>/dev/null <"$info" || true
+      done
+      ;;
+    esac
+  done
+  return 0
+}
+
+terminal_sequence() {
+  local emulator=$1 directory=$2 file line key value extra kind index i slot
+  local active=1 color='#?[0-9a-fA-F]{6}'
+  local setting_re='^[[:space:]]*([a-zA-Z0-9_-]+)([[:space:]]*=[[:space:]]*|[[:space:]]+)(.*)$'
+  local end=$'\e\\'
+  local -a colors=("${ansi[@]}")
+  local -A slots=(
+    [10]="${palette[foreground]}"
+    [11]="${palette[background]}"
+    [12]="${palette[cursor]}"
+    [17]="${palette[selection]}"
+    [19]="${palette[selectionText]}"
+  )
+  case "$emulator" in
+  foot) file=$directory/foot.ini ;;
+  kitty) file=$directory/kitty.conf ;;
+  ghostty) file=$directory/ghostty.conf ;;
+  *) return 2 ;;
+  esac
+  if [[ -f $file ]]; then
+    while IFS= read -r line || [[ $line ]]; do
+      if [[ $emulator == foot && $line =~ ^[[:space:]]*\[ ]]; then
+        active=0
+        [[ $line =~ ^[[:space:]]*\[colors(-dark)?\] ]] && active=1
+      fi
+      ((active)) || continue
+      [[ $line =~ $setting_re ]] || continue
+      key=${BASH_REMATCH[1]//_/-}
+      value=${BASH_REMATCH[3]}
+      if [[ $key == palette ]]; then
+        [[ $value =~ ^([0-9]+)[[:space:]]*=[[:space:]]*($color)[[:space:]]*$ ]] || continue
+        index=${BASH_REMATCH[1]}
+        value=${BASH_REMATCH[2]}
+        if [[ $index =~ ^(0|[1-9]|1[0-5])$ ]]; then
+          colors[index]="#${value#\#}"
+        fi
+        continue
+      fi
+      [[ $value =~ ^($color)([[:space:]]+($color))?[[:space:]]*$ ]] || continue
+      value=${BASH_REMATCH[1]}
+      extra=${BASH_REMATCH[3]:-}
+      case "$key" in
+      foreground) slot=10 ;;
+      background) slot=11 ;;
+      cursor | cursor-color)
+        slot=12
+        value=${extra:-$value}
+        ;;
+      selection-background) slot=17 ;;
+      selection-foreground) slot=19 ;;
+      *)
+        [[ $key =~ ^(color|regular|bright)([0-9]+)$ ]] || continue
+        kind=${BASH_REMATCH[1]}
+        index=${BASH_REMATCH[2]}
+        if [[ $kind == bright ]]; then
+          [[ $index =~ ^[0-7]$ ]] || continue
+          index=$((index + 8))
+        fi
+        if [[ $index =~ ^(0|[1-9]|1[0-5])$ ]]; then
+          colors[index]="#${value#\#}"
+        fi
+        continue
+        ;;
+      esac
+      slots[$slot]="#${value#\#}"
+    done <"$file"
+  fi
+  for i in "${!colors[@]}"; do
+    printf '\e]4;%s;%s%s' "$i" "${colors[i]}" "$end"
+  done
+  for slot in 10 11 12 17 19; do
+    printf '\e]%s;%s%s' "$slot" "${slots[$slot]}" "$end"
+  done
+}
+
+refresh_terminals() {
+  local terminal tty path
+  local -A sequences
+  for tty in "${!terminals[@]}"; do
+    terminal=${terminals[$tty]}
+    if [[ ! ${sequences[$terminal]+set} ]]; then
+      sequences[$terminal]=$(terminal_sequence "$terminal" "$1") || return 1
+    fi
+    path=/dev/pts/$tty
+    [[ -c $path && -O $path && ! -L $path ]] || continue
+    # Write to the PTY output stream. Bound writes if the terminal is stalled.
+    printf '%s' "${sequences[$terminal]}" | timeout 0.25 dd "of=$path" oflag=nonblock conv=notrunc status=none 2>/dev/null || true
+  done
+}
+
+signal_if_caught() {
+  local pid=$1 sig=$2 name value
+  while read -r name value _; do
+    if [[ $name == SigCgt: && $value =~ ^[[:xdigit:]]+$ ]]; then
+      if (((16#$value & (1 << (sig - 1))) != 0)); then
+        kill -s "$sig" "$pid" 2>/dev/null || true
+      fi
+      break
+    fi
+  done 2>/dev/null <"/proc/$pid/status" || true
+}
+
+hypr_colors() {
+  local action=$1 instance=${HYPRLAND_INSTANCE_SIGNATURE:-} snapshot=$state/hypr-colors.json
+  local general group key section value primary stop rgb angle i colors code=''
+  local -a stops
+  [[ $instance ]] && command -v hyprctl >/dev/null || return 0
+  if [[ $action == commit ]]; then
+    rm -f -- "$snapshot"
+    return
+  fi
+  if [[ ! -f $snapshot || $(jq -r '.instance' "$snapshot") != "$instance" ]]; then
+    rm -f -- "$snapshot"
+    [[ $action == preview ]] || return 0
+    general=$(timeout 2 hyprctl getoption general:col.active_border -j | jq -r '.gradient // empty') || return 1
+    group=$(timeout 2 hyprctl getoption group:col.border_active -j | jq -r '.gradient // empty') || return 1
+    jq -n --arg instance "$instance" --arg general "$general" --arg group "$group" \
+      '$ARGS.named' | publish "$snapshot" || return 1
+  fi
+  for section in general group; do
+    value=$(jq -r --arg section "$section" '.[$section]' "$snapshot") || return 1
+    [[ $value =~ ^([0-9a-fA-F]{8}[[:space:]])+[0-9]+deg$ ]] || continue
+    read -r -a stops <<<"$value"
+    angle=${stops[-1]%deg}
+    unset 'stops[-1]'
+    primary=${stops[0]}
+    colors=''
+    for i in "${!stops[@]}"; do
+      stop=${stops[i]}
+      rgb=${stop:2}
+      [[ $action == preview && $stop == "$primary" ]] && rgb=${palette[accent]#\#}
+      colors+="${colors:+, }\"rgba($rgb${stop:0:2})\""
+    done
+    if [[ $section == general ]]; then key=active_border; else key=border_active; fi
+    code+="hl.config({$section = {col = {$key = {colors = {$colors}, angle = $((10#$angle))}}}})"$'\n'
+  done
+  if [[ $code ]]; then timeout 2 hyprctl eval "$code" >/dev/null || return 1; fi
+  if [[ $action == restore ]]; then rm -f -- "$snapshot"; fi
+}
+
+helium_policy() {
+  local directory=$1 action=$2 snapshot=$state/helium-policy.json
+  local value r g b contents original name
+  case "$action" in
+  commit | restore)
+    [[ -f $snapshot ]] || return 0
+    original=$(jq -r '.original' "$snapshot") || return 1
+    if [[ $original == null ]]; then
+      rm -f -- "$policy" || return 1
+    else
+      printf '%s' "$original" | base64 -d | publish "$policy" || return 1
+    fi
+    rm -f -- "$snapshot" || return 1
+    # theme-browser applies and refreshes the committed policy after this hook.
+    if [[ $action == commit ]]; then return 0; fi
+    ;;
+  preview)
+    command -v helium-browser >/dev/null || return 0
+    [[ -f $config/dhms/helium-theme-preview && -d ${policy%/*} && -f $directory/chromium.theme ]] || return 0
+    value=$(<"$directory/chromium.theme")
+    [[ $value =~ ^([0-9]{1,3}),([0-9]{1,3}),([0-9]{1,3})$ ]] || return 0
+    r=$((10#${BASH_REMATCH[1]})) g=$((10#${BASH_REMATCH[2]})) b=$((10#${BASH_REMATCH[3]}))
+    ((r <= 255 && g <= 255 && b <= 255)) || return 0
+    printf -v value '#%02x%02x%02x' "$r" "$g" "$b"
+    contents='{}' original=null
+    if [[ -f $policy ]]; then
+      contents=$(<"$policy")
+      original=$(base64 -w0 -- "$policy") || return 1
+    fi
+    contents=$(jq -ce --arg color "$value" '.BrowserThemeColor = $color' <<<"$contents") || return 1
+    if [[ ! -f $snapshot ]]; then
+      if [[ $original == null ]]; then
+        printf '{"original":null}\n' | publish "$snapshot" || return 1
+      else
+        jq -n --arg original "$original" '$ARGS.named' | publish "$snapshot" || return 1
+      fi
+    fi
+    printf '%s\n' "$contents" | publish "$policy" || return 1
+    ;;
+  esac
+  for name in helium chromium; do
+    has_process "$name" || continue
+    [[ $name == helium ]] && name=helium-browser
+    command -v "$name" >/dev/null || continue
+    timeout 2 "$name" --refresh-platform-policy --no-startup-window >/dev/null 2>&1 || true
+  done
+}
+
+has_process() {
+  local name
+  for name in "${processes[@]}"; do [[ $name == "$1" ]] && return 0; done
+  return 1
+}
+
+refresh_apps() {
+  local directory=$1 action=$2 pid tty key colors shell='' wallpaper first_line=''
+  local nvim_preview=$HOME/.cache/dhms/nvim-live/preview.json
+
+  discover_processes || return 1
+  refresh_terminals "$directory" || return 1
+  if command -v opencode >/dev/null; then
+    opencode_theme | publish "$config/opencode/themes/dhms-current.json" || return 1
+  fi
+  if command -v claude >/dev/null; then
+    claude_theme | publish "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/themes/dhms-current.json" || return 1
+  fi
+  if [[ $action == commit ]] && command -v codex >/dev/null; then
+    codex_theme | publish "${CODEX_HOME:-$HOME/.codex}/themes/dhms-current.tmTheme" || return 1
+  fi
+  if command -v yazi >/dev/null && [[ ! -L $yazi_config ]]; then
+    if [[ -f $yazi_config ]]; then IFS= read -r first_line <"$yazi_config"; fi
+    if [[ ! -e $yazi_config || $first_line == "$marker" ]]; then
+      yazi_theme | publish "$yazi_config" || return 1
+      if command -v ya >/dev/null && has_process yazi; then
+        timeout 2 ya emit-to 0 app:theme >/dev/null 2>&1 || true
+      fi
+    fi
+  fi
+
+  if ((${#terminals[@]})); then sleep 0.12; fi
+  for pid in "${!processes[@]}"; do
+    case ${processes[$pid]} in
+    opencode)
+      if command -v opencode >/dev/null; then signal_if_caught "$pid" "$(kill -l USR2)"; fi
+      ;;
+    herdr)
+      command -v herdr >/dev/null || continue
+      tty=$(readlink "/proc/$pid/fd/0" 2>/dev/null) || continue
+      if [[ $tty == /dev/pts/* ]]; then signal_if_caught "$pid" "$(kill -l WINCH)"; fi
+      ;;
+    esac
+  done
+
+  colors=$(for key in foreground background accent muted red orange; do
+    printf '%s = "%s"\n' "$key" "${palette[$key]}"
+  done | base64 -w0) || return 1
+  case "$action" in
+  preview)
+    if command -v nvim >/dev/null; then
+      publish "$nvim_preview" <"$directory/dhms-palette.json" || return 1
+    fi
+    if command -v qs >/dev/null; then
+      if [[ -f $directory/shell.toml ]]; then shell=$(base64 -w0 -- "$directory/shell.toml"); fi
+      timeout 3 dhms-shell -q shell previewTheme "$colors" "$shell" || true
+      if [[ -d $directory/backgrounds ]]; then
+        while IFS= read -r -d '' wallpaper; do
+          wallpaper=$(realpath -- "$wallpaper") || break
+          timeout 3 dhms-shell -q background setInstant "$wallpaper" || true
+          break
+        done < <(find -L "$directory/backgrounds" -maxdepth 1 -type f \
+          \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) -print0 | sort -z)
+      fi
+    fi
+    ;;
+  restore)
+    rm -f -- "$nvim_preview" || return 1
+    if command -v qs >/dev/null; then
+      timeout 3 dhms-shell -q shell clearThemePreview "$colors" || true
+      timeout 3 dhms-shell -q background refresh || true
+    fi
+    ;;
+  commit) rm -f -- "$nvim_preview" || return 1 ;;
+  esac
+  if [[ -f $directory/zen.css ]]; then
+    dhms-zen-theme publish "$directory/zen.css" || return 1
+  fi
+  local failed=0
+  if ! hypr_colors "$action"; then
+    printf 'dhms-theme-live: Hyprland color %s failed\n' "$action" >&2
+    failed=1
+  fi
+  if ! helium_policy "$directory" "$action"; then
+    printf 'dhms-theme-live: browser color %s failed\n' "$action" >&2
+    failed=1
+  fi
+  return "$failed"
+}
+
+main() {
+  local action=${1:-} directory=$current pending=$state/preview-active lock
+  case "$action:$#" in
+  check:2)
+    load_palette "$2"
+    return
+    ;;
+  preview:2 | restore:1 | recover:1 | commit:1) ;;
+  *)
+    printf 'Usage: dhms-theme-live <preview theme-name|restore|recover|commit|check theme-dir>\n' >&2
+    return 2
+    ;;
+  esac
+  [[ $action != recover || -e $pending ]] || return 0
+  (
+    umask 077
+    mkdir -p -- "$state"
+  ) || return 1
+  exec {lock}>"$state/lock" || return 1
+  flock -x "$lock" || return 1
+  [[ $action != recover || -e $pending ]] || return 0
+  if [[ $action == preview || ! -f $current/dhms-palette.json ]]; then
+    scratch=$(mktemp -d "$state/render.XXXXXX") || return 1
+    trap 'rm -rf -- "$scratch"' EXIT
+    directory=$scratch
+    if [[ $action == preview ]]; then
+      dhms-theme-render "$2" "$scratch" || return 1
+    else
+      theme-template --render-dir "$current" "$scratch" || return 1
+    fi
+  fi
+  load_palette "$directory" || {
+    printf 'dhms-theme-live: invalid or incomplete palette in %s\n' "$directory" >&2
+    return 1
+  }
+  if [[ $action == preview ]]; then
+    touch -- "$pending" || return 1
+  elif [[ $action == recover ]]; then
+    action=restore
+  fi
+  refresh_apps "$directory" "$action" || return 1
+  if [[ $action != preview ]]; then rm -f -- "$pending" || return 1; fi
+}
+
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+  main "$@"
+fi
