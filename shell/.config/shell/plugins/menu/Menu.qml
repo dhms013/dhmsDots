@@ -1,4 +1,5 @@
 import "MenuModel.js" as MenuModel
+import "Calculator.js" as Calculator
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -749,7 +750,17 @@ Item {
         var rows = [];
         var query = root.filterText.trim();
         root.searchDivider = false;
-        if (query) {
+        if (root.isCalculatorQuery(query)) {
+            var result = Calculator.evaluate(query.slice(1));
+            if (result !== null) {
+                rows.push(root.displayRow({
+                    "id": "calculator-result",
+                    "kind": "calculator",
+                    "icon": "",
+                    "label": result
+                }, "Copy result"));
+            }
+        } else if (query) {
             var currentRows = [];
             var drilldownRows = [];
             for (var i = 0; i < root.itemOrder.length; i++) {
@@ -919,6 +930,10 @@ Item {
         return true;
     }
 
+    function isCalculatorQuery(query) {
+        return !root.dmenuActive && root.activeMenu === "apps" && query.startsWith("=");
+    }
+
     function activateIndex(index, fromPointer) {
         if (root.deleteConfirmOpen)
             return ;
@@ -941,6 +956,9 @@ Item {
         var row = displayModel.get(index);
         if (row.kind === "menu" || row.kind === "link") {
             root.setActiveMenu(row.target || row.itemId, true, fromPointer);
+        } else if (row.kind === "calculator") {
+            Quickshell.execDetached(["wl-copy", "--", row.label]);
+            root.cancel();
         } else if (row.kind === "app") {
             var appId = row.appId;
             var label = row.label;
@@ -1738,7 +1756,7 @@ Item {
                         }
 
                         Text {
-                            text: root.filterText ? "No matches for “" + root.filterText + "”" : "Nothing here yet"
+                            text: root.isCalculatorQuery(root.filterText.trim()) ? (root.filterText.trim() === "=" ? "Enter an expression" : "Invalid or incomplete expression") : root.filterText ? "No matches for “" + root.filterText + "”" : "Nothing here yet"
                             color: root.foreground
                             opacity: 0.7
                             font.family: root.fontFamily
